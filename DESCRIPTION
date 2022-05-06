@@ -16,5 +16,4 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Imports:
   png,
-  GenomicAlignments,
-  Seurat (>= 4.1.0)
+  GenomicAlignments
