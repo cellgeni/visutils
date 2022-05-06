@@ -50,7 +50,7 @@ weightedColourMeans = function(cols,weights){
 #' @param ... other arguments for plot function
 #'
 #' @return list bith bins and frequencies (invisible)
-#' @export
+#' @export plot.as.hm
 #'
 #' @examples
 plot.as.hm = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange','red'),zfun=identity,leg.title='',num.leg.tic=NULL,legend=TRUE,trimZq=0,xlim=NULL,ylim=NULL,new=TRUE,xlab=deparse(substitute(x)),ylab=deparse(substitute(y)),...){
