@@ -417,6 +417,26 @@ plotPanelLetter = function(l,cex=1.2,adj=c(0,1.1),...){
   text(x=x,y=y,labels=l,adj=adj,font=2,cex=cex,xpd=NA)
 }
 
+#' Line with confidence interval
+#'
+#' CI is shown by area
+#'
+#' @param x x coordinates
+#' @param p y coordinates. Matrix with two (mean and sd) or three (mean, lower CI bound, higher CI bound) columns
+#' @param col line and area colour
+#' @param sd.mult coefficient to multiply sd to get CI
+#' @param new make ne plot (default is to add line on existed plot)
+#' @param ylim
+#' @param xlim
+#' @param area.transp alpha for CI area
+#' @param type type of \code{\link{plot}}
+#' @param area.den density of \code{\link{polygon}}
+#' @param ...
+#'
+#' @return
+#' @export
+#'
+#' @examples
 plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.transp=0.2,type='l',area.den=-1,...){
   #p should contain either mean and sd
   #or mean, lower and upper bounds
@@ -441,7 +461,25 @@ plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.tra
   lines(x,p[,1],col=col,type=type,...)
 }
 
-plotLine = function(x,y=NULL,cor.method='pearson',line.col='red',leg.pos='topright',line.lwd=1,plot.ci=FALSE,ci.transparency=0.3,line.on.top=TRUE,new=TRUE,...){
+#' Plots scatterplot with regression line
+#'
+#' Wrapper for pllot function
+#'
+#' @param x,y coordinates
+#' @param cor.method pearson (default) or spearman
+#' @param line.col colour of line
+#' @param line.lwd line width
+#' @param plot.ci logical, should CI be plotted
+#' @param ci.transparency alpha of CI area
+#' @param line.on.top logical, should line be on the top of points
+#' @param new logical, create new plot (default) or add to existing
+#' @param ... other arguments for plot function
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plotLine = function(x,y=NULL,cor.method='pearson',line.col='red',line.lwd=1,plot.ci=FALSE,ci.transparency=0.3,line.on.top=TRUE,new=TRUE,...){
   if(is.null(y)){
     y = x[,2]
     x = x[,1]
@@ -478,6 +516,16 @@ plotLine = function(x,y=NULL,cor.method='pearson',line.col='red',leg.pos='toprig
   text(grconvertX(0.01,'npc','user'),grconvertY(0.99,'npc','user'),leg,col=line.col,adj=c(0,1),font=2)
 }
 
+#' Rename cluster by size
+#'
+#' Gives larger clusters smaller index
+#'
+#' @param x clustering, numeric vector with membership (as returned by cutree for instance)
+#'
+#' @return numeric cluster with new membership
+#' @export
+#'
+#' @examples
 renameClustsBySize = function(x){
   t = table(x)
   n = names(t)
@@ -488,36 +536,33 @@ renameClustsBySize = function(x){
   r
 }
 
-getPal=function(col=c('blue','white','red'),n=200){
-  r = character(n)
-  if(n == 1){
-    i = floor(length(col)/2)
-    return(.getPal(col[i],col[i+1],0.2))
-  }
-  for(i in 0:(n-1)){
-    cinx = i/(n-1)*(length(col)-1)+1
-    if(cinx == floor(cinx))
-      r[i+1] = col[cinx]
-    else{
-      rate = cinx-floor(cinx)
-      cinx = floor(cinx)
-      r[i+1] = .getPal(col[cinx],col[cinx+1],1-rate)
-    }
-  }
-  r
-}
-
-.getPal = function(c1,c2,r){
-  c1 = t(col2rgb(c1,alpha=TRUE)/255)
-  c2 = t(col2rgb(c2,alpha=TRUE)/255)
-  return(rgb((c1*r+c2*(1-r)),alpha=r*c1[4]+(1-r)*c2[4]))
-}
-
+#' Scale numeric vector
+#'
+#' @param x numeric vector to be scaled
+#' @param from,to target range
+#' @param minx,maxx true min of "real x" (in case if given x is just subset of the real)
+#' @param fraction fraction of target range to be used
+#'
+#' @return
+#' @export
+#'
+#' @examples
 scaleTo = function(x,from=0,to=1,minx=min(x,na.rm=TRUE),maxx=max(x,na.rm=TRUE),fraction=1){
   x = (x-minx)/(maxx-minx)
   x*(to-from)*fraction + from + (to-from)*(1-fraction)/2
 }
 
+#' Extract read coverage from bam files
+#'
+#' @param bams character vector with paths to bam files
+#' @param chr contig name
+#' @param start,end coordinates of region
+#' @param strand strand, NA for unstranded (default)
+#'
+#' @return list with three items: x (chr coordinates); cov - number of reads mapped to chr position; juncs - data.frame with introns
+#' @export
+#'
+#' @examples
 getReadCoverage = function(bams,chr,start,end,strand=NA){
   require(GenomicAlignments)
   if(start>end){
@@ -548,6 +593,22 @@ getReadCoverage = function(bams,chr,start,end,strand=NA){
   invisible(r)
 }
 
+#' Plots read coverage
+#'
+#' @param r read coverage; output of \code{\link{getReadCoverage}}
+#' @param min.junc.cov numeric, plots only junctions (introns) with coverage not less than \code{min.junc.cov}
+#' @param plot.junc.only.within logical, plot only juctions within the region
+#' @param ylim
+#' @param xlim
+#' @param reverse reverse x coordinates
+#' @param junc.col colour for junction line
+#' @param junc.lwd line width for jucntion line
+#' @param ... other parameters for plot function
+#'
+#' @return
+#' @export
+#'
+#' @examples
 plotReadCov = function(r,min.junc.cov=0,plot.junc.only.within=FALSE,ylim=NULL,xlim=range(r$x),reverse=FALSE,junc.col='red',junc.lwd=3,...){
   f = r$x >= xlim[1] & r$x <=xlim[2]
   r$x = r$x[f]
@@ -578,7 +639,6 @@ plotReadCov = function(r,min.junc.cov=0,plot.junc.only.within=FALSE,ylim=NULL,xl
 #' @param ... other parameters of lines functoin
 #'
 #' @return
-#' @export
 #'
 #' @examples
 plotArc = function(from,to,top,n=100,y.base=0,...){

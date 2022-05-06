@@ -30,7 +30,7 @@
 
 \item{cols}{colours to form gradient}
 
-\item{zfun}{transformation of frequency (try log1p, sqrt, etc). Identity by default}
+\item{zfun}{transformation of frequency (try \code{\link{log1p}}, \code{\link{sqrt}}, etc). Identity by default}
 
 \item{leg.title}{legend title}
 
@@ -38,7 +38,7 @@
 
 \item{legend}{logical, should legend be plotted}
 
-\item{trimZq}{frequencies outside of quantile(trimZq,1-trimZq) are set to the corresponding (closest) quantiles. Default is 0 (not trimming). See trimQ.}
+\item{trimZq}{frequencies outside of quantile(trimZq,1-trimZq) are set to the corresponding (closest) quantiles. Default is 0 (not trimming). See \code{\link{trimQ}}.}
 
 \item{new}{create new plot (default) or add to existing}
 

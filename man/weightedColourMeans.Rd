@@ -9,7 +9,7 @@ weightedColourMeans(cols, weights)
 \arguments{
 \item{cols}{vector of colors (any notation)}
 
-\item{weights}{matrix with number of columns equal to number of columns (in same order).}
+\item{weights}{matrix with number of columns equal to the length of \code{cols} (in same order).}
 }
 \value{
 vector of colours (length equal to nrow of weights)

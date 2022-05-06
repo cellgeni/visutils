@@ -2,7 +2,7 @@
 % Please edit documentation in R/general.purpuse.utilities.R
 \name{plotReadCov}
 \alias{plotReadCov}
-\title{Title}
+\title{Plots read coverage}
 \usage{
 plotReadCov(
   r,
@@ -17,11 +17,23 @@ plotReadCov(
 )
 }
 \arguments{
-\item{cov}{list with three elements: x (coordinates), cov (coverage) and juncs (start,end,score)}
+\item{r}{read coverage; output of \code{\link{getReadCoverage}}}
+
+\item{min.junc.cov}{numeric, plots only junctions (introns) with coverage not less than \code{min.junc.cov}}
+
+\item{plot.junc.only.within}{logical, plot only juctions within the region}
+
+\item{reverse}{reverse x coordinates}
+
+\item{junc.col}{colour for junction line}
+
+\item{junc.lwd}{line width for jucntion line}
+
+\item{...}{other parameters for plot function}
 }
 \value{
 
 }
 \description{
-Title
+Plots read coverage
 }

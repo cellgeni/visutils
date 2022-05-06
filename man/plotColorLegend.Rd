@@ -2,7 +2,7 @@
 % Please edit documentation in R/general.purpuse.utilities.R
 \name{plotColorLegend}
 \alias{plotColorLegend}
-\title{Title}
+\title{Gradient legend}
 \usage{
 plotColorLegend(x0, x1, y0, y1, col, at, legend, title = NULL)
 }
@@ -21,7 +21,7 @@ plotColorLegend(x0, x1, y0, y1, col, at, legend, title = NULL)
 
 }
 \description{
-Title
+Gradient legend
 }
 \examples{
 plot(1)
