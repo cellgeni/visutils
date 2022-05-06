@@ -17,4 +17,4 @@ RoxygenNote: 7.1.1
 Imports:
   png,
   GenomicAlignments,
-  Seurat
+  Seurat (>= 4.1.0)
