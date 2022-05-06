@@ -86,7 +86,7 @@ symbols.pie = function(x,y,r,d,cols,border=NA,alpha0=0){
 myLoad10X_Spatial = function(data.dir,filter.matrix=TRUE,ens_id=TRUE,...){
   d = Load10X_Spatial(data.dir,ifelse(filter.matrix,'filtered_feature_bc_matrix.h5','raw_feature_bc_matrix.h5'),filter.matrix=filter.matrix,...)
   if(ens_id){
-    gids = read.table(paste0(data.dir,'/raw_feature_bc_matrix/features.tsv.gz'))
+    gids = read.table(paste0(data.dir,ifelse(filter.matrix,'/filtered_feature_bc_matrix/features.tsv.gz','/raw_feature_bc_matrix/features.tsv.gz')))
     d@assays$Spatial@counts@Dimnames[[1]] = gids$V1
     d@assays$Spatial@data@Dimnames[[1]] = gids$V1
     d[['Spatial']][['name']] = gids$V2
@@ -215,7 +215,7 @@ plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legen
   }
   # plot
   if(type=='img'){
-    xy=plotVisiumImg(xy,v@images$slice1@image,v@images$slice1@scale.factors$lowres,cex=cex,col=col,border=border,xaxt='n',yaxt='n',...)
+    xy=plotVisiumImg(xy,v@images$slice1@image,v@images$slice1@scale.factors$lowres,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,...)
   }
   if(type=='hex'){
     xy=plotVisiumHex(xy,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,...)
@@ -359,6 +359,44 @@ plotVisiumHex = function(xy,cex=1,col='red',border=NA,xlab='Cols',ylab='Rows',xl
       polygon(c[i]+cmask*cexi,r[i]+rmask*cexi,col=col[(i-1) %% length(col)+1],border=border[(i-1) %% length(border)+1])
   }
   invisible(data.frame(x=c,y=r))
+}
+
+#' Download Visium dataset from 10x website
+#'
+#' @param url url of the dataset (whithot dataset name, see example)
+#' @param sample.name name of the dataset
+#' @param outdir folder to save dataset (function will create subfolder named by \code{sample.name})
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' loadVisiumFrom10x("https://cf.10xgenomics.com/samples/spatial-exp/1.3.0","Visium_Mouse_Olfactory_Bulb",outdir="data")
+loadVisiumFrom10x = function(url,sample.name,outdir){
+  url = paste0(url,'/',sample.name,'/',sample.name,'_')
+  cmd = paste0(
+    "rm -rf ",outdir,"/",sample.name,";
+        mkdir ",outdir,"/",sample.name,";
+        cd ",outdir,"/",sample.name,";
+        curl -O ",url,"filtered_feature_bc_matrix.h5;
+        curl -O ",url,"filtered_feature_bc_matrix.tar.gz;
+        curl -O ",url,"raw_feature_bc_matrix.h5;
+        curl -O ",url,"raw_feature_bc_matrix.tar.gz;
+        curl -O ",url,"spatial.tar.gz;
+        curl -O ",url,"analysis.tar.gz
+        curl -O ",url,"web_summary.html;
+        tar -xzvf ",sample.name,"_filtered_feature_bc_matrix.tar.gz;
+        tar -xzvf ",sample.name,"_raw_feature_bc_matrix.tar.gz;
+        tar -xzvf ",sample.name,"_spatial.tar.gz;
+        tar -xzvf ",sample.name,"_analysis.tar.gz;
+        mv ",sample.name,"_filtered_feature_bc_matrix.h5 filtered_feature_bc_matrix.h5;
+        mv ",sample.name,"_raw_feature_bc_matrix.h5 raw_feature_bc_matrix.h5;
+        rm ",sample.name,"_filtered_feature_bc_matrix.tar.gz;
+        rm ",sample.name,"_raw_feature_bc_matrix.tar.gz;
+        rm ",sample.name,"_spatial.tar.gz;
+        rm ",sample.name,"_analysis.tar.gz;")
+  #print(cmd)
+  system(cmd)
 }
 
 # swaps and rotations
