@@ -53,7 +53,7 @@ weightedColourMeans = function(cols,weights){
 #' @export
 #'
 #' @examples
-plot.as.hm = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange','red'),zfun=identity,leg.title='',num.leg.tic=NULL,legend=TRUE,trimZq=0,xlim=NULL,ylim=NULL,new=TRUE,xlab=deparse(substitute(x)),ylab=deparse(substitute(y)),...){
+plotAsHM = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange','red'),zfun=identity,leg.title='',num.leg.tic=NULL,legend=TRUE,trimZq=0,xlim=NULL,ylim=NULL,new=TRUE,xlab=deparse(substitute(x)),ylab=deparse(substitute(y)),...){
   xlab;ylab;
   f = !is.na(x) & !is.infinite(x) & !is.na(y) & !is.infinite(y)
   if(!is.null(xlim)) f = f & x >= xlim[1] & x <= xlim[2]

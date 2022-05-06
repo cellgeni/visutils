@@ -89,6 +89,7 @@ myLoad10X_Spatial = function(data.dir,filter.matrix=TRUE,ens_id=TRUE,...){
     gids = read.table(paste0(data.dir,ifelse(filter.matrix,'/filtered_feature_bc_matrix/features.tsv.gz','/raw_feature_bc_matrix/features.tsv.gz')))
     d@assays$Spatial@counts@Dimnames[[1]] = gids$V1
     d@assays$Spatial@data@Dimnames[[1]] = gids$V1
+    rownames(d@assays$Spatial@meta.features) = gids$V1
     d[['Spatial']][['name']] = gids$V2
     d[['Spatial']][['ensid']] = gids$V1
     #  d@assays$Spatial@scale.data@Dimnames[[1]] = gids$V1
