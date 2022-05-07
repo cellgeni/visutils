@@ -69,7 +69,7 @@ symbols.pie = function(x,y,r,d,cols,border=NA,alpha0=0){
     }
     if(!is.na(border[i])){
       as = seq(0,2*pi,length.out = 36)
-      polygon(x[i]+r[i]*cos(as),r[i]*sin(as),col = NA,border = border[i])
+      polygon(x[i]+r[i]*cos(as),y[i]+r[i]*sin(as),col = NA,border = border[i])
     }
   }
 }
