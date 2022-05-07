@@ -327,7 +327,7 @@ plotVisiumImg = function(xy,img,scale.factor,cex=1,col='red',border=NA,spot.dist
                 y=nrow(img)-xy$imagerow[f]*scale.factor,
                 r=cex[f]*spot.dist*scale.factor,
                 d=pie.fraqs[f,],
-                cols= pie.cols)
+                cols= pie.cols,border = border)
   }
   invisible(data.frame(y=xy$imagecol*scale.factor,y=nrow(img)-xy$imagerow*scale.factor))
 }
