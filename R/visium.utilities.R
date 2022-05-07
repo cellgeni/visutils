@@ -63,9 +63,13 @@ symbols.pie = function(x,y,r,d,cols,border=NA,alpha0=0){
     for(j in 1:ncol(d)){
       if(d[i,j]>0){
         as = c(seq(a,a+d[i,j],by=pi/18),a+d[i,j])
-        polygon(c(x[i],x[i]+r[i]*cos(as),x[i]),c(y[i],y[i]+r[i]*sin(as),y[i]),col = cols[j],border=border[i])
+        polygon(c(x[i],x[i]+r[i]*cos(as),x[i]),c(y[i],y[i]+r[i]*sin(as),y[i]),col = cols[j])
         a = a+d[i,j]
       }
+    }
+    if(!is.na(border[i])){
+      as = seq(0,2*pi,length.out = 36)
+      polygon(c(x[i],x[i]+r[i]*cos(as),x[i]),c(y[i],y[i]+r[i]*sin(as),y[i]),col = NA,border = border[i])
     }
   }
 }
