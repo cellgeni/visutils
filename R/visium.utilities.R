@@ -378,6 +378,7 @@ plotVisiumHex = function(xy,cex=1,col='red',border=NA,xlab='Cols',ylab='Rows',xl
 #' @examples
 #' loadVisiumFrom10x("https://cf.10xgenomics.com/samples/spatial-exp/1.3.0","Visium_Mouse_Olfactory_Bulb",outdir="data")
 loadVisiumFrom10x = function(url,sample.name,outdir){
+  print(sample.name)
   url = paste0(url,'/',sample.name,'/',sample.name,'_')
   cmd = paste0(
     "rm -rf ",outdir,"/",sample.name,";
@@ -405,6 +406,57 @@ loadVisiumFrom10x = function(url,sample.name,outdir){
 }
 
 # swaps and rotations
+
+getMeanSpotColor. = function(i,x,y,r){
+  xr = round(x)
+  yr = round(y)
+  rn = ceiling(r)
+  res = c(r=0,g=0,b=0)
+  n = 0
+  r2 = r^2
+  for(k in (xr-rn):(xr+rn))
+    for(m in (yr-rn):(yr+rn)){
+      if((k-x)^2+(m-y)^2 <= r){
+        n = n+1
+        res = res + i[k,m,]
+      }
+    }
+  res/n
+}
+
+#' Extracts mean color of spot
+#'
+#' @param vis Seurat object
+#' @param scalefactors list of scale factors (see Details)
+#'
+#' @details Seurat version 4.1.0 for stores wrong value for spot size in .
+#' So one needs to load scale factors themself using jsonlite::read_json('/spatial/scalefactors_json.json')).
+#' Output of read_json can be used as scalefactors parameter.
+#'
+#' @return matrix with three coumns (red, green, blue) and number of rows equal to the number of spots in vis object
+#' @export
+#'
+#' @examples
+getMeanSpotColor = function(vis,scalefactors){
+  i = vis@images$slice1@image
+  c = vis@images$slice1@coordinates
+  r = scalefactors$spot_diameter_fullres/2*scalefactors$tissue_lowres_scalef
+  c = c[,4:5]*scalefactors$tissue_lowres_scalef
+  r = t(sapply(1:nrow(c),function(j)getMeanSpotColor.(i,c$imagerow[j],c$imagecol[j],r)))
+  rownames(r) = colnames(vis)
+  r
+}
+
+
+
+#' Title
+#'
+#' @param m
+#'
+#' @return
+#' @export
+#'
+#' @examples
 getMaxInxByFirstDD = function(m){
   r = do.call(rbind,lapply(1:dim(m)[1],function(i){
     bout = which(m[i,,]==max(m[i,,]),arr.ind = T)[1,]
@@ -426,23 +478,47 @@ getMaxInxByFirstDD = function(m){
   r
 }
 
-t_ = function(i) aperm(i,c(2,1,3))
-c_ = function(i) i[,dim(i)[2]:1,]
-r_ = function(i) i[dim(i)[1]:1,,]
+#' Return list of 8 possible mirroring/rotations function
+#'
+#' @return list of functions
+#' @export
+#'
+#' @examples
+getRotations = function(){
+  t_ = function(i) aperm(i,c(2,1,3))
+  c_ = function(i) i[,dim(i)[2]:1,]
+  r_ = function(i) i[dim(i)[1]:1,,]
 
-transforms = list(o0 = list(identity),
-                  o1 = list(r_,t_),
-                  o2 = list(r_,c_),
-                  o3 = list(t_,r_),
-                  m0 = list(r_),
-                  m1 = list(t_),
-                  m2 = list(c_),
-                  m3 = list(r_,c_,t_))
+  transforms = list(o0 = list(identity),
+                    o1 = list(r_,t_),
+                    o2 = list(r_,c_),
+                    o3 = list(t_,r_),
+                    m0 = list(r_),
+                    m1 = list(t_),
+                    m2 = list(c_),
+                    m3 = list(r_,c_,t_))
+}
 
-applyTrans = function(i,trs=transforms){
-  lapply(trs,function(t){
+#' Apply list of transformations to image
+#'
+#' @param i image (3D array)
+#' @param trs single transformation or list of transformations (see \code{link{getRotations}})
+#' @param simplify logical, should image be returned in case if only one transformation was supplied
+#'
+#' @return list of transformed images
+#' @export
+#'
+#' @examples
+applyTransforms = function(i,trs=getRotations(),simplify=TRUE){
+  if(is.function(trs[[1]]))
+    trs = list(trs)
+  r = lapply(trs,function(t){
     for(f in t)
       i = f(i)
     i
   })
+  if(simplify & length(r) == 1)
+    r = r[[1]]
+  r
 }
+
