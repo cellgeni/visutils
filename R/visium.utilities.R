@@ -22,9 +22,10 @@ cropVisiumImage = function(v){
   cc = round(mean(rc))
   cr = round(mean(rr))
 
-  #ir = ceiling(max(rr[2]/2 - rr[1]/2,rc[2]/2 - rc[1]/2)) + ceiling(r)
-  irr = ceiling(rr[2]/2 - rr[1]/2 + r)
-  irc = ceiling(rc[2]/2 - rc[1]/2 + r)
+  ir = ceiling(max(rr[2]/2 - rr[1]/2,rc[2]/2 - rc[1]/2)) + ceiling(r)
+  #irr = ceiling(rr[2]/2 - rr[1]/2 + r)
+  #irc = ceiling(rc[2]/2 - rc[1]/2 + r)
+  irr = irc = ir
 
   img = img[(cr-irr):(cr+irr),(cc-irc):(cc+irc),]
   c$imagerow = c$imagerow - (cr-irr-1)
