@@ -407,7 +407,18 @@ loadVisiumFrom10x = function(url,sample.name,outdir){
 
 # swaps and rotations
 
-getMeanSpotColor. = function(i,x,y,r){
+#' Extracts mean color of given spot
+#'
+#'
+#' @param i image (3d array)
+#' @param x,y coordinates of center of the spot
+#' @param r radius of the spot
+#'
+#' @return numeric vector with three values (red, green, and blue)
+#' @export
+#'
+#' @examples
+getMeanSpotColor1 = function(i,x,y,r){
   xr = round(x)
   yr = round(y)
   rn = ceiling(r)
@@ -424,7 +435,7 @@ getMeanSpotColor. = function(i,x,y,r){
   res/n
 }
 
-#' Extracts mean color of spot
+#' Extracts mean color of spots
 #'
 #' @param vis Seurat object
 #' @param scalefactors list of scale factors (see Details)
@@ -442,7 +453,7 @@ getMeanSpotColor = function(vis,scalefactors){
   c = vis@images$slice1@coordinates
   r = scalefactors$spot_diameter_fullres/2*scalefactors$tissue_lowres_scalef
   c = c[,4:5]*scalefactors$tissue_lowres_scalef
-  r = t(sapply(1:nrow(c),function(j)getMeanSpotColor.(i,c$imagerow[j],c$imagecol[j],r)))
+  r = t(sapply(1:nrow(c),function(j)getMeanSpotColor1(i,c$imagerow[j],c$imagecol[j],r)))
   rownames(r) = colnames(vis)
   r
 }
