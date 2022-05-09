@@ -14,7 +14,7 @@ cropVisiumImage = function(v){
   img = v@images$slice1@image
 
   c[,4:5] = c[,4:5]*scalefactors$lowres
-  r = min(dist(c[,4:5]))*0.5
+  r = min(dist(c[,4:5]))*0.5 + 1
 
   rr = range(c$imagerow)
   rc = range(c$imagecol)
