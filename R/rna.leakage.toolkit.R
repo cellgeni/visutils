@@ -1,11 +1,10 @@
-library(nnls)
 rnaNNLS = function(cnt,pb,normsd=TRUE){
   if(normsd){
     w = apply(cnt,1,sd)
     cnt = sweep(cnt,1,w,'/')
     pb = sweep(pb,1,w,'/')
   }
-  
+
   r = apply(cnt,2,function(x){
     coef(nnls(pb,x))
   })
@@ -75,7 +74,7 @@ plotWithMeanTrend = function(x,y,col='black',new=TRUE,from=min(x),to=max(x),by=1
   f = !is.infinite(x) & !is.na(x) & !is.infinite(y) & !is.na(y)
   x = x[f]
   y = y[f]
-  
+
   m = mean.by.bin(x,y,from=from,to=to,by=by)
   m$ysd = m$ysd/sqrt(m$cnt)
   m = m[!is.infinite(m$x) & m$cnt>=min.obs,]
@@ -84,7 +83,7 @@ plotWithMeanTrend = function(x,y,col='black',new=TRUE,from=min(x),to=max(x),by=1
     plot(x,y,col=col,type=ifelse(plot.points,'p','n'),...)
   else if(plot.points)
     points(x,y,col=col,...)
-  
+
   plotArea(m$x,cbind(m$y,m$ysd),t='b',lwd=lwd,col=col,new = FALSE)
   invisible(m)
 }

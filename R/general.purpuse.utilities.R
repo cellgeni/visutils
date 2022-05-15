@@ -211,7 +211,7 @@ imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxl
   if(is.null(t))
     t = round(d,digits = digits)
   pars = list(...)
-  if(is.null(pars$col)) pars$col= getPal()
+  if(is.null(pars$col)) pars$col= num2col(1:100)
   pars$x = 1:nrow(d)
   pars$y = 1:ncol(d)
   if(is.null(pars$xlab)) pars$xlab=''
@@ -460,6 +460,81 @@ plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.tra
   polygon(c(x,rev(x)),yp,col=col.pol,border=NA,den=area.den)
   lines(x,p[,1],col=col,type=type,...)
 }
+
+#' Plots matrix as dotPlot
+#'
+#' Shows values in matix by point size and color
+#'
+#' @param m numeric matrix to be shown
+#' @param rfun function to calculate radius from matrix values. Use sqrt (default) to make area proportional to value
+#' @param colfun function to transform values to colour gradient
+#' @param grid logial, should grid be plotted
+#' @param grid.lty lty of grid
+#' @param grid.col line color of grid
+#' @param max.cex max size of dots
+#' @param xlab,ylab axis labels
+#' @param ylab.cex magnification label for ylabs
+#' @param colColours colour matrix to plot annotation for columns (matrix with nrow equal to ncol(m); each column of colColours is annotation)
+#' @param rowColours colour matrix to plot annotation for row (matrix with nrow equal to nrow(m); each column of rowColours is annotation)
+#' @param ... other parameters to be passed to plot function
+#'
+#' @return
+#' @export
+#'
+#' @examples
+dotPlot = function(m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','violet','black')),grid=TRUE,grid.lty=2,grid.col='gray',
+                   max.cex=0.9,xlab='',ylab='',ylab.cex=1,colColours=NULL,rowColours=NULL,...){
+  x = rep(1:ncol(m),each=nrow(m))
+  y = rep(nrow(m):1,times=ncol(m))
+
+  xlim=c(0,max(x)+1)
+  ylim=c(0,max(y)+1)
+
+  if(!is.null(colColours)){
+    if(!is.array(colColours))
+      colColours = matrix(colColours,ncol=1)
+    ylim[1] = -ncol(colColours)
+  }
+
+  if(!is.null(rowColours)){
+    if(!is.array(rowColours))
+      rowColours = matrix(rowColours,ncol=1)
+    xlim[1] = -ncol(rowColours)
+  }
+
+
+  plot(1,t='n',xaxt='n',yaxt='n',xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,yaxs='i',xaxs='i',...)
+  if(grid){
+    abline(v=1:ncol(m),lty=grid.lty,col=grid.col)
+    abline(h=1:nrow(m),lty=grid.lty,col=grid.col)
+  }
+  wh = par('cin')
+  sym.size=max(c(grconvertX(wh[1],'in','user')-grconvertX(0,'in','user'),grconvertY(wh[2],'in','user')-grconvertY(0,'in','user')))
+  r = scaleTo(rfun(m))/sym.size*max.cex
+  points(x,y,cex=r,col=colfun(r),pch=19)
+
+  # add col annotation
+  if(!is.null(colColours)){
+    for(i in 1:ncol(colColours))
+      for(j in 1:nrow(colColours)){
+        rect(j-0.5,0-i,j+0.5,1-i,border = NA,col=colColours[j,i])
+      }
+  }
+
+  # add row annotation
+  if(!is.null(rowColours)){
+    for(i in 1:ncol(rowColours))
+      for(j in 1:nrow(rowColours)){
+        rect(0-i,nrow(rowColours)-j+1.5,1-i,nrow(rowColours)-j+0.5,border = NA,col=rowColours[j,i])
+      }
+  }
+
+  axis(1,1:ncol(m),colnames(m))
+  par.out = par(cex=ylab.cex)
+  axis(2,nrow(m):1,rownames(m))
+  do.call(par,par.out)
+}
+
 
 #' Plots scatterplot with regression line
 #'
