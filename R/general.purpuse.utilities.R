@@ -476,6 +476,8 @@ plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.tra
 #' @param ylab.cex magnification label for ylabs
 #' @param colColours colour matrix to plot annotation for columns (matrix with nrow equal to ncol(m); each column of colColours is annotation)
 #' @param rowColours colour matrix to plot annotation for row (matrix with nrow equal to nrow(m); each column of rowColours is annotation)
+#' @param scaleWM logical, specifies wheter computed radiuses should be scaled into [0,1] interval
+#' @param pch point character (19 by default)
 #' @param ... other parameters to be passed to plot function
 #'
 #' @return
@@ -483,7 +485,7 @@ plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.tra
 #'
 #' @examples
 dotPlot = function(m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','violet','black')),grid=TRUE,grid.lty=2,grid.col='gray',
-                   max.cex=0.9,xlab='',ylab='',ylab.cex=1,colColours=NULL,rowColours=NULL,...){
+                   max.cex=0.9,xlab='',ylab='',ylab.cex=1,colColours=NULL,rowColours=NULL,scaleWM=TRUE,pch=19,...){
   x = rep(1:ncol(m),each=nrow(m))
   y = rep(nrow(m):1,times=ncol(m))
 
@@ -509,9 +511,13 @@ dotPlot = function(m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','v
     abline(h=1:nrow(m),lty=grid.lty,col=grid.col)
   }
   wh = par('cin')
-  sym.size=max(c(grconvertX(wh[1],'in','user')-grconvertX(0,'in','user'),grconvertY(wh[2],'in','user')-grconvertY(0,'in','user')))
-  r = scaleTo(rfun(m))/sym.size*max.cex
-  points(x,y,cex=r,col=colfun(r),pch=19)
+  # sym.size=max(c(grconvertX(wh[1],'in','user')-grconvertX(0,'in','user'),grconvertY(wh[2],'in','user')-grconvertY(0,'in','user')))
+  # r = scaleTo(rfun(m))/sym.size*max.cex
+  r = rfun(m)
+  if(scaleWM)
+    r = scaleTo(r)
+  r = r*max.cex
+  points(x,y,cex=r,col=colfun(m),pch=pch)
 
   # add col annotation
   if(!is.null(colColours)){
@@ -519,6 +525,10 @@ dotPlot = function(m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','v
       for(j in 1:nrow(colColours)){
         rect(j-0.5,0-i,j+0.5,1-i,border = NA,col=colColours[j,i])
       }
+
+    if(!is.null(colnames(colColours))){
+      text(nrow(colColours)+1,-(1:ncol(colColours))+0.5,colnames(colColours),adj=c(0,0.5),xpd=T)
+    }
   }
 
   # add row annotation
@@ -527,6 +537,9 @@ dotPlot = function(m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','v
       for(j in 1:nrow(rowColours)){
         rect(0-i,nrow(rowColours)-j+1.5,1-i,nrow(rowColours)-j+0.5,border = NA,col=rowColours[j,i])
       }
+    if(!is.null(colnames(rowColours))){
+      text(-(1:ncol(rowColours))+0.5,0,colnames(rowColours),srt=90,adj=c(1,0.5),xpd=T)
+    }
   }
 
   axis(1,1:ncol(m),colnames(m))
