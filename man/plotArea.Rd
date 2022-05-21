@@ -29,6 +29,8 @@ plotArea(
 
 \item{new}{make ne plot (default is to add line on existed plot)}
 
+\item{ylim, xlim}{see \code{\link{plot}}}
+
 \item{area.transp}{alpha for CI area}
 
 \item{type}{type of \code{\link{plot}}}

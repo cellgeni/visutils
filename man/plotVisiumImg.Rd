@@ -25,6 +25,26 @@ plotVisiumImg(
 )
 }
 \arguments{
+\item{xy}{seu@images$slice1@coordinates}
+
+\item{img}{image (3D array)}
+
+\item{scale.factor}{seu@images$slice1@scale.factors$lowres}
+
+\item{cex}{spot size}
+
+\item{col}{spot color}
+
+\item{border}{color of spot border}
+
+\item{spot.dist}{distance between spots (computed from xy by default)}
+
+\item{img.alpha}{alpha level for H&E image}
+
+\item{xlim, ylim, xlab, ylab}{parameters of \code{plot} function}
+
+\item{symmetric.lims}{logical, specifies whether image crop should be square}
+
 \item{pie.fraqs}{if specified plots pies instead of simple cycles. Matrix with number of rows equal to the number of spots, and number of columns equal to pie pieces.}
 
 \item{pie.cols}{colors to be used for pie pieces (ncol(pie.fraqs) should be equal to length(pie.cols))}

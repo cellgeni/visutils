@@ -6,8 +6,6 @@
 #'
 #' @return
 #' @export
-#'
-#' @examples
 cropVisiumImage = function(v){
   c = v@images$slice1@coordinates
   scalefactors = v@images$slice1@scale.factors
@@ -50,7 +48,7 @@ cropVisiumImage = function(v){
 #' @param alpha0 start angle
 #'
 #' @return
-#' @export
+#' @export symbols.pie
 #'
 #' @examples
 #' plot(1,t='n',xlim=c(0,5),ylim=c(0,10))
@@ -86,8 +84,6 @@ symbols.pie = function(x,y,r,d,cols,border=NA,alpha0=0){
 #'
 #' @return Seurat object
 #' @export
-#'
-#' @examples
 myLoad10X_Spatial = function(data.dir,filter.matrix=TRUE,ens_id=TRUE,...){
   d = Load10X_Spatial(data.dir,ifelse(filter.matrix,'filtered_feature_bc_matrix.h5','raw_feature_bc_matrix.h5'),filter.matrix=filter.matrix,...)
   if(ens_id){
@@ -110,14 +106,12 @@ myLoad10X_Spatial = function(data.dir,filter.matrix=TRUE,ens_id=TRUE,...){
 #'
 #' @param p image (3d numeric array)
 #' @param wb logical, specifies whether output image should be transformed to grayscale
-#' @param pow
+#' @param pow power of transformation
 #' @param qs quantiles to trim. Numerical vector with two items. Trims all values outside of specified quantile range.
 #'
 #' @return image (3d numeric array)
 #' @export
-#'
-#' @examples
-enhanceImage = function(p,wb=FALSE,pow=3,qs=c(0.01,0.99)){
+enhanceImage = function(p,wb=FALSE,pow=1,qs=c(0.01,0.99)){
   p = (1-p)^pow
   pm = apply(p,1:2,max)
   qs = quantile(pm,probs = qs)
@@ -166,8 +160,6 @@ enhanceImage = function(p,wb=FALSE,pow=3,qs=c(0.01,0.99)){
 #'
 #' @return
 #' @export
-#'
-#' @examples
 plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legend=TRUE,zlim=NULL,zfun = identity,spot.filter=NULL,
                       num.leg.tic=NULL,label.clusters=FALSE,legend.args=list(),randomize.points=FALSE,order.points.by.z=FALSE,xaxt='n',yaxt='n',cluster.lab.adj=c(0.5,0.5),cluster.lab.cex=1,...){
   if('Seurat' %in% class(v) & type=='xy'){
@@ -280,19 +272,16 @@ plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legen
 #'
 #' Normally this function shouldn't be called directly. Use plotVisium instead
 #'
-#' @param xy
-#' @param img
-#' @param scale.factor
-#' @param cex
-#' @param col
-#' @param border
-#' @param spot.dist
-#' @param img.alpha
-#' @param xlim
-#' @param ylim
-#' @param symmetric.lims
-#' @param xlab
-#' @param ylab
+#' @param xy seu@images$slice1@coordinates
+#' @param img image (3D array)
+#' @param scale.factor seu@images$slice1@scale.factors$lowres
+#' @param cex spot size
+#' @param col spot color
+#' @param border color of spot border
+#' @param spot.dist distance between spots (computed from xy by default)
+#' @param img.alpha alpha level for H&E image
+#' @param xlim,ylim,xlab,ylab parameters of \code{plot} function
+#' @param symmetric.lims logical, specifies whether image crop should be square
 #' @param pie.fraqs if specified plots pies instead of simple cycles. Matrix with number of rows equal to the number of spots, and number of columns equal to pie pieces.
 #' @param pie.cols colors to be used for pie pieces (ncol(pie.fraqs) should be equal to length(pie.cols))
 #' @param pie.min.fraq all pieces with relative size less than \code{pie.min.fraq} will be discared
@@ -300,8 +289,6 @@ plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legen
 #'
 #' @return
 #' @export
-#'
-#' @examples
 plotVisiumImg = function(xy,img,scale.factor,cex=1,col='red',border=NA,spot.dist=NULL,img.alpha=1,xlim=NULL,ylim=NULL,symmetric.lims=TRUE,xlab='',ylab='',pie.fraqs=NULL,pie.cols=NULL,pie.min.fraq=0.05,...){
   if(is.null(spot.dist)){
     spot.dist = min(dist(xy[,4:5]))*0.5
@@ -417,8 +404,6 @@ loadVisiumFrom10x = function(url,sample.name,outdir){
 #'
 #' @return numeric vector with three values (red, green, and blue)
 #' @export
-#'
-#' @examples
 getMeanSpotColor1 = function(i,x,y,r){
   xr = round(x)
   yr = round(y)
@@ -447,8 +432,6 @@ getMeanSpotColor1 = function(i,x,y,r){
 #'
 #' @return matrix with three coumns (red, green, blue) and number of rows equal to the number of spots in vis object
 #' @export
-#'
-#' @examples
 getMeanSpotColor = function(vis,scalefactors){
   i = vis@images$slice1@image
   c = vis@images$slice1@coordinates
@@ -467,8 +450,6 @@ getMeanSpotColor = function(vis,scalefactors){
 #'
 #' @return
 #' @export
-#'
-#' @examples
 getMaxInxByFirstDD = function(m){
   r = do.call(rbind,lapply(1:dim(m)[1],function(i){
     bout = which(m[i,,]==max(m[i,,]),arr.ind = T)[1,]
@@ -494,8 +475,6 @@ getMaxInxByFirstDD = function(m){
 #'
 #' @return list of functions
 #' @export
-#'
-#' @examples
 getRotations = function(){
   t_ = function(i) aperm(i,c(2,1,3))
   c_ = function(i) i[,dim(i)[2]:1,]
@@ -519,8 +498,6 @@ getRotations = function(){
 #'
 #' @return list of transformed images
 #' @export
-#'
-#' @examples
 applyTransforms = function(i,trs=getRotations(),simplify=TRUE){
   if(is.function(trs[[1]]))
     trs = list(trs)

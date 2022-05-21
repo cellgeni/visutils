@@ -40,6 +40,8 @@
 
 \item{trimZq}{frequencies outside of quantile(trimZq,1-trimZq) are set to the corresponding (closest) quantiles. Default is 0 (not trimming). See \code{\link{trimQ}}.}
 
+\item{xlim, ylim, xlab, ylab}{graphical parameters}
+
 \item{new}{create new plot (default) or add to existing}
 
 \item{...}{other arguments for plot function}

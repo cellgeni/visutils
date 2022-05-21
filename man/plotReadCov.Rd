@@ -23,6 +23,8 @@ plotReadCov(
 
 \item{plot.junc.only.within}{logical, plot only juctions within the region}
 
+\item{ylim, xlim}{see \code{\link{plot}}}
+
 \item{reverse}{reverse x coordinates}
 
 \item{junc.col}{colour for junction line}

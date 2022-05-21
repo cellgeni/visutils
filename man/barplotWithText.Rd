@@ -25,6 +25,8 @@ barplotWithText(
 
 \item{text.y}{text position (\code{x} by default)}
 
+\item{ylim}{ylim}
+
 \item{...}{other barplot options}
 }
 \value{

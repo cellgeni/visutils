@@ -7,7 +7,6 @@
 #' @return log10(1+x)
 #' @export
 #'
-#' @examples
 log10p1 = function(x){
   log1p(x)/log(10)
 }
@@ -22,7 +21,6 @@ log10p1 = function(x){
 #' @return vector of colours (length equal to nrow of weights)
 #' @export
 #'
-#' @examples
 weightedColourMeans = function(cols,weights){
   weights = sweep(weights,1,apply(weights,1,sum),'/')
   colrgb = col2rgb(cols)
@@ -42,17 +40,12 @@ weightedColourMeans = function(cols,weights){
 #' @param num.leg.tic desired number of tics in the legend
 #' @param legend logical, should legend be plotted
 #' @param trimZq frequencies outside of quantile(trimZq,1-trimZq) are set to the corresponding (closest) quantiles. Default is 0 (not trimming). See \code{\link{trimQ}}.
-#' @param xlim
-#' @param ylim
+#' @param xlim,ylim,xlab,ylab graphical parameters
 #' @param new create new plot (default) or add to existing
-#' @param xlab
-#' @param ylab
 #' @param ... other arguments for plot function
 #'
 #' @return list bith bins and frequencies (invisible)
 #' @export plot.as.hm
-#'
-#' @examples
 plot.as.hm = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange','red'),zfun=identity,leg.title='',num.leg.tic=NULL,legend=TRUE,trimZq=0,xlim=NULL,ylim=NULL,new=TRUE,xlab=deparse(substitute(x)),ylab=deparse(substitute(y)),...){
   xlab;ylab;
   f = !is.na(x) & !is.infinite(x) & !is.na(y) & !is.infinite(y)
@@ -99,7 +92,6 @@ plot.as.hm = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','oran
 #' @return corrected x
 #' @export
 #'
-#' @examples
 trimQ = function(x,q){
   if(q==0) return(x)
   qq=quantile(x,sort(c(q,1-q)))
@@ -119,8 +111,6 @@ trimQ = function(x,q){
 #'
 #' @return names colour vector
 #' @export
-#'
-#' @examples
 char2col = function(t,bpal='Set1',colfun=rainbow,palette=TRUE){
   torig = t
   t = sort(unique(t))
@@ -145,8 +135,6 @@ char2col = function(t,bpal='Set1',colfun=rainbow,palette=TRUE){
 #'
 #' @return recycled vector
 #' @export
-#'
-#' @examples
 recycle = function(v,i){
   if(length(i)==1)
     i = 1:i
@@ -163,8 +151,6 @@ recycle = function(v,i){
 #'
 #' @return vector of colours (same length as d)
 #' @export
-#'
-#' @examples
 num2col = function(d,col=c('blue','cyan','gray','orange','red'),minx=min(d,na.rm = TRUE),maxx=max(d,na.rm = TRUE)){
   if(sd(d,na.rm=TRUE)==0)
     return(rep(col[1],length(d)))
@@ -183,8 +169,6 @@ num2col = function(d,col=c('blue','cyan','gray','orange','red'),minx=min(d,na.rm
 #'
 #' @return logical vector
 #' @export
-#'
-#' @examples
 isColors <- function(x) {
   if(is.factor(x)) return(rep(FALSE,length(x)))
   x %in% colors() | (substr(x,1,1)=='#' & (nchar(x)==7 |  nchar(x)==9))
@@ -205,8 +189,6 @@ isColors <- function(x) {
 #'
 #' @return
 #' @export
-#'
-#' @examples
 imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxlab=colnames(d),centerColors0=FALSE,las=2,...){
   if(is.null(t))
     t = round(d,digits = digits)
@@ -251,8 +233,6 @@ imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxl
 #'
 #' @return
 #' @export
-#'
-#' @examples
 plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,leg=NULL,title=NULL){
   # make tics
   if(is.null(leg)){
@@ -312,8 +292,6 @@ plotColorLegend = function(x0,x1,y0,y1,col,at,legend,title=NULL){
 #'
 #' @return
 #' @export
-#'
-#' @examples
 mergePNG2PFD = function(dir=NULL,fls=NULL,pdfout,...){
   require(png)
   pdf(pdfout,...)
@@ -340,13 +318,11 @@ mergePNG2PFD = function(dir=NULL,fls=NULL,pdfout,...){
 #' @param adj relative text position (see \code{\link{text}})
 #' @param srt text rotation (see \code{\link{text}})
 #' @param text.y text position (\code{x} by default)
-#' @param ylim
+#' @param ylim ylim
 #' @param ... other barplot options
 #'
 #' @return
 #' @export
-#'
-#' @examples
 barplotWithText = function(x,t=x,adj=c(0.5,1.1),srt=0,text.y=x,ylim=c(0,max(x)),...){
   if(length(ylim)==1)
     ylim = c(0,max(x)*ylim)
@@ -361,8 +337,6 @@ barplotWithText = function(x,t=x,adj=c(0.5,1.1),srt=0,text.y=x,ylim=c(0,max(x)),
 #'
 #' @return numeric vector win bin number (same length as \code{v})
 #' @export
-#'
-#' @examples
 number2bin = function(v,n){
   o = order(v)
   j = 1
@@ -383,8 +357,6 @@ number2bin = function(v,n){
 #'
 #' @return matrix with number of rows equal to nrow(d) and number of columns equal to number of unique(f)
 #' @export
-#'
-#' @examples
 calcMeanCols = function(d,f,FUN=base::mean,verbose=FALSE){
   u = sort(unique(as.character(f)))
   r = matrix(ncol=length(u),nrow=nrow(d))
@@ -409,8 +381,6 @@ calcMeanCols = function(d,f,FUN=base::mean,verbose=FALSE){
 #'
 #' @return
 #' @export
-#'
-#' @examples
 plotPanelLetter = function(l,cex=1.2,adj=c(0,1.1),...){
   x=grconvertX(0,from='nfc',to='user')
   y=grconvertY(1,from='nfc',to='user')
@@ -426,8 +396,7 @@ plotPanelLetter = function(l,cex=1.2,adj=c(0,1.1),...){
 #' @param col line and area colour
 #' @param sd.mult coefficient to multiply sd to get CI
 #' @param new make ne plot (default is to add line on existed plot)
-#' @param ylim
-#' @param xlim
+#' @param ylim,xlim see \code{\link{plot}}
 #' @param area.transp alpha for CI area
 #' @param type type of \code{\link{plot}}
 #' @param area.den density of \code{\link{polygon}}
@@ -435,8 +404,6 @@ plotPanelLetter = function(l,cex=1.2,adj=c(0,1.1),...){
 #'
 #' @return
 #' @export
-#'
-#' @examples
 plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.transp=0.2,type='l',area.den=-1,...){
   #p should contain either mean and sd
   #or mean, lower and upper bounds
@@ -482,8 +449,6 @@ plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.tra
 #'
 #' @return
 #' @export
-#'
-#' @examples
 dotPlot = function(m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','violet','black')),grid=TRUE,grid.lty=2,grid.col='gray',
                    max.cex=0.9,xlab='',ylab='',ylab.cex=1,colColours=NULL,rowColours=NULL,scaleWM=TRUE,pch=19,...){
   x = rep(1:ncol(m),each=nrow(m))
@@ -565,8 +530,6 @@ dotPlot = function(m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','v
 #'
 #' @return
 #' @export
-#'
-#' @examples
 plotLine = function(x,y=NULL,cor.method='pearson',line.col='red',line.lwd=1,plot.ci=FALSE,ci.transparency=0.3,line.on.top=TRUE,new=TRUE,...){
   if(is.null(y)){
     y = x[,2]
@@ -612,8 +575,6 @@ plotLine = function(x,y=NULL,cor.method='pearson',line.col='red',line.lwd=1,plot
 #'
 #' @return numeric cluster with new membership
 #' @export
-#'
-#' @examples
 renameClustsBySize = function(x){
   t = table(x)
   n = names(t)
@@ -633,8 +594,6 @@ renameClustsBySize = function(x){
 #'
 #' @return
 #' @export
-#'
-#' @examples
 scaleTo = function(x,from=0,to=1,minx=min(x,na.rm=TRUE),maxx=max(x,na.rm=TRUE),fraction=1){
   x = (x-minx)/(maxx-minx)
   x*(to-from)*fraction + from + (to-from)*(1-fraction)/2
@@ -649,8 +608,6 @@ scaleTo = function(x,from=0,to=1,minx=min(x,na.rm=TRUE),maxx=max(x,na.rm=TRUE),f
 #'
 #' @return list with three items: x (chr coordinates); cov - number of reads mapped to chr position; juncs - data.frame with introns
 #' @export
-#'
-#' @examples
 getReadCoverage = function(bams,chr,start,end,strand=NA){
   require(GenomicAlignments)
   if(start>end){
@@ -686,8 +643,7 @@ getReadCoverage = function(bams,chr,start,end,strand=NA){
 #' @param r read coverage; output of \code{\link{getReadCoverage}}
 #' @param min.junc.cov numeric, plots only junctions (introns) with coverage not less than \code{min.junc.cov}
 #' @param plot.junc.only.within logical, plot only juctions within the region
-#' @param ylim
-#' @param xlim
+#' @param ylim,xlim see \code{\link{plot}}
 #' @param reverse reverse x coordinates
 #' @param junc.col colour for junction line
 #' @param junc.lwd line width for jucntion line
@@ -695,8 +651,6 @@ getReadCoverage = function(bams,chr,start,end,strand=NA){
 #'
 #' @return
 #' @export
-#'
-#' @examples
 plotReadCov = function(r,min.junc.cov=0,plot.junc.only.within=FALSE,ylim=NULL,xlim=range(r$x),reverse=FALSE,junc.col='red',junc.lwd=3,...){
   f = r$x >= xlim[1] & r$x <=xlim[2]
   r$x = r$x[f]
@@ -727,8 +681,6 @@ plotReadCov = function(r,min.junc.cov=0,plot.junc.only.within=FALSE,ylim=NULL,xl
 #' @param ... other parameters of lines functoin
 #'
 #' @return
-#'
-#' @examples
 plotArc = function(from,to,top,n=100,y.base=0,...){
   len = to - from
   x = seq(from=0,to=len,length.out = n)
@@ -742,8 +694,6 @@ plotArc = function(from,to,top,n=100,y.base=0,...){
 #'
 #' @return t with first letter of each item capitalized
 #' @export
-#'
-#' @examples
 first2Upper = function(t){
   paste0(toupper(substr(t,1,1)),substr(t,2,nchar(t)))
 }
