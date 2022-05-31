@@ -1,4 +1,5 @@
 rnaNNLS = function(cnt,pb,normsd=TRUE){
+  require(nnls)
   if(normsd){
     w = apply(cnt,1,sd)
     cnt = sweep(cnt,1,w,'/')
@@ -23,12 +24,11 @@ rnaNNLS.by.ann = function(v,ann,normsd=TRUE,min.gcounts=500){
 }
 
 
-dist2ann = function(v,ann,weights=NULL,fun=min,norm2spot.dist=TRUE){
-  dist = as.matrix(dist(v@images$slice1@coordinates[,c('imagerow','imagecol')]))
-  #dist = as.matrix(dist(v@images$slice1@coordinates[,c('row','col')],m='manhattan'))
+dist2ann = function(xy,ann,weights=NULL,fun=min,norm2spot.dist=TRUE){
+  dist = as.matrix(dist(xy[,c('imagerow','imagecol')]))
   if(norm2spot.dist)
     dist = dist/min(dist[dist>0])
-  as = unique(ann[as.logical(v$is.tissue)])
+  as = unique(ann)
   r = sapply(as,function(a){
     d =dist[,ann==a,drop=FALSE]
     if(!is.null(weights))
@@ -41,6 +41,7 @@ dist2ann = function(v,ann,weights=NULL,fun=min,norm2spot.dist=TRUE){
       })
     })
   rownames(r) = rownames(dist)
+  colnames(r) = as
   r
 }
 

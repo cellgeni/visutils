@@ -450,7 +450,7 @@ plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.tra
 #' @return
 #' @export
 dotPlot = function(m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','violet','black')),grid=TRUE,grid.lty=2,grid.col='gray',
-                   max.cex=0.9,xlab='',ylab='',ylab.cex=1,colColours=NULL,rowColours=NULL,scaleWM=TRUE,pch=19,...){
+                   max.cex=0.9,xlab='',ylab='',ylab.cex=1,xlab.cex=1,colColours=NULL,rowColours=NULL,scaleWM=TRUE,pch=19,...){
   x = rep(1:ncol(m),each=nrow(m))
   y = rep(nrow(m):1,times=ncol(m))
 
@@ -506,11 +506,16 @@ dotPlot = function(m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','v
       text(-(1:ncol(rowColours))+0.5,0,colnames(rowColours),srt=90,adj=c(1,0.5),xpd=T)
     }
   }
-
-  axis(1,1:ncol(m),colnames(m))
-  par.out = par(cex=ylab.cex)
-  axis(2,nrow(m):1,rownames(m))
-  do.call(par,par.out)
+  if(par('xaxt')=='s'){
+    par.out = par(cex=xlab.cex)
+    axis(1,1:ncol(m),colnames(m))
+    do.call(par,par.out)
+  }
+  if(par('yaxt')=='s'){
+    par.out = par(cex=ylab.cex)
+    axis(2,nrow(m):1,rownames(m))
+    do.call(par,par.out)
+  }
 }
 
 

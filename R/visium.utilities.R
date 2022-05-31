@@ -85,6 +85,8 @@ symbols.pie = function(x,y,r,d,cols,border=NA,alpha0=0){
 #' @return Seurat object
 #' @export
 myLoad10X_Spatial = function(data.dir,filter.matrix=TRUE,ens_id=TRUE,...){
+  #TODO: rename)
+  #TODO: if(dir.exists(paste0(path,f,'/outs')))
   d = Load10X_Spatial(data.dir,ifelse(filter.matrix,'filtered_feature_bc_matrix.h5','raw_feature_bc_matrix.h5'),filter.matrix=filter.matrix,...)
   if(ens_id){
     gids = read.table(paste0(data.dir,ifelse(filter.matrix,'/filtered_feature_bc_matrix/features.tsv.gz','/raw_feature_bc_matrix/features.tsv.gz')))
@@ -101,6 +103,55 @@ myLoad10X_Spatial = function(data.dir,filter.matrix=TRUE,ens_id=TRUE,...){
   }
   d
 }
+
+#' Loads scanpy h5ad file with Visium data into Seurat object
+#'
+#' @param filename character, path to h5ad file
+#'
+#' @return Seurat object
+#' @export
+myLoadH5AD_Spatial = function (filename){
+  require(Matrix)
+  require(rhdf5)
+  a = rhdf5::H5Fopen(filename)
+  ll = sapply(a$obs,length)
+  obs = as.data.frame(a$obs[ll==max(ll)],check.names=F)
+  rownames(obs) = a$obs[["_index"]]
+
+  var = as.data.frame(a$var[-1:-2],check.names=F)
+  rownames(var) = a$var[["_index"]]
+
+  m = a$X
+  mtx = sparseMatrix(i=m$indices+1, p=m$indptr,x = as.numeric(m$data),dims = c(nrow(var),nrow(obs)))
+  rownames(mtx) = rownames(var)
+  colnames(mtx) = rownames(obs)
+  object <- CreateSeuratObject(counts = mtx, assay = 'Spatial')
+
+  image <- aperm(a$uns[[1]][[1]]$images$hires,3:1)
+
+  scale.factors <- a$uns[[1]][[1]]$scalefactors
+  # looks like in stomics both images are hires actually (at least they were identical for example I tried)
+  scale.factors$tissue_lowres_scalef = scale.factors$tissue_hires_scalef
+  tissue.positions = cbind(obs[,c('in_tissue','array_row','array_col')], t(a$obsm$spatial)[,2:1])
+  colnames(tissue.positions) = c("tissue", "row", "col", "imagerow", "imagecol")
+  rownames(tissue.positions) = rownames(obs)
+
+  unnormalized.radius <- scale.factors$fiducial_diameter_fullres * scale.factors$tissue_lowres_scalef
+  spot.radius <- unnormalized.radius/max(dim(x = image))
+  image = new(Class = "VisiumV1", image = image, scale.factors = scalefactors(spot = scale.factors$tissue_hires_scalef,
+                                                                              fiducial = scale.factors$fiducial_diameter_fullres, hires = scale.factors$tissue_hires_scalef,
+                                                                              scale.factors$tissue_lowres_scalef), coordinates = tissue.positions, spot.radius = spot.radius)
+
+
+  image <- image[Cells(x = object)]
+  DefaultAssay(object = image) = 'Spatial'
+  object[['slice1']] = image
+  rhdf5::H5Fclose(a)
+  object@meta.data = cbind(object@meta.data,obs)
+  object@assays$Spatial@meta.features = var
+  return(object)
+}
+
 
 #' Adjast image brightnes and contrast
 #'
