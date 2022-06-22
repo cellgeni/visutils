@@ -400,11 +400,12 @@ plotPanelLetter = function(l,cex=1.2,adj=c(0,1.1),...){
 #' @param area.transp alpha for CI area
 #' @param type type of \code{\link{plot}}
 #' @param area.den density of \code{\link{polygon}}
+#' @param cilim numerical vector with two values, gives lower and apper values to truncate CI. NULL (to truncation) by default.
 #' @param ...
 #'
 #' @return
 #' @export
-plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.transp=0.2,type='l',area.den=-1,...){
+plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.transp=0.2,type='l',area.den=-1,cilim=NULL,...){
   #p should contain either mean and sd
   #or mean, lower and upper bounds
   o = order(x)
@@ -417,6 +418,8 @@ plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.tra
     yp = c(p[,1]-p[,2]*sd.mult,rev(p[,1]+p[,2]*sd.mult))
   else
     yp = c(p[,2],rev(p[,3]))
+  if(!is.null(cilim))
+    yp = pmin(pmax(yp,cilim[1]),cilim[2])
   if(new){
     if(is.null(ylim))
       ylim = range(yp,na.rm=T)

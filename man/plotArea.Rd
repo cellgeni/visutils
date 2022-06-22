@@ -15,6 +15,7 @@ plotArea(
   area.transp = 0.2,
   type = "l",
   area.den = -1,
+  cilim = NULL,
   ...
 )
 }
@@ -36,6 +37,8 @@ plotArea(
 \item{type}{type of \code{\link{plot}}}
 
 \item{area.den}{density of \code{\link{polygon}}}
+
+\item{cilim}{numerical vector with two values, gives lower and apper values to truncate CI. NULL (to truncation) by default.}
 
 \item{...}{}
 }
