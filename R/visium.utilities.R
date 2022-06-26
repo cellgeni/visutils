@@ -153,6 +153,73 @@ myLoadH5AD_Spatial = function (filename){
 }
 
 
+
+#' Loads scanpy h5ad file with multiple Visium data into list of Seurat object
+#'
+#' @param filename character, path to h5ad file
+#' @param library_id_field name of adata.obs that specifies visium library. 'library_id' by default
+#'
+#' @return list of Seurat object
+#' @export
+myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
+  require(Matrix)
+  require(rhdf5)
+  a = rhdf5::H5Fopen(filename)
+  ll = sapply(a$obs,length)
+  obs = as.data.frame(a$obs[ll==max(ll)],check.names=F)
+  rownames(obs) = a$obs[["_index"]]
+  for(fn in names(a$obs[['__categories']])){
+    obs[[fn]] = a$obs[['__categories']][[fn]][obs[[fn]]+1]
+  }
+
+  var = as.data.frame(a$var[-1:-2],check.names=F)
+  rownames(var) = a$var[["_index"]]
+
+  m = a$X
+  mtx = sparseMatrix(i=m$indices+1, p=m$indptr,x = as.numeric(m$data),dims = c(nrow(var),nrow(obs)))
+  rownames(mtx) = rownames(var)
+  colnames(mtx) = rownames(obs)
+
+  res = list()
+  for(lid in unique(obs[[library_id_field]])){
+    f = obs[[library_id_field]] == lid
+
+    object <- CreateSeuratObject(counts = mtx[,which(f)], assay = 'Spatial')
+
+    image <- aperm(a$uns$spatial[[lid]]$images$hires,3:1)
+
+    scale.factors <- a$uns$spatial[[lid]]$scalefactors
+    # looks like in stomics both images are hires actually (at least they were identical for example I tried)
+    scale.factors$tissue_lowres_scalef = scale.factors$tissue_hires_scalef
+    tissue.positions = cbind(obs[f,c('in_tissue','array_row','array_col')], t(a$obsm$spatial[,f])[,2:1])
+    colnames(tissue.positions) = c("tissue", "row", "col", "imagerow", "imagecol")
+    rownames(tissue.positions) = rownames(obs)
+
+    unnormalized.radius <- scale.factors$fiducial_diameter_fullres * scale.factors$tissue_lowres_scalef
+    spot.radius <- unnormalized.radius/max(dim(x = image))
+    image = new(Class = "VisiumV1", image = image, scale.factors = scalefactors(spot = scale.factors$tissue_hires_scalef,
+                                                                                fiducial = scale.factors$fiducial_diameter_fullres, hires = scale.factors$tissue_hires_scalef,
+                                                                                scale.factors$tissue_lowres_scalef), coordinates = tissue.positions, spot.radius = spot.radius)
+
+
+    image <- image[Cells(x = object)]
+    DefaultAssay(object = image) = 'Spatial'
+    object[['slice1']] = image
+
+    object@meta.data = cbind(object@meta.data,obs[f,])
+    if(!is.null(obs$barcode)){
+      rownames(object@meta.data) = object@meta.data$barcode
+    }
+    object@assays$Spatial@meta.features = var
+    res[[lid]] = object
+  }
+
+  rhdf5::H5Fclose(a)
+  return(res)
+
+}
+
+
 #' Adjast image brightnes and contrast
 #'
 #' @param p image (3d numeric array)
