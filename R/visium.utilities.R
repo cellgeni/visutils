@@ -172,6 +172,18 @@ myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
     obs[[fn]] = a$obs[['__categories']][[fn]][obs[[fn]]+1]
   }
 
+
+  ll = sapply(a$var,length)
+  var = as.data.frame(a$var[ll==max(ll)],check.names=F)
+
+  for(fn in names(a$var[['__categories']])){
+    var[[fn]] = a$var[['__categories']][[fn]][var[[fn]]+1]
+  }
+  if(!is.null(var$gene_ids))
+    rownames(var) = var$gene_ids
+  else if (!is.null(var$SYMBOL))
+    rownames(var) = var$SYMBOL
+
   var = as.data.frame(a$var[-1:-2],check.names=F)
   rownames(var) = a$var[["_index"]]
 
@@ -183,8 +195,14 @@ myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
   res = list()
   for(lid in unique(obs[[library_id_field]])){
     f = obs[[library_id_field]] == lid
+    obs_ = obs[f,]
+    if(!is.null(obs_$barcode)){
+      rownames(obs_) = obs_$barcode
+    }
+    mtx_ = mtx[,which(f)]
+    colnames(mtx_) = rownames(obs_)
 
-    object <- CreateSeuratObject(counts = mtx[,which(f)], assay = 'Spatial')
+    object <- CreateSeuratObject(counts = mtx_, assay = 'Spatial')
 
     image <- aperm(a$uns$spatial[[lid]]$images$hires,3:1)
 
@@ -193,7 +211,10 @@ myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
     scale.factors$tissue_lowres_scalef = scale.factors$tissue_hires_scalef
     tissue.positions = cbind(obs[f,c('in_tissue','array_row','array_col')], t(a$obsm$spatial[,f])[,2:1])
     colnames(tissue.positions) = c("tissue", "row", "col", "imagerow", "imagecol")
-    rownames(tissue.positions) = rownames(obs)
+
+
+
+    rownames(tissue.positions) = rownames(obs_)
 
     unnormalized.radius <- scale.factors$fiducial_diameter_fullres * scale.factors$tissue_lowres_scalef
     spot.radius <- unnormalized.radius/max(dim(x = image))
@@ -206,10 +227,9 @@ myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
     DefaultAssay(object = image) = 'Spatial'
     object[['slice1']] = image
 
-    object@meta.data = cbind(object@meta.data,obs[f,])
-    if(!is.null(obs$barcode)){
-      rownames(object@meta.data) = object@meta.data$barcode
-    }
+    object@meta.data = cbind(object@meta.data,obs_)
+    rownames(object@meta.data) = rownames(obs_)
+
     object@assays$Spatial@meta.features = var
     res[[lid]] = object
   }
