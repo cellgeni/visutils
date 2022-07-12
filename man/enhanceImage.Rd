@@ -4,7 +4,7 @@
 \alias{enhanceImage}
 \title{Adjast image brightnes and contrast}
 \usage{
-enhanceImage(p, wb = FALSE, pow = 1, qs = c(0.01, 0.99))
+enhanceImage(p, wb = FALSE, pow = 1, qs = NULL)
 }
 \arguments{
 \item{p}{image (3d numeric array)}

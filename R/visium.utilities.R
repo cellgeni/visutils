@@ -249,7 +249,7 @@ myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
 #'
 #' @return image (3d numeric array)
 #' @export
-enhanceImage = function(p,wb=FALSE,pow=1,qs=c(0.01,0.99)){
+enhanceImage = function(p,wb=FALSE,pow=1,qs=NULL){
   p = (1-p)^pow
   pm = apply(p,1:2,max)
   if(!is.null(qs)){
