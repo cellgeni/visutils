@@ -437,7 +437,6 @@ plotVisiumImg = function(xy,img,scale.factor,cex=1,col='red',border=NA,spot.dist
     img = EBImage::resize(img,w=he.img.width)
     xy$imagerow = xy$imagerow*coef
     xy$imagecol = xy$imagecol*coef
-    v
   }
   if(is.null(spot.dist)){
     spot.dist = min(dist(xy[,4:5]))*0.5
