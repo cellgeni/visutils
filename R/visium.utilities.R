@@ -255,9 +255,9 @@ enhanceImage = function(p,wb=FALSE,pow=1,qs=c(0.01,0.99)){
   if(!is.null(qs)){
     qs = quantile(pm,probs = qs)
     pm = (pm-qs[1])/(qs[2]-qs[1])
+    pm[pm>1] = 1
+    pm[pm<0] = 0
   }
-  pm[pm>1] = 1
-  pm[pm<0] = 0
   p = sweep(p,1:2, apply(p,1:2,max)/pm,'/')
   p[is.na(p)] = 1
   p = 1-p
