@@ -258,8 +258,9 @@ enhanceImage = function(p,wb=FALSE,pow=1,qs=NULL){
     pm[pm>1] = 1
     pm[pm<0] = 0
   }
-  p = sweep(p,1:2, apply(p,1:2,max)/pm,'/')
-  p[is.na(p)] = 1
+  f = apply(p,1:2,max)/pm
+  f[is.na(f)] = 1
+  p = sweep(p,1:2, f,'/')
   p = 1-p
   if(wb){
     z=apply(p,1:2,mean)
