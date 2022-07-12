@@ -21,6 +21,7 @@ plotVisiumImg(
   pie.fraqs = NULL,
   pie.cols = NULL,
   pie.min.fraq = 0.05,
+  he.img.width = NULL,
   ...
 )
 }
@@ -50,6 +51,8 @@ plotVisiumImg(
 \item{pie.cols}{colors to be used for pie pieces (ncol(pie.fraqs) should be equal to length(pie.cols))}
 
 \item{pie.min.fraq}{all pieces with relative size less than \code{pie.min.fraq} will be discared}
+
+\item{he.img.width}{integer, defines width (in pixels) the H&E figure should be resized to. No resizing if NULL (default)}
 
 \item{...}{other parameters to be passed to \code{plot} function}
 }
