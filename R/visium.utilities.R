@@ -718,10 +718,12 @@ applyTransforms = function(i,trs=getRotations(),simplify=TRUE){
 #'
 #' @param rc either seurat object or seu@images$slice1@coordinates dataframe
 #'
-#' @return augmented rc dataframe with spot coordinates. Following columns added:
-#' tissue.piece - number of tissue piece
-#' is.border - specifies whether spot is tissue border
-#' border.inx - consecutive number of border spots
+#' @return list with two elements:
+#' 1. augmented rc dataframe with spot coordinates. Following columns added:
+#'  tissue.piece - number of tissue piece
+#'  is.border - specifies whether spot is tissue border
+#'  border.inx - consecutive number of border spots
+#' 2. nj - list of spot neighbors
 #'
 #' @export
 #'
@@ -782,12 +784,12 @@ findTissueBorder = function(rc){
       }
     }
   }
-  rc
+  list(rc=rc,nj=nj)
 }
 
 #' Classifies visium spots according to its position relative to tissue slice border
 #'
-#' @param rc output of findTissueBorder
+#' @param rc,nj output of findTissueBorder
 #'
 #' @return augmented rc dataframe with spot coordinates. Following columns added:
 #' nearest.border.inxs.graph - list of indexes (as specified by border.inx) of all nearestest border spots
@@ -798,7 +800,7 @@ findTissueBorder = function(rc){
 #' @export
 #'
 #' @examples
-calcDistance2border = function(rc){
+calcDistance2border = function(rc,nj){
   # each tissue point should know its closest border and distance to it
   # by phisical distance
   rc$nearest.border.inx = NA

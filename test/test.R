@@ -6,6 +6,6 @@ devtools::load_all()
 devtools::install_github("iaaka/visutils")
 
 # git add -u
-# git commit -m "split tissue-border function into two"
+# git commit -m "fix function name"
 # git push -u origin main
 ?dotPlot
