@@ -798,7 +798,7 @@ findTissueBorder = function(rc){
 #' @export
 #'
 #' @examples
-calcDistance2order = function(rc){
+calcDistance2border = function(rc){
   # each tissue point should know its closest border and distance to it
   # by phisical distance
   rc$nearest.border.inx = NA
