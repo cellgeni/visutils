@@ -16,7 +16,8 @@ plotColorLegend2(
   N = 100,
   ntic = 5,
   leg = NULL,
-  title = NULL
+  title = NULL,
+  title.adj = c(0, -0.5)
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ plotColorLegend2(
 \item{leg}{tics values, if NULL (default) estimated automatically}
 
 \item{title}{legend title}
+
+\item{title.adj}{legend title adj parameter to be passed to text function}
 }
 \value{
 

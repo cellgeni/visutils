@@ -230,10 +230,11 @@ imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxl
 #' @param ntic desired number of tics
 #' @param leg tics values, if NULL (default) estimated automatically
 #' @param title legend title
+#' @param title.adj legend title adj parameter to be passed to text function
 #'
 #' @return
 #' @export
-plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,leg=NULL,title=NULL){
+plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,leg=NULL,title=NULL,title.adj=c(0,-0.5)){
   # make tics
   if(is.null(leg)){
     ztic = seq(zlim[1],zlim[2],length.out = 1e5)
@@ -253,7 +254,7 @@ plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,le
   ztcol = sort(unique(c(ztat,seq(zfun(zlim[1]),zfun(zlim[2]),length.out = N))))
   col = z2col(c(zfun(fullzlim),ztcol))[-(1:length(fullzlim))]
   at = match(ztat,ztcol)
-  plotColorLegend(x0,x1,y0,y1,col,at=at,legend=leg,title=title)
+  plotColorLegend(x0,x1,y0,y1,col,at=at,legend=leg,title=title,title.adj=title.adj)
 }
 
 #' Gradient legend
@@ -263,6 +264,7 @@ plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,le
 #' @param at indexes (of col vector) to place tics
 #' @param legend tics labels
 #' @param title legend title
+#' @param title.adj legend title adj parameter to be passed to text function
 #'
 #' @return
 #' @export
@@ -270,7 +272,7 @@ plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,le
 #' @examples
 #' plot(1)
 #' plotColorLegend(0.4,0.5,0.8,0.3,getPal(n=100),0:10*10,1:10)
-plotColorLegend = function(x0,x1,y0,y1,col,at,legend,title=NULL){
+plotColorLegend = function(x0,x1,y0,y1,col,at,legend,title=NULL,title.adj=c(0,-0.5)){
   xpd = par(xpd=TRUE)
   y = seq(grconvertY(y0,'nfc','user'),grconvertY(y1,'nfc','user'),length.out = length(col)+1)
   rect(grconvertX(x0,'nfc','user'),y[-length(y)],grconvertX(x0+(x1-x0)*0.25,'nfc','user'),y[-1],col=col,border = NA)
@@ -278,7 +280,7 @@ plotColorLegend = function(x0,x1,y0,y1,col,at,legend,title=NULL){
   text(grconvertX(x0+(x1-x0)*0.3,'nfc','user'),at,legend,adj=c(0,0.5))
   if(!is.null(title)){
     #text(grconvertX(x1,'nfc','user'),y[length(y)],title,adj=c(1,-0.5))
-    text(grconvertX(x0,'nfc','user'),y[length(y)],title,adj=c(0,-0.5))
+    text(grconvertX(x0,'nfc','user'),y[length(y)],title,adj=title.adj)
   }
   par(xpd=xpd)
 }

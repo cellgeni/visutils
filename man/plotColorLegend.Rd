@@ -4,7 +4,17 @@
 \alias{plotColorLegend}
 \title{Gradient legend}
 \usage{
-plotColorLegend(x0, x1, y0, y1, col, at, legend, title = NULL)
+plotColorLegend(
+  x0,
+  x1,
+  y0,
+  y1,
+  col,
+  at,
+  legend,
+  title = NULL,
+  title.adj = c(0, -0.5)
+)
 }
 \arguments{
 \item{x0, x1, y0, y1}{rectange coordinates of the legend in nfc coordinates}
@@ -16,6 +26,8 @@ plotColorLegend(x0, x1, y0, y1, col, at, legend, title = NULL)
 \item{legend}{tics labels}
 
 \item{title}{legend title}
+
+\item{title.adj}{legend title adj parameter to be passed to text function}
 }
 \value{
 
