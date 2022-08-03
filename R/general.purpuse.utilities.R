@@ -217,6 +217,71 @@ imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxl
     axis(2,pars$y,yaxlab,las=las)
 }
 
+
+#' Sums two colours with alpha channel
+#'
+#' @param a top colour (numeric vector of length four)
+#' @param b bottom colour (numeric vector of length four)
+#'
+#' @return vector of length four with resultant colour
+#' @export
+#'
+#' @examples
+overlayTwoColours = function(a,b){
+  # a over b
+  if(a[4] == 0 && b[4] == 0)
+    return((a+b)/2)
+  a0 = a[4] + b[4]*(1-a[4])
+  r = c(sapply(1:3,function(i){
+    (a[i]*a[4]+b[i]*b[4]*(1-a[4]))/a0
+  }),a0)
+  r
+}
+
+#' Calculate per-row mean colour according to opacity
+#'
+#' @param c text matrix with colours to be overlayed per row
+#' @param reorderByOpacity logical, should colours be ordered by increased opacity prior to summing
+#'
+#' @return
+#' @export
+#'
+#' @examples
+overlayColours = function(c,reorderByOpacity=FALSE){
+  apply(c,1,function(x){
+    m = col2rgb(x,alpha = TRUE)/255
+    if(reorderByOpacity)
+      m = m[,order(m[4,])]
+    r = m[,1]
+    for(i in 2:ncol(m))
+      r = overlayTwoColours(m[,i],r)
+    rgb(r[1],r[2],r[3],r[4],maxColorValue = 1)
+  })
+}
+
+
+#' Transforms colour to hex representation
+#'
+#' @param c character vector with colours
+#' @param withAlpha
+#'
+#' @return
+#' @export
+#'
+#' @examples
+col2hex = function(c,withAlpha = TRUE){
+  r = apply(col2rgb(c,alpha = TRUE),2,function(x){
+    if(!withAlpha)
+      x[4] = 255
+    rgb(x[1],x[2],x[3],x[4],maxColorValue = 255)
+  })
+  if(!withAlpha)
+    r = substr(r,1,7)
+  r
+}
+
+
+
 #' Gradient legend
 #'
 #' Wrapper for plotColorLegend to plot legend for given range
