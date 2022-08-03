@@ -722,11 +722,7 @@ applyTransforms = function(i,trs=getRotations(),simplify=TRUE){
 #' tissue.piece - number of tissue piece
 #' is.border - specifies whether spot is tissue border
 #' border.inx - consecutive number of border spots
-#' nearest.border.inxs.graph - list of indexes (as specified by border.inx) of all nearestest border spots
-#' dist2border.graph - distance to tissue border (in spots, by hex-graph of spots)
-#' nearest.border.pos.graph - mean of nearest.border.inxs.graph
 #'
-#' please ignore other coumns added
 #' @export
 #'
 #' @examples
@@ -786,6 +782,23 @@ findTissueBorder = function(rc){
       }
     }
   }
+  rc
+}
+
+#' Classifies visium spots according to its position relative to tissue slice border
+#'
+#' @param rc output of findTissueBorder
+#'
+#' @return augmented rc dataframe with spot coordinates. Following columns added:
+#' nearest.border.inxs.graph - list of indexes (as specified by border.inx) of all nearestest border spots
+#' dist2border.graph - distance to tissue border (in spots, by hex-graph of spots)
+#' nearest.border.pos.graph - mean of nearest.border.inxs.graph
+#'
+#' please ignore other coumns added
+#' @export
+#'
+#' @examples
+calcDistance2order = function(rc){
   # each tissue point should know its closest border and distance to it
   # by phisical distance
   rc$nearest.border.inx = NA
