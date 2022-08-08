@@ -513,19 +513,23 @@ plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legen
 #' @param pie.cols colors to be used for pie pieces (ncol(pie.fraqs) should be equal to length(pie.cols))
 #' @param pie.min.fraq all pieces with relative size less than \code{pie.min.fraq} will be discared
 #' @param he.img.width integer, defines width (in pixels) the H&E figure should be resized to. No resizing if NULL (default)
+#' @param he.grayscale logical, specifies whether H&E image should be converted to grayscale
 #' @param ... other parameters to be passed to \code{plot} function
 #'
 #' @return
 #' @export
 plotVisiumImg = function(xy,img,scale.factor,cex=1,col='red',border=NA,spot.dist=NULL,img.alpha=1,xlim=NULL,
                          ylim=NULL,symmetric.lims=TRUE,xlab='',ylab='',pie.fraqs=NULL,pie.cols=NULL,pie.min.fraq=0.05,
-                         he.img.width=NULL,...){
+                         he.img.width=NULL,he.grayscale=FALSE,...){
   if(!is.null(he.img.width)){
     require(EBImage)
     coef = he.img.width/dim(img)[1]
     img = EBImage::resize(img,w=he.img.width)
     xy$imagerow = xy$imagerow*coef
     xy$imagecol = xy$imagecol*coef
+  }
+  if(he.grayscale){
+    img = enhanceImage(img,wb = TRUE)
   }
   if(is.null(spot.dist)){
     spot.dist = min(dist(xy[,4:5]))*0.5

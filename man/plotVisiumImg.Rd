@@ -22,6 +22,7 @@ plotVisiumImg(
   pie.cols = NULL,
   pie.min.fraq = 0.05,
   he.img.width = NULL,
+  he.grayscale = FALSE,
   ...
 )
 }
@@ -53,6 +54,8 @@ plotVisiumImg(
 \item{pie.min.fraq}{all pieces with relative size less than \code{pie.min.fraq} will be discared}
 
 \item{he.img.width}{integer, defines width (in pixels) the H&E figure should be resized to. No resizing if NULL (default)}
+
+\item{he.grayscale}{logical, specifies whether H&E image should be converted to grayscale}
 
 \item{...}{other parameters to be passed to \code{plot} function}
 }
