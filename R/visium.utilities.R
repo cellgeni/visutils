@@ -245,14 +245,18 @@ myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
 #' @param wb logical, specifies whether output image should be transformed to grayscale
 #' @param pow power of transformation
 #' @param qs quantiles to trim. Numerical vector with two items. Trims all values outside of specified quantile range.
-#'
+#' @param trim01 logical, wspecifies whether pixels with zero (black) and maximal (white) intensity should be trimed ahead of quantile trimming.
 #'
 #' @return image (3d numeric array)
 #' @export
-enhanceImage = function(p,wb=FALSE,qs=NULL){
+enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
   pm = apply(p,1:2,max)
   if(!is.null(qs)){
-    qs = quantile(pm,probs = qs)
+    f = pm == 0 | pm == 1
+    if(trim01)
+      qs = quantile(pm[!f],probs = qs)
+    else
+      qs = quantile(pm,probs = qs)
     pm = (pm-qs[1])/(qs[2]-qs[1])
     pm[pm>1] = 1
     pm[pm<0] = 0

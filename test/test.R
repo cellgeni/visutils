@@ -6,6 +6,6 @@ devtools::load_all()
 devtools::install_github("iaaka/visutils")
 
 # git add -u
-# git commit -m "fix border function"
+# git commit -m "fix enhanceImage and border functions"
 # git push -u origin main
 ?dotPlot

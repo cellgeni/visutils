@@ -4,7 +4,7 @@
 \alias{enhanceImage}
 \title{Adjast image brightnes and contrast}
 \usage{
-enhanceImage(p, wb = FALSE, qs = NULL)
+enhanceImage(p, wb = FALSE, qs = NULL, trim01 = TRUE)
 }
 \arguments{
 \item{p}{image (3d numeric array)}
@@ -12,6 +12,8 @@ enhanceImage(p, wb = FALSE, qs = NULL)
 \item{wb}{logical, specifies whether output image should be transformed to grayscale}
 
 \item{qs}{quantiles to trim. Numerical vector with two items. Trims all values outside of specified quantile range.}
+
+\item{trim01}{logical, wspecifies whether pixels with zero (black) and maximal (white) intensity should be trimed ahead of quantile trimming.}
 
 \item{pow}{power of transformation}
 }
