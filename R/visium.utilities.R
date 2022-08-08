@@ -239,6 +239,35 @@ myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
 
 }
 
+#' Adjast image brightnes and contrast
+#'
+#' @param p image (3d numeric array)
+#' @param wb logical, specifies whether output image should be transformed to grayscale
+#' @param pow power of transformation
+#' @param qs quantiles to trim. Numerical vector with two items. Trims all values outside of specified quantile range.
+#'
+#'
+#' @return image (3d numeric array)
+#' @export
+enhanceImage = function(p,wb=FALSE,qs=NULL){
+  pm = apply(p,1:2,max)
+  if(!is.null(qs)){
+    qs = quantile(pm,probs = qs)
+    pm = (pm-qs[1])/(qs[2]-qs[1])
+    pm[pm>1] = 1
+    pm[pm<0] = 0
+  }
+  f = apply(p,1:2,max)/pm
+  f[is.na(f)] = 1
+  p = sweep(p,1:2, f,'/')
+  if(wb){
+    z=apply(p,1:2,mean)
+    for(j in 1:3)
+      p[,,j] = z
+  }
+  p
+}
+
 
 #' Adjast image brightnes and contrast
 #'
@@ -247,9 +276,11 @@ myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
 #' @param pow power of transformation
 #' @param qs quantiles to trim. Numerical vector with two items. Trims all values outside of specified quantile range.
 #'
+#' @details it is old versioin of enhanceImage
+#'
 #' @return image (3d numeric array)
 #' @export
-enhanceImage = function(p,wb=FALSE,pow=1,qs=NULL){
+enhanceImage_ = function(p,wb=FALSE,pow=1,qs=NULL){
   p = (1-p)^pow
   pm = apply(p,1:2,max)
   if(!is.null(qs)){
@@ -809,6 +840,7 @@ calcDistance2border = function(rc,nj){
   dist = dist/min(dist[dist>0])
   for(p in unique(na.omit(rc$tissue.piece))){
     f = !is.na(rc$tissue.piece) & rc$tissue.piece == p
+    if(sum(rc$is.border & f)==0) next
     d = dist[f,rc$is.border & f,drop=F]
     d2b = do.call(rbind,apply(d,1,function(x){i=which.min(x);data.frame(i=i,dist=x[i])}))
     rc$nearest.border.inx[f] = rc[colnames(d)[d2b$i],'border.inx']
@@ -830,6 +862,7 @@ calcDistance2border = function(rc,nj){
     crc = crc[f,]
     border.inxs = sapply(split(rc$nearest.border.inxs.graph[cnj$inx],cnj$nj.inx),function(x){paste(sort(unique(unlist(strsplit(x,',',TRUE)))),collapse = ',')})
     inxs = as.numeric(names(border.inxs))
+    if(length(inxs)==0) break
     rc$dist2border.graph[inxs] = d
     rc$nearest.border.inxs.graph[inxs] =  border.inxs
     spots = rownames(rc)[inxs]
