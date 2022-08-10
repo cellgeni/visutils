@@ -316,13 +316,15 @@ enhanceImage_ = function(p,wb=FALSE,pow=1,qs=NULL){
 #' @param scale.per.colour logical, specifies whether each colour should cover whole range (that is, should x be sclaed per column)
 #' @param reorderByOpacity logical, specifes whether colours should be ordered by increasing opacity prior to summing
 #' @param title.adj legend title adj (to be passed to text function)
+#' @param bg color to use as spot background. NULL (default) for transparent background.
+#' @param legend.ncol number of legend columns
 #' @param ... other parameters to be passed to plotVisium
 #'
 #' @return
 #' @export
 #'
 #' @examples
-plotVisiumMultyColours = function(v,x,cols=NULL,log=FALSE,scale.per.colour=TRUE,reorderByOpacity=FALSE,title.adj=c(0,-0.5),...){
+plotVisiumMultyColours = function(v,x,cols=NULL,log=FALSE,scale.per.colour=TRUE,reorderByOpacity=FALSE,title.adj=c(0,-0.5),bg='#FFFFFFFF',legend.ncol=1,...){
   xs = x
   if(log)
     xs = log(x)
@@ -335,22 +337,37 @@ plotVisiumMultyColours = function(v,x,cols=NULL,log=FALSE,scale.per.colour=TRUE,
   cols = col2hex(cols,withAlpha = FALSE)
   col = sapply(1:ncol(xs),function(i)num2col(xs[,i],paste0(cols[i],c('00','FF'))))
   col = overlayColours(col,reorderByOpacity = reorderByOpacity)
-  col = overlayColours(cbind('#FFFFFFFF',col),reorderByOpacity = FALSE)
+  if(!is.null(bg))
+    col = overlayColours(cbind(bg,col),reorderByOpacity = FALSE)
 
   plotVisium(v,col,...)
 
 
+  # plot legends
+  legend.nrow = ceiling(length(cols) / legend.ncol)
+
   x0 = grconvertX(1,'npc','nfc')
-  x1 = 1#x0 + 0.2*(1-x0)
-  ys = grconvertY(c(0,1),'npc','nfc')
-  ys[2] = ys[2]-ys[1]
-  ys = list(c(0.95,0.7)*ys[2] + ys[1],
-            c(0.6,0.35)*ys[2] + ys[1],
-            c(0.25,0)*ys[2] + ys[1])
-  for(i in 1:min(3,ncol(x))){
+  y0 = grconvertY(c(0,1),'npc','nfc')
+
+  lw = grconvertY(1:2,'line','nfc')
+  lw = max(lw)-min(lw)
+
+  dx = (1-x0)/legend.ncol
+
+  dy = (y0[2]-y0[1])/legend.nrow
+
+  y0 = y0[2]
+
+  for(i in 1:length(cols)){
     col1 = paste0(cols[i],'00')
     col2 = paste0(cols[i],'FF')
-    plotColorLegend2(x0,x1,ys[[i]][2],ys[[i]][1],zlim = range(x[,i]),fullzlim = range(x[,i]),zfun=ifelse(log,base::log,identity),
+    r = (i-1) %% legend.nrow
+    c = (i-1) %/% legend.nrow
+    plotColorLegend2(x0+dx*c,
+                     x0+dx*(c+1),
+                     y0-dy*(r+1)+lw*0.8,
+                     y0-dy*r-lw*0.8,
+                     zlim = range(x[,i]),fullzlim = range(x[,i]),zfun=ifelse(log,base::log,identity),
                      z2col=function(x)num2col(x,c(col1,col2)),title=colnames(x)[i],title.adj = title.adj)
   }
 }
