@@ -312,22 +312,22 @@ enhanceImage_ = function(p,wb=FALSE,pow=1,qs=NULL){
 #' @param v Seurat object
 #' @param x matrix with values (in columns) to be plotted
 #' @param cols colour to be used for x columns
-#' @param log logical, specifies whether data should be log transformed
+#' @param log.pc numeric, pseudocount to be added before log-transformation. No transformation is applied if NA.
 #' @param scale.per.colour logical, specifies whether each colour should cover whole range (that is, should x be sclaed per column)
 #' @param reorderByOpacity logical, specifes whether colours should be ordered by increasing opacity prior to summing
 #' @param title.adj legend title adj (to be passed to text function)
 #' @param bg color to use as spot background. NULL (default) for transparent background.
-#' @param legend.ncol number of legend columns
+#' @param legend.ncol number of legend columns. Set to 0 to suppress legend plotting.
 #' @param ... other parameters to be passed to plotVisium
 #'
 #' @return
 #' @export
 #'
 #' @examples
-plotVisiumMultyColours = function(v,x,cols=NULL,log=FALSE,scale.per.colour=TRUE,reorderByOpacity=FALSE,title.adj=c(0,-0.5),bg='#FFFFFFFF',legend.ncol=1,...){
+plotVisiumMultyColours = function(v,x,cols=NULL,log.pc=NA,scale.per.colour=TRUE,reorderByOpacity=FALSE,title.adj=c(0,-0.5),bg='#FFFFFFFF',legend.ncol=1,...){
   xs = x
-  if(log)
-    xs = log(x)
+  if(!is.na(log.pc))
+    xs = log(x+log.pc)
   if(scale.per.colour){
     for(i in 1:ncol(xs)) xs[,i] = scaleTo(xs[,i])
   }else{
@@ -335,41 +335,44 @@ plotVisiumMultyColours = function(v,x,cols=NULL,log=FALSE,scale.per.colour=TRUE,
   }
   xs[is.na(xs)] = 0
   cols = col2hex(cols,withAlpha = FALSE)
-  col = sapply(1:ncol(xs),function(i)num2col(xs[,i],paste0(cols[i],c('00','FF'))))
+  col = sapply(1:ncol(xs),function(i)num2col(xs[,i],paste0(cols[i],c('00','FF')),minx = 0,maxx = 1))
   col = overlayColours(col,reorderByOpacity = reorderByOpacity)
   if(!is.null(bg))
     col = overlayColours(cbind(bg,col),reorderByOpacity = FALSE)
 
-  plotVisium(v,col,...)
+  r = plotVisium(v,col,...)
 
 
   # plot legends
-  legend.nrow = ceiling(length(cols) / legend.ncol)
+  if(legend.ncol>0){
+    legend.nrow = ceiling(length(cols) / legend.ncol)
 
-  x0 = grconvertX(1,'npc','nfc')
-  y0 = grconvertY(c(0,1),'npc','nfc')
+    x0 = grconvertX(1,'npc','nfc')
+    y0 = grconvertY(c(0,1),'npc','nfc')
 
-  lw = grconvertY(1:2,'line','nfc')
-  lw = max(lw)-min(lw)
+    lw = grconvertY(1:2,'line','nfc')
+    lw = max(lw)-min(lw)
 
-  dx = (1-x0)/legend.ncol
+    dx = (1-x0)/legend.ncol
 
-  dy = (y0[2]-y0[1])/legend.nrow
+    dy = (y0[2]-y0[1])/legend.nrow
 
-  y0 = y0[2]
+    y0 = y0[2]
 
-  for(i in 1:length(cols)){
-    col1 = paste0(cols[i],'00')
-    col2 = paste0(cols[i],'FF')
-    r = (i-1) %% legend.nrow
-    c = (i-1) %/% legend.nrow
-    plotColorLegend2(x0+dx*c,
-                     x0+dx*(c+1),
-                     y0-dy*(r+1)+lw*0.8,
-                     y0-dy*r-lw*0.8,
-                     zlim = range(x[,i]),fullzlim = range(x[,i]),zfun=ifelse(log,base::log,identity),
-                     z2col=function(x)num2col(x,c(col1,col2)),title=colnames(x)[i],title.adj = title.adj)
+    for(i in 1:length(cols)){
+      col1 = paste0(cols[i],'00')
+      col2 = paste0(cols[i],'FF')
+      r = (i-1) %% legend.nrow
+      c = (i-1) %/% legend.nrow
+      plotColorLegend2(x0+dx*c,
+                       x0+dx*(c+1),
+                       y0-dy*(r+1)+lw*0.8,
+                       y0-dy*r-lw*0.8,
+                       zlim = range(x[,i]),fullzlim = range(x[,i]),zfun=ifelse(log,base::log,identity),
+                       z2col=function(x)num2col(x,c(col1,col2)),title=colnames(x)[i],title.adj = title.adj)
+    }
   }
+  invisible(r)
 }
 
 

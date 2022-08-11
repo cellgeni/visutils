@@ -10,7 +10,7 @@ devtools::install_github("iaaka/visutils")
 
 
 # git add -u
-# git commit -m "fix enhanceImage and border functions"
+# git commit -m "improve legend in plotVisiumMultyColours"
 # git push -u origin main
 ?dotPlot
 
