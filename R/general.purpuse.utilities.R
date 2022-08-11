@@ -259,6 +259,25 @@ overlayColours = function(c,reorderByOpacity=FALSE){
   })
 }
 
+#' Creates folder and its parents
+#' if not exists
+#'
+#' @param d folder to be created
+#'
+#' @return
+#' @export
+#'
+#' @examples
+dir.create.r = function(d){
+  d = strsplit(d,'/')[[1]]
+  d = d[d!='']
+  c = ''
+  for(f in d){
+    c = paste0(c,f,'/')
+    if(!dir.exists(c)) dir.create(c)
+  }
+}
+
 
 #' Transforms colour to hex representation
 #'
