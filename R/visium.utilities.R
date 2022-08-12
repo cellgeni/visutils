@@ -368,7 +368,7 @@ plotVisiumMultyColours = function(v,x,cols=NULL,log.pc=NA,scale.per.colour=TRUE,
                        x0+dx*(c+1),
                        y0-dy*(r+1)+lw*0.8,
                        y0-dy*r-lw*0.8,
-                       zlim = range(x[,i]),fullzlim = range(x[,i]),zfun=ifelse(log,base::log,identity),
+                       zlim = range(x[,i]),fullzlim = range(x[,i]),zfun=ifelse(is.na(log.pc),identity,function(x)log(x+log.pc)),
                        z2col=function(x)num2col(x,c(col1,col2)),title=colnames(x)[i],title.adj = title.adj)
     }
   }
