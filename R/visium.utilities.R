@@ -243,9 +243,8 @@ myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
 #'
 #' @param p image (3d numeric array)
 #' @param wb logical, specifies whether output image should be transformed to grayscale
-#' @param pow power of transformation
 #' @param qs quantiles to trim. Numerical vector with two items. Trims all values outside of specified quantile range.
-#' @param trim01 logical, wspecifies whether pixels with zero (black) and maximal (white) intensity should be trimed ahead of quantile trimming.
+#' @param trim01 logical, specifies whether pixels with zero (black) and maximal (white) intensity should be trimed ahead of quantile trimming.
 #'
 #' @return image (3d numeric array)
 #' @export
@@ -273,37 +272,7 @@ enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
 }
 
 
-#' Adjast image brightnes and contrast
-#'
-#' @param p image (3d numeric array)
-#' @param wb logical, specifies whether output image should be transformed to grayscale
-#' @param pow power of transformation
-#' @param qs quantiles to trim. Numerical vector with two items. Trims all values outside of specified quantile range.
-#'
-#' @details it is old versioin of enhanceImage
-#'
-#' @return image (3d numeric array)
-#' @export
-enhanceImage_ = function(p,wb=FALSE,pow=1,qs=NULL){
-  p = (1-p)^pow
-  pm = apply(p,1:2,max)
-  if(!is.null(qs)){
-    qs = quantile(pm,probs = qs)
-    pm = (pm-qs[1])/(qs[2]-qs[1])
-    pm[pm>1] = 1
-    pm[pm<0] = 0
-  }
-  f = apply(p,1:2,max)/pm
-  f[is.na(f)] = 1
-  p = sweep(p,1:2, f,'/')
-  p = 1-p
-  if(wb){
-    z=apply(p,1:2,mean)
-    for(j in 1:3)
-      p[,,j] = z
-  }
-  p
-}
+
 
 #' Plot multiple numerical values (gene expression or cell abundancies) on H&E image
 #'

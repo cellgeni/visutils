@@ -497,7 +497,7 @@ plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.tra
   o = order(x)
   x = x[o]
   p = p[o,,drop=F]
-  na = !is.na(p[,1])
+  na = apply(is.na(p),1,sum)==0
   x = x[na]
   p = p[na,,drop=F]
   if(ncol(p)==2)
@@ -516,6 +516,28 @@ plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.tra
   polygon(c(x,rev(x)),yp,col=col.pol,border=NA,den=area.den)
   lines(x,p[,1],col=col,type=type,...)
 }
+
+#' Make Character Strings Unique
+#'
+#' Makes the elements of a character vector unique by appending sequence numbers to duplicates.
+#' The difference from make.unique is that my.make.unique adds replicate number to all items, not to duplicates only.
+#'
+#' @param x a character vector
+#' @param sep a character string used to separate a duplicate name from its sequence number.
+#'
+#' @return A character vector of same length as names with duplicates changed
+#' @export
+#'
+#' @examples
+my.make.unique = function(x,sep='.'){
+  ux = unique(x)
+  for(u in ux){
+    f = x == u
+    x[f] = paste0(x[f],sep,1:sum(f))
+  }
+  x
+}
+
 
 #' Plots matrix as dotPlot
 #'
