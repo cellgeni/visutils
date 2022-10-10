@@ -13,9 +13,7 @@ enhanceImage(p, wb = FALSE, qs = NULL, trim01 = TRUE)
 
 \item{qs}{quantiles to trim. Numerical vector with two items. Trims all values outside of specified quantile range.}
 
-\item{trim01}{logical, wspecifies whether pixels with zero (black) and maximal (white) intensity should be trimed ahead of quantile trimming.}
-
-\item{pow}{power of transformation}
+\item{trim01}{logical, specifies whether pixels with zero (black) and maximal (white) intensity should be trimed ahead of quantile trimming.}
 }
 \value{
 image (3d numeric array)
