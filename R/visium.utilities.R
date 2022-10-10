@@ -249,18 +249,18 @@ myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
 #' @return image (3d numeric array)
 #' @export
 enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
-  pm = apply(p,1:2,max)
+  pm0 = pm = apply(p,1:2,max)
   if(!is.null(qs)){
-    f = pm == 0 | pm == 1
-    if(trim01)
+    if(trim01){
+      f = pm == 0 | pm == 1
       qs = quantile(pm[!f],probs = qs)
-    else
+    }else
       qs = quantile(pm,probs = qs)
     pm = (pm-qs[1])/(qs[2]-qs[1])
     pm[pm>1] = 1
     pm[pm<0] = 0
   }
-  f = apply(p,1:2,max)/pm
+  f = pm0/pm
   f[is.na(f)] = 1
   p = sweep(p,1:2, f,'/')
   if(wb){
