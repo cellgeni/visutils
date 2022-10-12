@@ -920,10 +920,10 @@ plotNMFCons = function(coefs,cons,clcols=NULL,max.cex = 4.5/14*8,
   rownames(slh) = names(cls)
 
 
-  par(mar=c(3,0,2.5,0.3))
+  par(mar=c(3,0.2,2.5,0.3))
   b=barplot(slh[rev(o),3],horiz = T,width = 1,space = 0, yaxs = "i",ylim=c(-1.5,length(o)+0.5),names.arg = '',border=NA,col=clcols[cls[rev(o)]],xlab='silhouette',xlim=c(-1,1),xaxt='n')
   par(cex=0.6)
-  axis(1,)
+  axis(1)
   par(cex=1,xaxt='n',yaxt='n')
   dotPlot(cons[o,o],max.cex = 1.3,rowColours = cbind(clcols[cls[o]]),colColours = clcols[cls[o]],main='Consensus clustering matrix')
 

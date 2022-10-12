@@ -14,6 +14,6 @@ devtools::install_github("iaaka/visutils")
 # git push -u origin main
 ?dotPlot
 
-# library(visutils)
-# ?plotVisium
+library(visutils)
+?plotNMFCons
 # ?visutils
