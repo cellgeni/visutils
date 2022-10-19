@@ -911,7 +911,7 @@ plotNMFCons = function(coefs,cons,clcols=NULL,max.cex = 4.5/14*8,
 
   o = names(cls)[order(cls)]
   layout(matrix(1:3,ncol=3),widths = c(0.9,0.3,1.8))
-  parl = par()
+  parl = par(no.readonly=TRUE)
   par(mar=c(3,9,2.5,0),bty='n',oma=c(0,0,1,0),cex=1,tcl=-0.2,mgp=c(1.2,0.3,0),las=1)
 
   dotPlot(t(coefs[,o]),rowColours = cbind(clcols[cls[o]]),colColours = clcols,max.cex = max.cex,ylab.cex = ylab.cex,xlab.cex = xlab.cex,scaleWM=F,colfun=colfun)
@@ -928,10 +928,8 @@ plotNMFCons = function(coefs,cons,clcols=NULL,max.cex = 4.5/14*8,
   dotPlot(cons[o,o],max.cex = 1.3,rowColours = cbind(clcols[cls[o]]),colColours = clcols[cls[o]],main='Consensus clustering matrix')
 
   mtext(title,3,outer = TRUE,line = 0)
-  w = options(warn = -1)
-  par(parl[c('mar','bty','oma','cex','tcl','mgp','las')])
+  par(parl)
   layout(matrix(1,ncol=1,nrow=1))
-  options(w)
   invisible(list(clusters=cls,cols=clcols,slh=slh))
 }
 
