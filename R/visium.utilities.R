@@ -929,7 +929,8 @@ plotNMFCons = function(coefs,cons,clcols=NULL,max.cex = 4.5/14*8,
 
   mtext(title,3,outer = TRUE,line = 0)
   w = options(warn = -1)
-  par(parl)
+  par(parl[c('mar','bty','oma','cex','tcl','mgp','las')])
+  layout(matrix(1,ncol=1,nrow=1))
   options(w)
   invisible(list(clusters=cls,cols=clcols,slh=slh))
 }
