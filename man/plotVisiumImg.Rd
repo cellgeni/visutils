@@ -18,9 +18,9 @@ plotVisiumImg(
   symmetric.lims = TRUE,
   xlab = "",
   ylab = "",
-  pie.fraqs = NULL,
+  pie.fracs = NULL,
   pie.cols = NULL,
-  pie.min.fraq = 0.05,
+  pie.min.frac = 0.05,
   he.img.width = NULL,
   he.grayscale = FALSE,
   ...
@@ -47,11 +47,11 @@ plotVisiumImg(
 
 \item{symmetric.lims}{logical, specifies whether image crop should be square}
 
-\item{pie.fraqs}{if specified plots pies instead of simple cycles. Matrix with number of rows equal to the number of spots, and number of columns equal to pie pieces.}
+\item{pie.fracs}{if specified plots pies instead of simple cycles. Matrix with number of rows equal to the number of spots, and number of columns equal to pie pieces.}
 
-\item{pie.cols}{colors to be used for pie pieces (ncol(pie.fraqs) should be equal to length(pie.cols))}
+\item{pie.cols}{colors to be used for pie pieces (ncol(pie.fracs) should be equal to length(pie.cols))}
 
-\item{pie.min.fraq}{all pieces with relative size less than \code{pie.min.fraq} will be discared}
+\item{pie.min.frac}{all pieces with relative size less than \code{pie.min.frac} will be discared}
 
 \item{he.img.width}{integer, defines width (in pixels) the H&E figure should be resized to. No resizing if NULL (default)}
 

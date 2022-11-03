@@ -95,12 +95,8 @@ myLoad10X_Spatial = function(data.dir,filter.matrix=TRUE,ens_id=TRUE,...){
     rownames(d@assays$Spatial@meta.features) = gids$V1
     d[['Spatial']][['name']] = gids$V2
     d[['Spatial']][['ensid']] = gids$V1
-    #  d@assays$Spatial@scale.data@Dimnames[[1]] = gids$V1
   }
-  if(!filter.matrix){
-    f = read.csv(paste0(data.dir,'/spatial/tissue_positions_list.csv'),header = F,row.names = 1)
-    d[['is.tissue']] = f[colnames(d),1]
-  }
+  d[['is.tissue']] = d@images$slice1@coordinates$tissue
   d
 }
 
@@ -498,9 +494,9 @@ plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legen
 #' @param img.alpha alpha level for H&E image
 #' @param xlim,ylim,xlab,ylab parameters of \code{plot} function
 #' @param symmetric.lims logical, specifies whether image crop should be square
-#' @param pie.fraqs if specified plots pies instead of simple cycles. Matrix with number of rows equal to the number of spots, and number of columns equal to pie pieces.
-#' @param pie.cols colors to be used for pie pieces (ncol(pie.fraqs) should be equal to length(pie.cols))
-#' @param pie.min.fraq all pieces with relative size less than \code{pie.min.fraq} will be discared
+#' @param pie.fracs if specified plots pies instead of simple cycles. Matrix with number of rows equal to the number of spots, and number of columns equal to pie pieces.
+#' @param pie.cols colors to be used for pie pieces (ncol(pie.fracs) should be equal to length(pie.cols))
+#' @param pie.min.frac all pieces with relative size less than \code{pie.min.frac} will be discared
 #' @param he.img.width integer, defines width (in pixels) the H&E figure should be resized to. No resizing if NULL (default)
 #' @param he.grayscale logical, specifies whether H&E image should be converted to grayscale
 #' @param ... other parameters to be passed to \code{plot} function
@@ -508,8 +504,15 @@ plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legen
 #' @return
 #' @export
 plotVisiumImg = function(xy,img,scale.factor,cex=1,col='red',border=NA,spot.dist=NULL,img.alpha=1,xlim=NULL,
-                         ylim=NULL,symmetric.lims=TRUE,xlab='',ylab='',pie.fraqs=NULL,pie.cols=NULL,pie.min.fraq=0.05,
+                         ylim=NULL,symmetric.lims=TRUE,xlab='',ylab='',pie.fracs=NULL,pie.cols=NULL,pie.min.frac=0.05,
                          he.img.width=NULL,he.grayscale=FALSE,...){
+  # remove on new update
+  par = list(...)
+  if(!is.null(par$pie.fraqs))
+    pie.fracs = par$pie.fraqs
+  if(!is.null(par$pie.min.fraq))
+    pie.min.frac = par$pie.min.fraq
+
   if(!is.null(he.img.width)){
     require(EBImage)
     coef = he.img.width/dim(img)[1]
@@ -536,19 +539,19 @@ plotVisiumImg = function(xy,img,scale.factor,cex=1,col='red',border=NA,spot.dist
   rasterImage(1-(1-img)*img.alpha,1,1,ncol(img),nrow(img))
 
   f = cex>0
-  if(any(cex>0) & is.null(pie.fraqs))
+  if(any(cex>0) & is.null(pie.fracs))
     symbols(xy$imagecol[f]*scale.factor,
             nrow(img)-xy$imagerow[f]*scale.factor,
             circles=cex[f]*spot.dist*scale.factor,
             bg=col[f],inches = FALSE,fg=border[f],add = T)
 
-  if(any(cex>0) & !is.null(pie.fraqs)){
-    pie.fraqs = sweep(pie.fraqs,1,apply(pie.fraqs,1,sum),'/')
-    pie.fraqs[pie.fraqs<pie.min.fraq] = 0
+  if(any(cex>0) & !is.null(pie.fracs)){
+    pie.fracs = sweep(pie.fracs,1,apply(pie.fracs,1,sum),'/')
+    pie.fracs[pie.fracs<pie.min.frac] = 0
     symbols.pie(x=xy$imagecol[f]*scale.factor,
                 y=nrow(img)-xy$imagerow[f]*scale.factor,
                 r=cex[f]*spot.dist*scale.factor,
-                d=pie.fraqs[f,],
+                d=pie.fracs[f,],
                 cols= pie.cols,border = border[f])
   }
   invisible(data.frame(y=xy$imagecol*scale.factor,y=nrow(img)-xy$imagerow*scale.factor))
