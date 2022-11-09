@@ -444,6 +444,7 @@ number2bin = function(v,n){
 #' @return matrix with number of rows equal to nrow(d) and number of columns equal to number of unique(f)
 #' @export
 calcMeanCols = function(d,f,FUN=base::mean,verbose=FALSE){
+  stop('use calcColSums')
   u = sort(unique(as.character(f)))
   r = matrix(ncol=length(u),nrow=nrow(d))
   colnames(r) = u
@@ -455,6 +456,34 @@ calcMeanCols = function(d,f,FUN=base::mean,verbose=FALSE){
   }
   r
 }
+
+#' Calculates row sums for matrix subsets
+#'
+#' @param d matrix
+#' @param f character vector, factor to split matrix columns (length should be equal to nrow(d))
+#' @param FUN function to be applied to matrix slices (mean by default)
+#' @param verbose
+#'
+#' @return matrix with number of rows equal to nrow(d) and number of columns equal to number of unique(f)
+#' @export
+calcColSums = function(d,f,verbose=FALSE,mean=FALSE){
+  u = sort(unique(as.character(f)))
+  r = matrix(ncol=length(u),nrow=nrow(d))
+  colnames(r) = u
+  rownames(r) = rownames(d)
+  for(j in 1:length(u)){
+    i = u[j]
+    if(verbose) cat('\r',j,' from ',length(u),'; ',i,'      ')
+    r[,i] = rowSums(d[,f==i,drop=F],1,FUN,na.rm=TRUE)
+  }
+  if(mean){
+    t = as.numeric(table(f)[colnames(r)])
+    r = sweep(r,2,t,'/')
+  }
+  r
+}
+
+
 
 #' Add panel label
 #'

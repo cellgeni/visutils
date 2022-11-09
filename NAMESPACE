@@ -2,6 +2,7 @@
 
 export(applyTransforms)
 export(barplotWithText)
+export(calcColSums)
 export(calcDistance2border)
 export(calcMeanCols)
 export(char2col)
