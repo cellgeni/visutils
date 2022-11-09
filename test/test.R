@@ -10,7 +10,7 @@ devtools::install_github("iaaka/visutils")
 
 
 # git add -u
-# git commit -m "fix"
+# git commit -m "add calcColSums"
 # git push -u origin main
 ?dotPlot
 

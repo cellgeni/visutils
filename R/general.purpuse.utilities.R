@@ -474,7 +474,7 @@ calcColSums = function(d,f,verbose=FALSE,mean=FALSE){
   for(j in 1:length(u)){
     i = u[j]
     if(verbose) cat('\r',j,' from ',length(u),'; ',i,'      ')
-    r[,i] = rowSums(d[,f==i,drop=F],1,FUN,na.rm=TRUE)
+    r[,i] = rowSums(d[,f==i,drop=F],na.rm=TRUE)
   }
   if(mean){
     t = as.numeric(table(f)[colnames(r)])
