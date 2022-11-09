@@ -287,8 +287,6 @@ enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
 #'
 #' @return
 #' @export
-#'
-#' @examples
 plotVisiumMultyColours = function(v,x,cols=NULL,log.pc=NA,scale.per.colour=TRUE,reorderByOpacity=FALSE,title.adj=c(0,-0.5),bg='#FFFFFFFF',legend.ncol=1,...){
   xs = x
   if(!is.na(log.pc))
@@ -757,8 +755,6 @@ applyTransforms = function(i,trs=getRotations(),simplify=TRUE){
 #' 2. nj - list of spot neighbors
 #'
 #' @export
-#'
-#' @examples
 findTissueBorder = function(rc){
   require(igraph)
   if(class(rc) == 'Seurat')
@@ -829,8 +825,6 @@ findTissueBorder = function(rc){
 #'
 #' please ignore other coumns added
 #' @export
-#'
-#' @examples
 calcDistance2border = function(rc,nj){
   # each tissue point should know its closest border and distance to it
   # by phisical distance
@@ -879,8 +873,6 @@ calcDistance2border = function(rc,nj){
 #'
 #' @return modified Seurat object
 #' @export
-#'
-#' @examples
 scaleVisiumImage = function(v,wpx=500){
   require(EBImage)
   coef = wpx/dim(v@images$slice1@image)[1]
@@ -902,8 +894,6 @@ scaleVisiumImage = function(v,wpx=500){
 #'
 #' @return
 #' @export
-#'
-#' @examples
 plotNMFCons = function(coefs,cons,clcols=NULL,max.cex = 4.5/14*8,
                        colfun=function(x)num2col(x,c('blue','gray','orange','violet','black'),minx = 0,maxx = 1),
                        title='',ylab.cex=1,xlab.cex=1){

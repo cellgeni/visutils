@@ -225,8 +225,6 @@ imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxl
 #'
 #' @return vector of length four with resultant colour
 #' @export
-#'
-#' @examples
 overlayTwoColours = function(a,b){
   # a over b
   if(a[4] == 0 && b[4] == 0)
@@ -245,8 +243,6 @@ overlayTwoColours = function(a,b){
 #'
 #' @return
 #' @export
-#'
-#' @examples
 overlayColours = function(c,reorderByOpacity=FALSE){
   apply(c,1,function(x){
     m = col2rgb(x,alpha = TRUE)/255
@@ -266,8 +262,6 @@ overlayColours = function(c,reorderByOpacity=FALSE){
 #'
 #' @return
 #' @export
-#'
-#' @examples
 dir.create.r = function(d){
   d = strsplit(d,'/')[[1]]
   d = d[d!='']
@@ -286,8 +280,6 @@ dir.create.r = function(d){
 #'
 #' @return
 #' @export
-#'
-#' @examples
 col2hex = function(c,withAlpha = TRUE){
   r = apply(col2rgb(c,alpha = TRUE),2,function(x){
     if(!withAlpha)
@@ -474,7 +466,7 @@ calcColSums = function(d,f,verbose=FALSE,mean=FALSE){
   for(j in 1:length(u)){
     i = u[j]
     if(verbose) cat('\r',j,' from ',length(u),'; ',i,'      ')
-    r[,i] = rowSums(d[,f==i,drop=F],na.rm=TRUE)
+    r[,i] = Matrix::rowSums(d[,f==i,drop=F],na.rm=TRUE)
   }
   if(mean){
     t = as.numeric(table(f)[colnames(r)])
@@ -556,8 +548,6 @@ plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.tra
 #'
 #' @return A character vector of same length as names with duplicates changed
 #' @export
-#'
-#' @examples
 my.make.unique = function(x,sep='.'){
   ux = unique(x)
   for(u in ux){

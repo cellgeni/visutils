@@ -17,3 +17,4 @@ devtools::install_github("iaaka/visutils")
 library(visutils)
 ?plotNMFCons
 # ?visutils
+
