@@ -346,7 +346,7 @@ plotVisiumMultyColours = function(v,x,cols=NULL,log.pc=NA,scale.per.colour=TRUE,
 #' @param v Seurat object or data.frame with two columns (x and y coordinates)
 #' @param z z coordinate. Either numeric or categorical (factor/character)
 #' @param cex relative size of symbols
-#' @param type character, one of img, hex, or xy, see Details.
+#' @param type character, one of img, hex, rect, or xy, see Details.
 #' @param border colour of symbol borders
 #' @param z2col function to transform z to colous (if z is numeric) or named vector of colours if z is character (names are levels of \code{z})
 #' @param plot.legend logical
@@ -427,6 +427,9 @@ plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legen
   }
   if(type=='hex'){
     xy=plotVisiumHex(xy,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,...)
+  }
+  if(type=='rect'){
+    xy=plotVisiumRect(xy,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,...)
   }
   if(type=='xy'){
     if(randomize.points | order.points.by.z){
@@ -584,6 +587,25 @@ plotVisiumHex = function(xy,cex=1,col='red',border=NA,xlab='Cols',ylab='Rows',xl
   }
   invisible(data.frame(x=c,y=r))
 }
+
+
+plotVisiumRect = function(xy,cex=1,col='red',border=NA,xlab='x',ylab='y',
+                          xlim=c(min(xy$x)-0.5,max(xy$x)+0.5),
+                          ylim=c(min(xy$y)+0.5,max(xy$y)-0.5),...){
+  cex = recycle(cex,1:nrow(xy))
+  col = recycle(col,1:nrow(xy))
+  border = recycle(border,1:nrow(xy))
+
+  plot(1,t='n',xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,...)
+
+  for(i in 1:nrow(xy)){
+    cexi = cex[i]*0.5
+    if(cexi>0)
+      rect(xy$x[i]-cexi,xy$y[i]-cexi,xy$x[i]+cexi,xy$y[i]+cexi,col=col[i],border=border[i])
+  }
+  invisible(xy)
+}
+
 
 #' Download Visium dataset from 10x website
 #'

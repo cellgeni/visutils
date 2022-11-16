@@ -34,7 +34,7 @@ plotVisium(
 
 \item{cex}{relative size of symbols}
 
-\item{type}{character, one of img, hex, or xy, see Details.}
+\item{type}{character, one of img, hex, rect, or xy, see Details.}
 
 \item{border}{colour of symbol borders}
 

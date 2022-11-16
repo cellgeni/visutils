@@ -1,3 +1,42 @@
+removeExoRNA_ = function(m,ann,nnls){
+  m = as.matrix(m)
+  for(a in colnames(nnls$nnls)){
+    pb = rowMeans(m[,ann ==a])
+    f = ann != a
+    m[,f] = m[,f] - matrix(pb,ncol=1) %*% matrix(nnls$nnls[f,a],nrow=1)
+  }
+  m = round(m)
+  m[m<0] = 0
+  m = as(m,'dgCMatrix')
+  m
+}
+
+
+removeExoRNA = function(m,ann,is.tissue,n=1,normsd = T,min.gcounts=500,min.spots=10){
+  # remove small ann types
+  t = table(ann)
+  small.anns = names(t)[t<min.spots]
+  is.tissue = as.logical(is.tissue) & !(ann %in% small.anns)
+  ann[ann %in% small.anns] = 'not_tissue'
+  if(sum(is.tissue) < min.spots){
+    warning("Too few tissue spots! Stop procesing.")
+    return(NULL)
+  }
+
+  r = list(list(vis=m))
+  cat('0; total=',sum(m),'; non-zero=',length(m@x),'\n',sep='')
+  m = as.matrix(m)
+  for(i in 1:n){
+    nnls = rnaNNLS.by.ann(m,ann,is.tissue,normsd = normsd,min.gcounts=min.gcounts)
+    m = removeExoRNA_(m,ann,nnls)
+    cat(i,'; total=',sum(m),'; non-zero=',length(m@x),'\n',sep='')
+    nnls$vis = m
+    r[[i+1]] = nnls
+  }
+  r
+}
+
+
 rnaNNLS = function(cnt,pb,normsd=TRUE){
   require(nnls)
   if(normsd){
@@ -15,11 +54,18 @@ rnaNNLS = function(cnt,pb,normsd=TRUE){
 }
 
 
-rnaNNLS.by.ann = function(v,ann,normsd=TRUE,min.gcounts=500){
-  x = as.matrix(v@assays$Spatial@counts)
-  tot = apply(x,1,sum)
+rnaNNLS.by.ann = function(v,ann,is.tissue,normsd=TRUE,min.gcounts=500){
+  if(is(v,'Seurat')){
+    x = as.matrix(v@assays$Spatial@counts)
+    is.tissue = v$is.tissue
+  }else
+    x = (v)
+
+  is.tissue = as.logical(is.tissue)
+
+  tot = rowSums(x)
   x = x[tot>=min.gcounts,]
-  pb = calcMeanCols(x[,as.logical(v$is.tissue)],ann[as.logical(v$is.tissue)])
+  pb = calcColSums(x[,is.tissue],ann[is.tissue],mean = TRUE)
   list(nnls=rnaNNLS(x,pb,normsd=normsd),pb=pb)
 }
 
