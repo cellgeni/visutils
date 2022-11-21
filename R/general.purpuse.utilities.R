@@ -584,14 +584,14 @@ my.make.unique = function(x,sep='.'){
 #'
 #' @return
 #' @export
-#' @example
-c = matrix(1:12,ncol=3)
-par(mar=c(4,4,1,10),bty='n')
-dotPlot(c/12,-c,max.cex = 3,colColours = cbind(col1=c('red','blue','red'),col2=c('green','green','magenta')),
-        rowColours = cbind(rrr1=c('red','blue','blue','red'),rrr2=c('green','green','magenta','green')),
-      legend.cex.title='size',legend.col.title='col',
-      colAnnWidth = 0.5,
-      rowAnnWidth = 0.5)
+#' @examples
+#' c = matrix(1:12,ncol=3)
+#' par(mar=c(4,4,1,10),bty='n')
+#' dotPlot(c/12,-c,max.cex = 3,colColours = cbind(col1=c('red','blue','red'),col2=c('green','green','magenta')),
+#'         rowColours = cbind(rrr1=c('red','blue','blue','red'),rrr2=c('green','green','magenta','green')),
+#'       legend.cex.title='size',legend.col.title='col',
+#'       colAnnWidth = 0.5,
+#'       rowAnnWidth = 0.5)
 dotPlot = function(m,mc=m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','violet','black')),grid=TRUE,grid.lty=2,grid.col='gray',
                    max.cex=1,xlab='',ylab='',ylab.cex=1,xlab.cex=1,
                    colColours=NULL,rowColours=NULL,

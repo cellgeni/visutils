@@ -9,9 +9,9 @@ devtools::load_all()
 devtools::install_github("iaaka/visutils")
 
 
-# git add -u
-# git commit -m "improove dotPlot"
-# git push -u origin main
+git add -u
+git commit -m "improve dotPlot"
+git push -u origin main
 ?dotPlot
 
 library(visutils)

@@ -78,3 +78,12 @@ dotPlot(
 \description{
 Shows values in matix by point size and color. Size matrix (m) is not scaled by default, dot size is defined as m*max.cex
 }
+\examples{
+c = matrix(1:12,ncol=3)
+par(mar=c(4,4,1,10),bty='n')
+dotPlot(c/12,-c,max.cex = 3,colColours = cbind(col1=c('red','blue','red'),col2=c('green','green','magenta')),
+        rowColours = cbind(rrr1=c('red','blue','blue','red'),rrr2=c('green','green','magenta','green')),
+      legend.cex.title='size',legend.col.title='col',
+      colAnnWidth = 0.5,
+      rowAnnWidth = 0.5)
+}
