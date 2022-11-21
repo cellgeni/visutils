@@ -676,8 +676,11 @@ dotPlot = function(m,mc=m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yello
       legend.cex.at = round(seq(min(m),max(m),length.out = 5),digits = 4)
     if(is.null(legend.col.at))
       legend.col.at = round(seq(min(mc),max(mc),length.out = 5),digits = 4)
+
+
+    legend.cex.at = rfun(legend.cex.at)
     if(scaleWM)
-      legend.cex = scaleTo(legend.cex.at,minx = min(m),maxx = max(m))
+      legend.cex = scaleTo(legend.cex.at,minx = rfun(min(m)),maxx = rfun(max(m)))
     else
       legend.cex = legend.cex.at
     legend.cex = legend.cex * max.cex

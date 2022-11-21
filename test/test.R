@@ -10,7 +10,7 @@ devtools::install_github("iaaka/visutils")
 
 
 # git add -u
-# git commit -m "add plotVisiumRect"
+# git commit -m "improove dotPlot"
 # git push -u origin main
 ?dotPlot
 
