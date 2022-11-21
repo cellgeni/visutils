@@ -560,9 +560,10 @@ my.make.unique = function(x,sep='.'){
 
 #' Plots matrix as dotPlot
 #'
-#' Shows values in matix by point size and color
+#' Shows values in matix by point size and color. Size matrix (m) is not scaled by default, dot size is defined as m*max.cex
 #'
-#' @param m numeric matrix to be shown
+#' @param m numeric matrix to be shown as dot size
+#' @param mc numeric matrix to be shown as dot colour (uses m as default)
 #' @param rfun function to calculate radius from matrix values. Use sqrt (default) to make area proportional to value
 #' @param colfun function to transform values to colour gradient
 #' @param grid logial, should grid be plotted
@@ -573,14 +574,31 @@ my.make.unique = function(x,sep='.'){
 #' @param ylab.cex magnification label for ylabs
 #' @param colColours colour matrix to plot annotation for columns (matrix with nrow equal to ncol(m); each column of colColours is annotation)
 #' @param rowColours colour matrix to plot annotation for row (matrix with nrow equal to nrow(m); each column of rowColours is annotation)
-#' @param scaleWM logical, specifies wheter computed radiuses should be scaled into [0,1] interval
+#' @param scaleWM logical, specifies wheter computed radiuses should be scaled into [0,1] interval (FALSE by default).
 #' @param pch point character (19 by default)
+#' @param plot.legend logical, whether legend should be plotted. Single legend will be plotted if m is identicall to mc.
+#' @param legend.cex.at,legend.cex.at values to be used in legend
+#' @param legend.cex.title,legend.col.title titles of legends
+#' @param rowAnnWidth,colAnnWidth - size of colour annotations in user coordinates
 #' @param ... other parameters to be passed to plot function
 #'
 #' @return
 #' @export
-dotPlot = function(m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','violet','black')),grid=TRUE,grid.lty=2,grid.col='gray',
-                   max.cex=0.9,xlab='',ylab='',ylab.cex=1,xlab.cex=1,colColours=NULL,rowColours=NULL,scaleWM=TRUE,pch=19,...){
+#' @example
+#' c = matrix(1:12,ncol=3)
+#' par(mar=c(4,4,1,10),bty='n')
+#' dotPlot(c/12,-c,max.cex = 3,colColours = cbind(col1=c('red','blue','red'),col2=c('green','green','magenta')),
+#'         rowColours = cbind(rrr1=c('red','blue','blue','red'),rrr2=c('green','green','magenta','green')),
+#'       legend.cex.title='size',legend.col.title='col',
+#'       colAnnWidth = 0.5,
+#'       rowAnnWidth = 0.5)
+dotPlot = function(m,mc=m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','violet','black')),grid=TRUE,grid.lty=2,grid.col='gray',
+                   max.cex=1,xlab='',ylab='',ylab.cex=1,xlab.cex=1,
+                   colColours=NULL,rowColours=NULL,
+                   rowAnnWidth=1,colAnnWidth=1,
+                   scaleWM=FALSE,pch=19,plot.legend=TRUE,
+                   legend.cex.at=NULL,legend.col.at=legend.cex.at,
+                   legend.cex.title='',legend.col.title='',...){
   x = rep(1:ncol(m),each=nrow(m))
   y = rep(nrow(m):1,times=ncol(m))
 
@@ -590,13 +608,13 @@ dotPlot = function(m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','v
   if(!is.null(colColours)){
     if(!is.array(colColours))
       colColours = matrix(colColours,ncol=1)
-    ylim[1] = -ncol(colColours)
+    ylim[1] = -ncol(colColours)*colAnnWidth
   }
 
   if(!is.null(rowColours)){
     if(!is.array(rowColours))
       rowColours = matrix(rowColours,ncol=1)
-    xlim[1] = -ncol(rowColours)
+    xlim[1] = -ncol(rowColours)*rowAnnWidth
   }
 
 
@@ -612,28 +630,30 @@ dotPlot = function(m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','v
   if(scaleWM)
     r = scaleTo(r)
   r = r*max.cex
-  points(x,y,cex=r,col=colfun(m),pch=pch)
+  points(x,y,cex=r,col=colfun(mc),pch=pch)
 
   # add col annotation
+  f = colAnnWidth
   if(!is.null(colColours)){
     for(i in 1:ncol(colColours))
       for(j in 1:nrow(colColours)){
-        rect(j-0.5,0-i,j+0.5,1-i,border = NA,col=colColours[j,i])
+        rect(j-0.5,0-i*f,j+0.5,f-i*f,border = NA,col=colColours[j,i])
       }
 
     if(!is.null(colnames(colColours))){
-      text(nrow(colColours)+1,-(1:ncol(colColours))+0.5,colnames(colColours),adj=c(0,0.5),xpd=T)
+      text(nrow(colColours)+1,-(1:ncol(colColours))*f+f/2,colnames(colColours),adj=c(0,0.5),xpd=T)
     }
   }
 
   # add row annotation
+  f = rowAnnWidth
   if(!is.null(rowColours)){
     for(i in 1:ncol(rowColours))
       for(j in 1:nrow(rowColours)){
-        rect(0-i,nrow(rowColours)-j+1.5,1-i,nrow(rowColours)-j+0.5,border = NA,col=rowColours[j,i])
+        rect(0-i*f,nrow(rowColours)-j+1.5,f-i*f,nrow(rowColours)-j+0.5,border = NA,col=rowColours[j,i])
       }
     if(!is.null(colnames(rowColours))){
-      text(-(1:ncol(rowColours))+0.5,0,colnames(rowColours),srt=90,adj=c(1,0.5),xpd=T)
+      text(-(1:ncol(rowColours))*f+f/2,0,colnames(rowColours),srt=90,adj=c(1,0.5),xpd=T)
     }
   }
   if(par('xaxt')=='s'){
@@ -645,6 +665,38 @@ dotPlot = function(m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','v
     par.out = par(cex=ylab.cex)
     axis(2,nrow(m):1,rownames(m))
     do.call(par,par.out)
+  }
+  # legend
+  legend.col.at
+  if(plot.legend){
+    x = grconvertX(1,'npc','user')
+    y = grconvertY(1,'npc','user')
+
+    if(is.null(legend.cex.at))
+      legend.cex.at = round(seq(min(m),max(m),length.out = 5),digits = 4)
+    if(is.null(legend.col.at))
+      legend.col.at = round(seq(min(mc),max(mc),length.out = 5),digits = 4)
+    if(scaleWM)
+      legend.cex = scaleTo(legend.cex.at,minx = min(m),maxx = max(m))
+    else
+      legend.cex = legend.cex.at
+    legend.cex = legend.cex * max.cex
+    legend.col = colfun(c(min(mc),max(mc),legend.col.at))[-1:-2]
+
+    cexx = legend.cex
+    coll = 'black'
+    if(all(m==mc))
+      coll = legend.col
+    labb = legend.cex.at
+    l = legend(x,y,xpd=NA,pch=19,pt.cex=cexx,col=coll,legend = labb,title=legend.cex.title,bty=par('bty'))
+    if(!all(m==mc)){
+      cexx = 1
+      coll = legend.col
+      if(all(m==mc))
+        coll = legend.col
+      labb = legend.col.at
+      legend(x,l$rect$top-l$rect$h,xpd=NA,pch=19,pt.cex=cexx,col=coll,legend = labb,title=legend.col.title,bty=par('bty'))
+    }
   }
 }
 
