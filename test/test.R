@@ -6,12 +6,13 @@ devtools::load_all()
 # usethis::create_github_token()
 # gitcreds::gitcreds_set()
 # usethis::edit_r_environ()
+options(timeout=400)
 devtools::install_github("iaaka/visutils")
 
-
-git add -u
-git commit -m "improve dotPlot"
-git push -u origin main
+devtools::install_local()
+# git add -u
+# git commit -m "improve dotPlot"
+# git push -u origin main
 ?dotPlot
 
 library(visutils)

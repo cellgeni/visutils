@@ -164,24 +164,39 @@ myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
   ll = sapply(a$obs,length)
   obs = as.data.frame(a$obs[ll==max(ll)],check.names=F)
   rownames(obs) = a$obs[["_index"]]
+  # one way to store factord
   for(fn in names(a$obs[['__categories']])){
     obs[[fn]] = a$obs[['__categories']][[fn]][obs[[fn]]+1]
   }
-
+  # another way to store factord
+  for(fn in names(ll)[ll==2]){
+    if(all(names(a$obs[[fn]]) %in% c("categories","codes"))){
+      obs[[fn]] = a$obs[[fn]]$categories[a$obs[[fn]]$codes+1]
+    }
+  }
 
   ll = sapply(a$var,length)
   var = as.data.frame(a$var[ll==max(ll)],check.names=F)
 
+  # one way to store factord
   for(fn in names(a$var[['__categories']])){
     var[[fn]] = a$var[['__categories']][[fn]][var[[fn]]+1]
   }
-  if(!is.null(var$gene_ids))
-    rownames(var) = var$gene_ids
-  else if (!is.null(var$SYMBOL))
-    rownames(var) = var$SYMBOL
+  # another way to store factord
+  for(fn in names(ll)[ll==2]){
+    if(all(names(a$var[[fn]]) %in% c("categories","codes"))){
+      var[[fn]] = a$var[[fn]]$categories[a$var[[fn]]$codes+1]
+    }
+  }
 
-  var = as.data.frame(a$var[-1:-2],check.names=F)
-  rownames(var) = a$var[["_index"]]
+  if(!is.null(var$gene_ids)){
+    rownames(var) = var$gene_ids
+  }else if (!is.null(var$SYMBOL)){
+    rownames(var) = var$SYMBOL
+  }
+
+  #var = as.data.frame(a$var[-1:-2],check.names=F)
+  #rownames(var) = a$var[["_index"]]
 
   m = a$X
   mtx = sparseMatrix(i=m$indices+1, p=m$indptr,x = as.numeric(m$data),dims = c(nrow(var),nrow(obs)))
