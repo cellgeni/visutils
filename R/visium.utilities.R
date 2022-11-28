@@ -944,7 +944,7 @@ plotNMFCons = function(coefs,cons,clcols=NULL,max.cex = 4.5/14*8,
   parl = par(no.readonly=TRUE)
   par(mar=c(3,9,2.5,0),bty='n',oma=c(0,0,1,0),cex=1,tcl=-0.2,mgp=c(1.2,0.3,0),las=1)
 
-  dotPlot(t(coefs[,o]),rowColours = cbind(clcols[cls[o]]),colColours = clcols,max.cex = max.cex,ylab.cex = ylab.cex,xlab.cex = xlab.cex,scaleWM=F,colfun=colfun)
+  dotPlot(t(coefs[,o]),rowColours = cbind(clcols[cls[o]]),colColours = clcols,max.cex = max.cex,ylab.cex = ylab.cex,xlab.cex = xlab.cex,scaleWM=F,colfun=colfun,plot.legend=FALSE)
 
   slh = cluster::silhouette(cls,dmatrix=1-cons)
   rownames(slh) = names(cls)
@@ -955,7 +955,7 @@ plotNMFCons = function(coefs,cons,clcols=NULL,max.cex = 4.5/14*8,
   par(cex=0.6)
   axis(1)
   par(cex=1,xaxt='n',yaxt='n')
-  dotPlot(cons[o,o],max.cex = 1.3,rowColours = cbind(clcols[cls[o]]),colColours = clcols[cls[o]],main='Consensus clustering matrix')
+  dotPlot(cons[o,o],max.cex = 1.3,rowColours = cbind(clcols[cls[o]]),colColours = clcols[cls[o]],main='Consensus clustering matrix',plot.legend=FALSE)
 
   mtext(title,3,outer = TRUE,line = 0)
   par(parl)
