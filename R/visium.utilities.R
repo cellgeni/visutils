@@ -304,22 +304,31 @@ enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
 #' @return
 #' @export
 plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=TRUE,mode='overlay',reorderByOpacity=FALSE,title.adj=c(0,-0.5),bg='#FFFFFFFF',legend.ncol=1,...){
-  xs = zfun(z)
+  zscaled = zfun(z)
   if(scale.per.colour){
-    for(i in 1:ncol(xs)) xs[,i] = scaleTo(xs[,i])
+    for(i in 1:ncol(zscaled)) zscaled[,i] = scaleTo(zscaled[,i])
   }else{
-    xs = scaleTo(xs)
+    zscaled = scaleTo(zscaled)
   }
-  xs[is.na(xs)] = 0
+  zscaled[is.na(zscaled)] = 0
   cols = col2hex(cols,withAlpha = FALSE)
   if(mode == 'overlay'){
-    col = sapply(1:ncol(xs),function(i)num2col(xs[,i],paste0(cols[i],c('00','FF')),minx = 0,maxx = 1))
+    col = sapply(1:ncol(zscaled),function(i)num2col(zscaled[,i],paste0(cols[i],c('00','FF')),minx = 0,maxx = 1))
     col = overlayColours(col,reorderByOpacity = reorderByOpacity)
     if(!is.null(bg))
       col = overlayColours(cbind(bg,col),reorderByOpacity = FALSE)
   }else if(mode  == 'mean'){
-    col = weightedColourMeans(cols,xs)
-    col = rbind(col2rgb(col),scaleTo(apply(xs,1,max),from=0,to=255))
+    # opacity is proportional to untransformed z, maybe I'll need to add opacity transformation function, lets see
+    opacity = z
+    if(scale.per.colour){
+      for(i in 1:ncol(opacity)) opacity[,i] = scaleTo(opacity[,i])
+    }else{
+      opacity = scaleTo(opacity)
+    }
+    opacity = scaleTo(apply(opacity,1,max),from=0,to=255)
+
+    col = weightedColourMeans(cols,zscaled)
+    col = rbind(col2rgb(col),opacity)
     col = apply(col,2,function(x)rgb(x[1],x[2],x[3],x[4],maxColorValue = 255))
   }else{
     stop("mode should be either mean or overlay")
