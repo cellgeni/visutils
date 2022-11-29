@@ -540,7 +540,7 @@ plotVisiumImg = function(xy,img,scale.factor,cex=1,col='red',border=NA,spot.dist
     img = enhanceImage(img,wb = TRUE)
   }
   if(is.null(spot.dist)){
-    spot.dist = min(dist(xy[,4:5]))*0.5
+    spot.dist = min(dist(xy[,c('imagerow','imagecol')]))*0.5
   }
   xlim. = range(xy$imagecol*scale.factor)
   ylim. = range(nrow(img) - xy$imagerow*scale.factor)
