@@ -287,13 +287,14 @@ enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
 
 #' Plot multiple numerical values (gene expression or cell abundancies) on H&E image
 #'
-#' Values are plotted as a sum of color gradients. Be carefull, result depends on the order of features.
+#' Values are plotted as a sum of color gradients. Be carefull, in overlay mode results can be misleading for spots with two dominant features.
 #'
 #' @param v Seurat object
-#' @param x matrix with values (in columns) to be plotted
+#' @param z matrix with values (in columns) to be plotted
 #' @param cols colour to be used for x columns
-#' @param log.pc numeric, pseudocount to be added before log-transformation. No transformation is applied if NA.
+#' @param zfun function to transform values in z
 #' @param scale.per.colour logical, specifies whether each colour should cover whole range (that is, should x be sclaed per column)
+#' @param mode 'overlay' or 'mean'.
 #' @param reorderByOpacity logical, specifes whether colours should be ordered by increasing opacity prior to summing
 #' @param title.adj legend title adj (to be passed to text function)
 #' @param bg color to use as spot background. NULL (default) for transparent background.
@@ -302,10 +303,8 @@ enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
 #'
 #' @return
 #' @export
-plotVisiumMultyColours = function(v,x,cols=NULL,log.pc=NA,scale.per.colour=TRUE,reorderByOpacity=FALSE,title.adj=c(0,-0.5),bg='#FFFFFFFF',legend.ncol=1,...){
-  xs = x
-  if(!is.na(log.pc))
-    xs = log(x+log.pc)
+plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=TRUE,mode='overlay',reorderByOpacity=FALSE,title.adj=c(0,-0.5),bg='#FFFFFFFF',legend.ncol=1,...){
+  xs = zfun(z)
   if(scale.per.colour){
     for(i in 1:ncol(xs)) xs[,i] = scaleTo(xs[,i])
   }else{
@@ -313,11 +312,18 @@ plotVisiumMultyColours = function(v,x,cols=NULL,log.pc=NA,scale.per.colour=TRUE,
   }
   xs[is.na(xs)] = 0
   cols = col2hex(cols,withAlpha = FALSE)
-  col = sapply(1:ncol(xs),function(i)num2col(xs[,i],paste0(cols[i],c('00','FF')),minx = 0,maxx = 1))
-  col = overlayColours(col,reorderByOpacity = reorderByOpacity)
-  if(!is.null(bg))
-    col = overlayColours(cbind(bg,col),reorderByOpacity = FALSE)
-
+  if(mode == 'overlay'){
+    col = sapply(1:ncol(xs),function(i)num2col(xs[,i],paste0(cols[i],c('00','FF')),minx = 0,maxx = 1))
+    col = overlayColours(col,reorderByOpacity = reorderByOpacity)
+    if(!is.null(bg))
+      col = overlayColours(cbind(bg,col),reorderByOpacity = FALSE)
+  }else if(mode  == 'mean'){
+    col = weightedColourMeans(cols,xs)
+    col = rbind(col2rgb(col),scaleTo(apply(xs,1,max),from=0,to=255))
+    col = apply(col,2,function(x)rgb(x[1],x[2],x[3],x[4],maxColorValue = 255))
+  }else{
+    stop("mode should be either mean or overlay")
+  }
   r = plotVisium(v,col,...)
 
 
@@ -346,8 +352,8 @@ plotVisiumMultyColours = function(v,x,cols=NULL,log.pc=NA,scale.per.colour=TRUE,
                        x0+dx*(c+1),
                        y0-dy*(r+1)+lw*0.8,
                        y0-dy*r-lw*0.8,
-                       zlim = range(x[,i]),fullzlim = range(x[,i]),zfun=ifelse(is.na(log.pc),identity,function(x)log(x+log.pc)),
-                       z2col=function(x)num2col(x,c(col1,col2)),title=colnames(x)[i],title.adj = title.adj)
+                       zlim = range(z[,i]),fullzlim = range(z[,i]),zfun=zfun,
+                       z2col=function(x)num2col(x,c(col1,col2)),title=colnames(z)[i],title.adj = title.adj)
     }
   }
   invisible(r)

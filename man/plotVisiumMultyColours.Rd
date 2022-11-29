@@ -6,10 +6,11 @@
 \usage{
 plotVisiumMultyColours(
   v,
-  x,
+  z,
   cols = NULL,
-  log.pc = NA,
+  zfun = identity,
   scale.per.colour = TRUE,
+  mode = "overlay",
   reorderByOpacity = FALSE,
   title.adj = c(0, -0.5),
   bg = "#FFFFFFFF",
@@ -20,13 +21,15 @@ plotVisiumMultyColours(
 \arguments{
 \item{v}{Seurat object}
 
-\item{x}{matrix with values (in columns) to be plotted}
+\item{z}{matrix with values (in columns) to be plotted}
 
 \item{cols}{colour to be used for x columns}
 
-\item{log.pc}{numeric, pseudocount to be added before log-transformation. No transformation is applied if NA.}
+\item{zfun}{function to transform values in z}
 
 \item{scale.per.colour}{logical, specifies whether each colour should cover whole range (that is, should x be sclaed per column)}
+
+\item{mode}{'overlay' or 'mean'.}
 
 \item{reorderByOpacity}{logical, specifes whether colours should be ordered by increasing opacity prior to summing}
 
@@ -42,5 +45,5 @@ plotVisiumMultyColours(
 
 }
 \description{
-Values are plotted as a sum of color gradients. Be carefull, result depends on the order of features.
+Values are plotted as a sum of color gradients. Be carefull, in overlay mode results can be misleading for spots with two dominant features.
 }
