@@ -23,6 +23,7 @@ log10p1 = function(x){
 #'
 weightedColourMeans = function(cols,weights){
   weights = sweep(weights,1,apply(weights,1,sum),'/')
+  weights[is.na(weights)] = 0
   colrgb = col2rgb(cols)
   z = weights %*% t(colrgb)
   apply(z,1,function(x)rgb(x[1],x[2],x[3],maxColorValue = 255))
