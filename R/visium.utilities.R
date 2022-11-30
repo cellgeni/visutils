@@ -328,6 +328,7 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=T
     opacity = scaleTo(apply(opacity,1,max),from=0,to=255)
 
     col = weightedColourMeans(cols,zscaled)
+    col[is.na(col)] = bg
     col = rbind(col2rgb(col),opacity)
     col = apply(col,2,function(x)rgb(x[1],x[2],x[3],x[4],maxColorValue = 255))
   }else{

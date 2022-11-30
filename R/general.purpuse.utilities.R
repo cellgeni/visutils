@@ -23,10 +23,13 @@ log10p1 = function(x){
 #'
 weightedColourMeans = function(cols,weights){
   weights = sweep(weights,1,apply(weights,1,sum),'/')
+  na = apply(is.na(weights),1,sum)>0
   weights[is.na(weights)] = 0
   colrgb = col2rgb(cols)
   z = weights %*% t(colrgb)
-  apply(z,1,function(x)rgb(x[1],x[2],x[3],maxColorValue = 255))
+  r = apply(z,1,function(x)rgb(x[1],x[2],x[3],maxColorValue = 255))
+  r[na] = NA
+  r
 }
 
 #' 2D density plot
