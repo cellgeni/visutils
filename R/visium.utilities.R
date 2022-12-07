@@ -508,12 +508,12 @@ plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legen
     xl = sapply(split(xy[,1],clusters),mean,na.rm=T)[uclusters]
     yl = sapply(split(xy[,2],clusters),mean,na.rm=T)[uclusters]
 
-    col = 'black'
+    clcol = 'black'
     if(!is.null(cluster.lab2col)){
-      col = cluster.lab2col[uclusters]
-      col[is.na(col)] = 'black'
+      clcol = cluster.lab2col[uclusters]
+      clcol[is.na(clcol)] = 'black'
     }
-    text(xl,yl,uclusters,adj = cluster.lab.adj,cex=cluster.lab.cex,font=cluster.lab.font,col=col)
+    text(xl,yl,uclusters,adj = cluster.lab.adj,cex=cluster.lab.cex,font=cluster.lab.font,col=clcol)
   }
   #cat(nrow(xy),',',ncol(xy),', ',length(z),',',length(col),'\n')
   invisible(data.frame(x=xy[,1],y=xy[,2],z=z,col=col))
