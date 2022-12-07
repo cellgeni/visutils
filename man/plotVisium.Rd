@@ -24,6 +24,8 @@ plotVisium(
   yaxt = "n",
   cluster.lab.adj = c(0.5, 0.5),
   cluster.lab.cex = 1,
+  cluster.lab.font = 1,
+  cluster.lab2col = NULL,
   ...
 )
 }
@@ -63,6 +65,10 @@ plotVisium(
 \item{cluster.lab.adj}{adj parameterfor cluster labels (see  \code{text})}
 
 \item{cluster.lab.cex}{size of cluster labels}
+
+\item{cluster.lab.font}{font of cluster labels}
+
+\item{cluster.lab2col}{named vector that maps cluster names to colors to be used as text colors. All labels are black if NULL (default). Lables not mentioned in here will be shown in black as well.}
 
 \item{...}{other arguments to be passed to graphical functions (see Details)}
 }

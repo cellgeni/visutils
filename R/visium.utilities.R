@@ -393,6 +393,8 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=T
 #' @param xaxt,yaxt type of axis (see \code{par}), no axis are drown by default
 #' @param cluster.lab.adj adj parameterfor cluster labels (see  \code{text})
 #' @param cluster.lab.cex size of cluster labels
+#' @param cluster.lab.font font of cluster labels
+#' @param cluster.lab2col named vector that maps cluster names to colors to be used as text colors. All labels are black if NULL (default). Lables not mentioned in here will be shown in black as well.
 #' @param ... other arguments to be passed to graphical functions (see Details)
 #'
 #' @details Plots spots on top of H&E image, if type is 'img' (see \code{\link{plotVisiumImg}} for additional parameters),
@@ -403,7 +405,8 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=T
 #' @return
 #' @export
 plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legend=TRUE,zlim=NULL,zfun = identity,spot.filter=NULL,
-                      num.leg.tic=NULL,label.clusters=FALSE,legend.args=list(),randomize.points=FALSE,order.points.by.z=FALSE,xaxt='n',yaxt='n',cluster.lab.adj=c(0.5,0.5),cluster.lab.cex=1,...){
+                      num.leg.tic=NULL,label.clusters=FALSE,legend.args=list(),randomize.points=FALSE,order.points.by.z=FALSE,xaxt='n',yaxt='n',
+                      cluster.lab.adj=c(0.5,0.5),cluster.lab.cex=1,cluster.lab.font=1,cluster.lab2col=NULL,...){
   if('Seurat' %in% class(v) & type=='xy'){
     if(is.na(z[1]))
       z = as.character(v$seurat_clusters)
@@ -425,12 +428,12 @@ plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legen
   border= recycle(border,1:nrow(xy))
   # subset spots
   if(!is.null(spot.filter)){
+    if(length(label.clusters) == nrow(xy))
+      label.clusters = label.clusters[spot.filter]
     xy = xy[spot.filter,]
     z = z[spot.filter]
     cex = cex[spot.filter]
     border = border[spot.filter]
-    if(length(label.clusters) == length(spot.filter))
-      label.clusters = label.clusters[spot.filter]
   }
   # make color
   if(is.factor(z))
@@ -498,16 +501,19 @@ plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legen
   if(is.character(label.clusters) || (label.clusters[1] & is.character(z))){
     if(is.character(label.clusters)){
       clusters = label.clusters
-      if(!is.null(spot.filter)){
-        clusters = clusters[spot.filter]
-      }
     }else
       clusters = z
     uclusters = unique(clusters)
 
     xl = sapply(split(xy[,1],clusters),mean,na.rm=T)[uclusters]
     yl = sapply(split(xy[,2],clusters),mean,na.rm=T)[uclusters]
-    text(xl,yl,uclusters,adj = cluster.lab.adj,cex=cluster.lab.cex)
+
+    col = 'black'
+    if(!is.null(cluster.lab2col)){
+      col = cluster.lab2col[uclusters]
+      col[is.na(col)] = 'black'
+    }
+    text(xl,yl,uclusters,adj = cluster.lab.adj,cex=cluster.lab.cex,font=cluster.lab.font,col=col)
   }
   #cat(nrow(xy),',',ncol(xy),', ',length(z),',',length(col),'\n')
   invisible(data.frame(x=xy[,1],y=xy[,2],z=z,col=col))
