@@ -299,11 +299,12 @@ enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
 #' @param title.adj legend title adj (to be passed to text function)
 #' @param bg color to use as spot background. NULL (default) for transparent background.
 #' @param legend.ncol number of legend columns. Set to 0 to suppress legend plotting.
+#' @param min.opacity minumal spot opacity for mean mode (from 0 to 255)
 #' @param ... other parameters to be passed to plotVisium
 #'
 #' @return
 #' @export
-plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=TRUE,mode='overlay',reorderByOpacity=FALSE,title.adj=c(0,-0.5),bg='#FFFFFFFF',legend.ncol=1,...){
+plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=TRUE,mode='overlay',reorderByOpacity=FALSE,min.opacity=0,title.adj=c(0,-0.5),bg='#FFFFFFFF',legend.ncol=1,...){
   zscaled = zfun(z)
   if(scale.per.colour){
     for(i in 1:ncol(zscaled)) zscaled[,i] = scaleTo(zscaled[,i])
@@ -325,8 +326,9 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=T
     }else{
       opacity = scaleTo(opacity)
     }
-    opacity = scaleTo(apply(opacity,1,max,na.rm=TRUE),from=0,to=255)
+    opacity = scaleTo(apply(opacity,1,max,na.rm=TRUE),from=min.opacity,to=255)
     opacity[is.na(opacity)] = 0
+
 
     col = weightedColourMeans(cols,zscaled)
     col[is.na(col)] = bg

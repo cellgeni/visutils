@@ -12,6 +12,7 @@ plotVisiumMultyColours(
   scale.per.colour = TRUE,
   mode = "overlay",
   reorderByOpacity = FALSE,
+  min.opacity = 0,
   title.adj = c(0, -0.5),
   bg = "#FFFFFFFF",
   legend.ncol = 1,
@@ -32,6 +33,8 @@ plotVisiumMultyColours(
 \item{mode}{'overlay' or 'mean'.}
 
 \item{reorderByOpacity}{logical, specifes whether colours should be ordered by increasing opacity prior to summing}
+
+\item{min.opacity}{minumal spot opacity for mean mode (from 0 to 255)}
 
 \item{title.adj}{legend title adj (to be passed to text function)}
 
