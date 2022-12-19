@@ -109,13 +109,14 @@ trimQ = function(x,q){
 #' Sorts t numerically if possible, alphabetically otherwise.
 #'
 #' @param t input character vector
-#' @param bpal RColorBrewer pallete to be used if number of colors less than 10
+#' @param bpal RColorBrewer pallete to be used if number of colors allows
 #' @param colfun pallete function to be used in number of colors 10 or more
 #' @param palette logical, specifies whether pallete (color per unique value in t) or colour along t should be returned
+#' @param random.seed seed to be set befor color generation (for stochastic colfuns)
 #'
 #' @return names colour vector
 #' @export
-char2col = function(t,bpal='Set1',colfun=rainbow,palette=TRUE){
+char2col = function(t,bpal='Set1',colfun=randomcoloR::distinctColorPalette,palette=TRUE,random.seed=1234){
   torig = t
   t = sort(unique(t))
   suppressWarnings({
@@ -123,10 +124,12 @@ char2col = function(t,bpal='Set1',colfun=rainbow,palette=TRUE){
       t = as.character(sort(as.integer(t)))
     }
   })
-  if(length(t)<10)
+  if(length(t) <= RColorBrewer::brewer.pal.info[bpal,'maxcolors'])
     r=setNames(RColorBrewer::brewer.pal(max(3,length(t)),bpal),t)[1:length(t)]
-  else
+  else{
+    set.seed(random.seed)
     r=setNames(colfun(length(t)),t)
+  }
   if(!palette)
     r = r[torig]
   r

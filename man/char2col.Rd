@@ -4,16 +4,24 @@
 \alias{char2col}
 \title{Creates palette for character vector}
 \usage{
-char2col(t, bpal = "Set1", colfun = rainbow, palette = TRUE)
+char2col(
+  t,
+  bpal = "Set1",
+  colfun = randomcoloR::distinctColorPalette,
+  palette = TRUE,
+  random.seed = 1234
+)
 }
 \arguments{
 \item{t}{input character vector}
 
-\item{bpal}{RColorBrewer pallete to be used if number of colors less than 10}
+\item{bpal}{RColorBrewer pallete to be used if number of colors allows}
 
 \item{colfun}{pallete function to be used in number of colors 10 or more}
 
 \item{palette}{logical, specifies whether pallete (color per unique value in t) or colour along t should be returned}
+
+\item{random.seed}{seed to be set befor color generation (for stochastic colfuns)}
 }
 \value{
 names colour vector
