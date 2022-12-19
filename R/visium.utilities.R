@@ -387,6 +387,7 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=T
 #' @param zlim numerical vector with two items, used to trim z
 #' @param zfun function, transformation (log1p, sqrt, ect) of z (used only if z is numerical). Identity by default.
 #' @param spot.filter logical vector, specifies which spots should be plotted
+#' @param pch point type to be used with type='xy'
 #' @param num.leg.tic numerical, desired number of tics in gradient legend
 #' @param label.clusters label cluster on top of spots. Either logical, or character, if latter should provide names of each spot, it this case could be different from \code{z}
 #' @param legend.args list of arguments to be passed to legend function (for categorical z), only title is used for numerical z.
@@ -397,6 +398,7 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=T
 #' @param cluster.lab.cex size of cluster labels
 #' @param cluster.lab.font font of cluster labels
 #' @param cluster.lab2col named vector that maps cluster names to colors to be used as text colors. All labels are black if NULL (default). Lables not mentioned in here will be shown in black as well.
+#' @param show.cluster.sizes logical, specifies whether number of cell per cluster should be shown in the legend
 #' @param ... other arguments to be passed to graphical functions (see Details)
 #'
 #' @details Plots spots on top of H&E image, if type is 'img' (see \code{\link{plotVisiumImg}} for additional parameters),
@@ -406,9 +408,9 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=T
 #'
 #' @return
 #' @export
-plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legend=TRUE,zlim=NULL,zfun = identity,spot.filter=NULL,
+plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legend=TRUE,zlim=NULL,zfun = identity,spot.filter=NULL,pch=16,
                       num.leg.tic=NULL,label.clusters=FALSE,legend.args=list(),randomize.points=FALSE,order.points.by.z=FALSE,xaxt='n',yaxt='n',
-                      cluster.lab.adj=c(0.5,0.5),cluster.lab.cex=1,cluster.lab.font=1,cluster.lab2col=NULL,...){
+                      cluster.lab.adj=c(0.5,0.5),cluster.lab.cex=1,cluster.lab.font=1,cluster.lab2col=NULL,show.cluster.sizes=FALSE,...){
   if('Seurat' %in% class(v) & type=='xy'){
     if(is.na(z[1]))
       z = as.character(v$seurat_clusters)
@@ -481,7 +483,7 @@ plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legen
       if(length(label.clusters) == length(o))
         label.clusters = label.clusters[o]
     }
-    plot(xy[,1:2],cex=cex,col=col,xaxt=xaxt,yaxt=yaxt,...)
+    plot(xy[,1:2],cex=cex,col=col,xaxt=xaxt,yaxt=yaxt,pch=pch,...)
   }
   #legend
   if(plot.legend){
@@ -494,6 +496,9 @@ plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legen
       legend.args.def = list(xpd=NA,pch=19,col=z2col,legend=names(z2col),bty=par('bty'))
       for(n in names(legend.args.def))
         if(is.null(legend.args[[n]])) legend.args[[n]] = legend.args.def[[n]]
+      if(show.cluster.sizes){
+        legend.args$legend = paste0(legend.args$legend,' (',table(col)[z2col],')')
+      }
       do.call(legend,legend.args)
     }else{
       # numerical
