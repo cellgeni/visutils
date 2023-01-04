@@ -838,20 +838,25 @@ getReadCoverage = function(bams,chr,start,end,strand=NA){
 #'
 #' @param r read coverage; output of \code{\link{getReadCoverage}}
 #' @param min.junc.cov numeric, plots only junctions (introns) with coverage not less than \code{min.junc.cov}
+#' #' @param min.junc.cov.f numeric, plots only junctions (introns) with coverage not less than \code{min.junc.cov.f} of maximal junction coverage in the region
 #' @param plot.junc.only.within logical, plot only juctions within the region
 #' @param ylim,xlim see \code{\link{plot}}
 #' @param reverse reverse x coordinates
-#' @param junc.col colour for junction line
+#' @param junc.col colour for junction line. Individual color could be specified for each junction
 #' @param junc.lwd line width for jucntion line
 #' @param ... other parameters for plot function
 #'
 #' @return
 #' @export
-plotReadCov = function(r,min.junc.cov=0,plot.junc.only.within=FALSE,ylim=NULL,xlim=range(r$x),reverse=FALSE,junc.col='red',junc.lwd=3,...){
+plotReadCov = function(r,min.junc.cov=0,min.junc.cov.f=0,plot.junc.only.within=FALSE,ylim=NULL,xlim=range(r$x),reverse=FALSE,junc.col='red',junc.lwd=3,...){
   f = r$x >= xlim[1] & r$x <=xlim[2]
   r$x = r$x[f]
   r$cov = r$cov[f]
+  r$juncs$col = junc.col
   r$juncs = r$juncs[r$juncs$start <= xlim[2] | r$juncs$end >=xlim[1],]
+
+  r$juncs = r$juncs[r$juncs$score >= min.junc.cov & (!plot.junc.only.within || (r$juncs$start > min(xlim) & r$juncs$end< max(xlim))),]
+  r$juncs = r$juncs[r$juncs$score >= min.junc.cov.f * max(r$juncs$score),]
 
   start = r$x[1]
   end = r$x[length(r$x)]
@@ -864,8 +869,7 @@ plotReadCov = function(r,min.junc.cov=0,plot.junc.only.within=FALSE,ylim=NULL,xl
   polygon(r$x,r$cov,col = 'gray',border=NA)
   if(nrow(r$juncs)>0)
     for(i in 1:nrow(r$juncs))
-      if(r$juncs$score[i] >= min.junc.cov & (!plot.junc.only.within || (r$juncs$start[i] > min(xlim) & r$juncs$end[i]< max(xlim))))
-        plotArc(r$juncs$start[i],r$juncs$end[i],r$juncs$score[i],col=junc.col,lwd=junc.lwd)
+        plotArc(r$juncs$start[i],r$juncs$end[i],r$juncs$score[i],col=r$juncs$col,lwd=junc.lwd)
 }
 
 #' Plots parabolic arc
