@@ -11,7 +11,7 @@ devtools::install_github("iaaka/visutils")
 
 devtools::install_local()
 # git add -u
-# git commit -m "update plotVisium"
+# git commit -m "update plotReadCov"
 # git push -u origin main
 ?dotPlot
 

@@ -869,7 +869,7 @@ plotReadCov = function(r,min.junc.cov=0,min.junc.cov.f=0,plot.junc.only.within=F
   polygon(r$x,r$cov,col = 'gray',border=NA)
   if(nrow(r$juncs)>0)
     for(i in 1:nrow(r$juncs))
-        plotArc(r$juncs$start[i],r$juncs$end[i],r$juncs$score[i],col=r$juncs$col,lwd=junc.lwd)
+        plotArc(r$juncs$start[i],r$juncs$end[i],r$juncs$score[i],col=r$juncs$col[i],lwd=junc.lwd)
 }
 
 #' Plots parabolic arc
