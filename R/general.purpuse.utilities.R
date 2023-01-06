@@ -117,10 +117,11 @@ hist2D = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange',
 #' plot(d1,d3,pch=16,cex=0.2)#,xlim=lim,ylim=lim)
 #' abline(a=0,b=1,col='red')
 pointKde2d = function(x,y,kernel=dnorm,approx=length(x)>2000,random_seed=123,k=min(length(x),1000)){
+  require(MASS)
   r = c()
   if(approx){
     set.seed(random_seed)
-    neighs = sample(nx,k)
+    neighs = sample(length(x),k)
     xn = x[neighs]
     yn = y[neighs]
   }else{
