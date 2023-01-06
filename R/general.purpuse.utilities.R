@@ -135,6 +135,41 @@ char2col = function(t,bpal='Set1',colfun=randomcoloR::distinctColorPalette,palet
   r
 }
 
+#' Maps distance matrix into colour space
+#'
+#' use MDS (via cmdscale) to map objects into colour space
+#'
+#' @param d distance matrix to be used with MDS
+#' @param use3D logical, specifies whether whole [0,1]^3 space should be used. About equally-bright 2D space is used otherwise (default)
+#' @param orderBySim logical, whether objects should be ordered by similarity. Preserves original order otherwise (default)
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' d=1-cor(t(mtcars))
+#' c=getColoursByDistance(d,F)
+#' plot(cmdscale(d),col=c,pch=19)
+getColoursByDistance = function(d,use3D=FALSE,orderBySim=FALSE){
+  if(use3D){
+    mds = cmdscale(d,k=3)
+    mds[,1] = scaleTo(mds[,1])
+    mds[,2] = scaleTo(mds[,2])
+    mds[,3] = scaleTo(mds[,3])
+    col=rgb(mds[,1],mds[,2],mds[,3],maxColorValue = 1)
+  }else{
+    mds = cmdscale(d,k=2)
+    mds[,1] = scaleTo(mds[,1])
+    mds[,2] = scaleTo(mds[,2])
+    col=rgb(mds[,1],mds[,2],scaleTo(-mds[,1]-mds[,2]),maxColorValue = 1)
+  }
+  if(orderBySim){
+    o = cmdscale(d,k=1)
+    col=setNames(col,rownames(mds))[rownames(o)[order(o[,1])]]
+  }
+  col
+}
+
 #' Recycle vector v along i
 #'
 #' @param v vector to be recycled
