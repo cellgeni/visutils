@@ -49,8 +49,8 @@ weightedColourMeans = function(cols,weights){
 #' @param ... other arguments for plot function
 #'
 #' @return list bith bins and frequencies (invisible)
-#' @export plot.as.hm
-plot.as.hm = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange','red'),zfun=identity,leg.title='',num.leg.tic=NULL,legend=TRUE,trimZq=0,xlim=NULL,ylim=NULL,new=TRUE,xlab=deparse(substitute(x)),ylab=deparse(substitute(y)),...){
+#' @export hist2D
+hist2D = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange','red'),zfun=identity,leg.title='',num.leg.tic=NULL,legend=TRUE,trimZq=0,xlim=NULL,ylim=NULL,new=TRUE,xlab=deparse(substitute(x)),ylab=deparse(substitute(y)),...){
   xlab;ylab;
   f = !is.na(x) & !is.infinite(x) & !is.na(y) & !is.infinite(y)
   if(!is.null(xlim)) f = f & x >= xlim[1] & x <= xlim[2]
@@ -83,7 +83,64 @@ plot.as.hm = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','oran
   if(legend)
     plotColorLegend2(grconvertX(1,'npc','nfc'),1,grconvertY(0,'npc','nfc'),grconvertY(1,'npc','nfc'),
                      range(z),range(z),zfun,z2col=z2col,leg=num.leg.tic,title=leg.title)
-  invisible(list(xbins=xbins,ybins=ybins,z=z))
+  invisible(list(x=(xbins[-1]+xbins[-length(xbins)])/2,
+                 y=(ybins[-1]+ybins[-length(ybins)])/2,
+                 z=z,xbins=xbins,ybins=ybins))
+}
+
+
+#' Estimates density at specified 2D points
+#'
+#' similar to MASS::kde2d but calculates density for supplied points
+#'
+#' @param x,y data coordinates
+#' @param kernel kernel to be used (dnorm by default)
+#' @param approx logical, should density be estimated on subset of point. Approximate mode is much faster for large (length(x)>5000) datasets
+#' @param random_seed random seed to chose subset in approximate mode
+#' @param k subset size to use in approximate mode. 1000 is good starting point
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' x = rnorm(10000,mean = c(-300,300,300),sd=100)
+#' y = rnorm(10000,x*c(-1,1),sd=100)
+#' system.time(d1 <- pointKde2d(x,y,approx = F))
+#' system.time(d2 <- pointKde2d(x,y,approx = T,k=100))
+#' system.time(d3 <- pointKde2d(x,y,approx = T,k=1000))
+#'
+#' par(mfrow=c(2,2))
+#' plot(x,y,col=num2col(d1),pch=19,cex=0.2)
+#' plot(x,y,col=num2col(d2),pch=19,cex=0.2)
+#' plot(x,y,col=num2col(d3),pch=19,cex=0.2)
+#'
+#' plot(d1,d3,pch=16,cex=0.2)#,xlim=lim,ylim=lim)
+#' abline(a=0,b=1,col='red')
+pointKde2d = function(x,y,kernel=dnorm,approx=length(x)>2000,random_seed=123,k=min(length(x),1000)){
+  r = c()
+  if(approx){
+    set.seed(random_seed)
+    neighs = sample(nx,k)
+    xn = x[neighs]
+    yn = y[neighs]
+  }else{
+    xn = x
+    yn = y
+  }
+
+  h = c(bandwidth.nrd(xn), bandwidth.nrd(yn))
+  h = h/4
+  xn = xn/h[1]
+  yn = yn/h[2]
+  x = x/h[1]
+  y = y/h[2]
+
+  for(i in 1:length(x)){
+    xx = (x[i]-xn)
+    yy = (y[i]-yn)
+    r[i] = sum(kernel(xx)*kernel(yy))
+  }
+  r/(length(xn) * h[1L] * h[2L])
 }
 
 #' Trim by quantiles

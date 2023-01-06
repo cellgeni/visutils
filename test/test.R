@@ -16,6 +16,4 @@ devtools::install_local()
 ?dotPlot
 
 library(visutils)
-?plotNMFCons
-# ?visutils
 
