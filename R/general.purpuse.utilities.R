@@ -114,7 +114,7 @@ hist2D = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange',
 #' plot(x,y,col=num2col(d2),pch=19,cex=0.2)
 #' plot(x,y,col=num2col(d3),pch=19,cex=0.2)
 #'
-#' plot(d1,d3,pch=16,cex=0.2)#,xlim=lim,ylim=lim)
+#' plot(d1,d3,pch=16,cex=0.2)
 #' abline(a=0,b=1,col='red')
 pointKde2d = function(x,y,kernel=dnorm,approx=length(x)>2000,random_seed=123,k=min(length(x),1000)){
   require(MASS)
@@ -221,9 +221,10 @@ getColoursByDistance = function(d,use3D=FALSE,orderBySim=FALSE){
     mds[,2] = scaleTo(mds[,2])
     col=rgb(mds[,1],mds[,2],scaleTo(-mds[,1]-mds[,2]),maxColorValue = 1)
   }
+  col=setNames(col,rownames(mds))
   if(orderBySim){
     o = cmdscale(d,k=1)
-    col=setNames(col,rownames(mds))[rownames(o)[order(o[,1])]]
+    col = col[order(o[,1])]
   }
   col
 }
