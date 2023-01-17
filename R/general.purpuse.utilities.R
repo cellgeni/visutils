@@ -129,7 +129,7 @@ pointKde2d = function(x,y,kernel=dnorm,approx=length(x)>2000,random_seed=123,k=m
     yn = y
   }
 
-  h = c(bandwidth.nrd(xn), bandwidth.nrd(yn))
+  h = c(bandwidth.nrd.not0(xn), bandwidth.nrd.not0(yn))
   h = h/4
   xn = xn/h[1]
   yn = yn/h[2]
@@ -143,6 +143,52 @@ pointKde2d = function(x,y,kernel=dnorm,approx=length(x)>2000,random_seed=123,k=m
   }
   r/(length(xn) * h[1L] * h[2L])
 }
+
+#' Identify optimal bandwidth via normal distribution
+#'
+#' ensure that result is not zero: removes the most frequent value in x if bandwidth.nrd return zero
+#'
+#' @param x a data vector
+#'
+#' @return
+#' @export
+#'
+#' @examples
+bandwidth.nrd.not0 = function (x) {
+  repeat{
+    if(length(x)<2) return(NA)
+    r = bandwidth.nrd(x)
+    if(r>0) return(r)
+    t = sort(table(x),decreasing = T)
+    if(t[1]/length(x) > 0.5){
+      x = x[x != names(t)[1]]
+    }
+  }
+}
+
+#' Scatterplot wih point density shown by colour
+#'
+#' @param x,y point coordinates
+#' @param pch,bty,log parameters of plot function
+#' @param ... other parameters to be passed to plot
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plotPointDensity = function(x,y,pch=16,bty='n',log='',...){
+  x.=x
+  y.=y
+  if(grepl('x',log)){
+    x. = log(x.)
+  }
+  if(grepl('y',log)){
+    y. = log(y.)
+  }
+  c = pointKde2d(x.,y.)
+  plot(x,y,col=num2col(c),pch=pch,bty=bty,log=log,...)
+}
+
 
 #' Trim by quantiles
 #'
