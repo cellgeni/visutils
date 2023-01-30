@@ -58,6 +58,7 @@ symbols.pie = function(x,y,r,d,cols,border=NA,alpha0=0){
   r = recycle(r,1:length(x))
   d = sweep(d,1,apply(d,1,sum),'/')*2*pi
   for(i in 1:nrow(d)){
+    if(any(is.na(d[i])) || any(is.nan(d[i])) || any(is.infinite(d[i]))) next
     a = alpha0
     for(j in 1:ncol(d)){
       if(d[i,j]>0){
@@ -408,11 +409,11 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=T
 #'
 #' @return
 #' @export
-plotVisium = function(v,z=NA,cex=1,type='img',border=NA,z2col=num2col,plot.legend=TRUE,zlim=NULL,zfun = identity,spot.filter=NULL,pch=16,
+plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.legend=TRUE,zlim=NULL,zfun = identity,spot.filter=NULL,pch=16,
                       num.leg.tic=NULL,label.clusters=FALSE,legend.args=list(),randomize.points=FALSE,order.points.by.z=FALSE,xaxt='n',yaxt='n',
                       cluster.lab.adj=c(0.5,0.5),cluster.lab.cex=1,cluster.lab.font=1,cluster.lab2col=NULL,show.cluster.sizes=FALSE,...){
   if('Seurat' %in% class(v) & type=='xy'){
-    if(is.na(z[1]))
+    if(is.null(z))
       z = as.character(v$seurat_clusters)
     v = v@reductions$umap@cell.embeddings
   }

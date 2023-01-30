@@ -1,9 +1,8 @@
 removeExoRNA_ = function(m,ann,nnls){
   m = as.matrix(m)
   for(a in colnames(nnls$nnls)){
-    pb = rowMeans(m[,ann ==a])
     f = ann != a
-    m[,f] = m[,f] - matrix(pb,ncol=1) %*% matrix(nnls$nnls[f,a],nrow=1)
+    m[,f] = m[,f] - nnls$whole.pb[,a,drop=FALSE] %*% matrix(nnls$nnls[f,a],nrow=1)
   }
   m = round(m)
   m[m<0] = 0
@@ -12,7 +11,7 @@ removeExoRNA_ = function(m,ann,nnls){
 }
 
 
-removeExoRNA = function(m,ann,is.tissue,n=1,normsd = T,min.gcounts=500,min.spots=10){
+removeExoRNA = function(m,ann,is.tissue,n=1,normsd = T,min.gcounts=500,min.spots=10,per.spot.norm=FALSE,normfun=sd){
   # remove small ann types
   t = table(ann)
   small.anns = names(t)[t<min.spots]
@@ -27,7 +26,7 @@ removeExoRNA = function(m,ann,is.tissue,n=1,normsd = T,min.gcounts=500,min.spots
   cat('0; total=',sum(m),'; non-zero=',length(m@x),'\n',sep='')
   m = as.matrix(m)
   for(i in 1:n){
-    nnls = rnaNNLS.by.ann(m,ann,is.tissue,normsd = normsd,min.gcounts=min.gcounts)
+    nnls = rnaNNLS.by.ann(m,ann,is.tissue,normsd = normsd,min.gcounts=min.gcounts,per.spot.norm = per.spot.norm,normfun=normfun)
     m = removeExoRNA_(m,ann,nnls)
     cat(i,'; total=',sum(m),'; non-zero=',length(m@x),'\n',sep='')
     nnls$vis = m
@@ -37,10 +36,10 @@ removeExoRNA = function(m,ann,is.tissue,n=1,normsd = T,min.gcounts=500,min.spots
 }
 
 
-rnaNNLS = function(cnt,pb,normsd=TRUE){
+rnaNNLS = function(cnt,pb,normsd=TRUE,normfun=sd){
   require(nnls)
   if(normsd){
-    w = apply(cnt,1,sd)
+    w = apply(cnt,1,normfun)
     cnt = sweep(cnt,1,w,'/')
     pb = sweep(pb,1,w,'/')
   }
@@ -54,19 +53,25 @@ rnaNNLS = function(cnt,pb,normsd=TRUE){
 }
 
 
-rnaNNLS.by.ann = function(v,ann,is.tissue,normsd=TRUE,min.gcounts=500){
+rnaNNLS.by.ann = function(v,ann,is.tissue,normsd=TRUE,min.gcounts=500,per.spot.norm=FALSE,normfun=sd){
   if(is(v,'Seurat')){
     x = as.matrix(v@assays$Spatial@counts)
     is.tissue = v$is.tissue
   }else
-    x = (v)
+    x = v
 
   is.tissue = as.logical(is.tissue)
 
+  xx = x
+  if(per.spot.norm){
+    total = colSums(xx)
+    xx = sweep(xx,2,total,'/')*mean(total)
+  }
+
   tot = rowSums(x)
-  x = x[tot>=min.gcounts,]
-  pb = calcColSums(x[,is.tissue],ann[is.tissue],mean = TRUE)
-  list(nnls=rnaNNLS(x,pb,normsd=normsd),pb=pb)
+  spotfilter = tot>=min.gcounts
+  pb = calcColSums(xx[,is.tissue],ann[is.tissue],mean = TRUE)
+  list(nnls=rnaNNLS(x[spotfilter,],pb[spotfilter,],normsd=normsd,normfun=normfun),pb=pb[spotfilter,],whole.pb=pb)
 }
 
 
