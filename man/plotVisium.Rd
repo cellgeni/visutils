@@ -6,7 +6,7 @@
 \usage{
 plotVisium(
   v,
-  z = NA,
+  z = NULL,
   cex = 1,
   type = "img",
   border = NA,

@@ -978,7 +978,7 @@ getReadCoverage = function(bams,chr,start,end,strand=NA){
 #'
 #' @param r read coverage; output of \code{\link{getReadCoverage}}
 #' @param min.junc.cov numeric, plots only junctions (introns) with coverage not less than \code{min.junc.cov}
-#' #' @param min.junc.cov.f numeric, plots only junctions (introns) with coverage not less than \code{min.junc.cov.f} of maximal junction coverage in the region
+#' @param min.junc.cov.f numeric, plots only junctions (introns) with coverage not less than \code{min.junc.cov.f} of maximal junction coverage in the region
 #' @param plot.junc.only.within logical, plot only juctions within the region
 #' @param ylim,xlim see \code{\link{plot}}
 #' @param reverse reverse x coordinates
@@ -995,7 +995,7 @@ plotReadCov = function(r,min.junc.cov=0,min.junc.cov.f=0,plot.junc.only.within=F
   r$juncs$col = junc.col
   r$juncs = r$juncs[r$juncs$start <= xlim[2] | r$juncs$end >=xlim[1],]
 
-  r$juncs = r$juncs[r$juncs$score >= min.junc.cov & (!plot.junc.only.within || (r$juncs$start > min(xlim) & r$juncs$end< max(xlim))),]
+  r$juncs = r$juncs[r$juncs$score >= min.junc.cov & (!plot.junc.only.within | (r$juncs$start > xlim[1] & r$juncs$end < xlim[2])),]
   r$juncs = r$juncs[r$juncs$score >= min.junc.cov.f * max(r$juncs$score),]
 
   start = r$x[1]

@@ -20,8 +20,9 @@ plotReadCov(
 \arguments{
 \item{r}{read coverage; output of \code{\link{getReadCoverage}}}
 
-\item{min.junc.cov}{numeric, plots only junctions (introns) with coverage not less than \code{min.junc.cov}
-#' @param min.junc.cov.f numeric, plots only junctions (introns) with coverage not less than \code{min.junc.cov.f} of maximal junction coverage in the region}
+\item{min.junc.cov}{numeric, plots only junctions (introns) with coverage not less than \code{min.junc.cov}}
+
+\item{min.junc.cov.f}{numeric, plots only junctions (introns) with coverage not less than \code{min.junc.cov.f} of maximal junction coverage in the region}
 
 \item{plot.junc.only.within}{logical, plot only juctions within the region}
 
