@@ -11,7 +11,7 @@ devtools::install_github("iaaka/visutils")
 
 devtools::install_local()
 # git add -u
-# git commit -m "fix cex in plot"
+# git commit -m "fix cex in plotVisiumImg"
 # git push -u origin main
 ?dotPlot
 
