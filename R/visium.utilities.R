@@ -573,7 +573,7 @@ plotVisiumImg = function(xy,img,scale.factor,spot.radius,cex=1,col='red',border=
   }
   if(is.null(spot.dist)){
     #spot.dist = min(dist(xy[,c('imagerow','imagecol')]))*0.5
-    spot.dist = spot.radius*max(dim(img))/scale.factors/2
+    spot.dist = spot.radius*max(dim(img))/scale.factor/2
   }
   xlim. = range(xy$imagecol*scale.factor)
   ylim. = range(nrow(img) - xy$imagerow*scale.factor)
