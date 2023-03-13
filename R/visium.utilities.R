@@ -463,7 +463,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
   }
   # plot
   if(type=='img'){
-    xy=plotVisiumImg(xy,v@images$slice1@image,v@images$slice1@scale.factors$lowres,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,...)
+    xy=plotVisiumImg(xy,v@images$slice1@image,v@images$slice1@scale.factors$lowres,v@images$slice1@spot.radius,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,...)
   }
   if(type=='hex'){
     xy=plotVisiumHex(xy,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,...)
@@ -533,7 +533,8 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
 #'
 #' @param xy seu@images$slice1@coordinates
 #' @param img image (3D array)
-#' @param scale.factor seu@images$slice1@scale.factors$lowres
+#' @param scale.factor see @images$slice1@scale.factors$lowres
+#' @param spot.radius see @images$slice1@spot.radius
 #' @param cex spot size
 #' @param col spot color
 #' @param border color of spot border
@@ -550,7 +551,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
 #'
 #' @return
 #' @export
-plotVisiumImg = function(xy,img,scale.factor,cex=1,col='red',border=NA,spot.dist=NULL,img.alpha=1,xlim=NULL,
+plotVisiumImg = function(xy,img,scale.factor,spot.radius,cex=1,col='red',border=NA,spot.dist=NULL,img.alpha=1,xlim=NULL,
                          ylim=NULL,symmetric.lims=TRUE,xlab='',ylab='',pie.fracs=NULL,pie.cols=NULL,pie.min.frac=0.05,
                          he.img.width=NULL,he.grayscale=FALSE,...){
   # remove on new update
@@ -571,7 +572,8 @@ plotVisiumImg = function(xy,img,scale.factor,cex=1,col='red',border=NA,spot.dist
     img = enhanceImage(img,wb = TRUE)
   }
   if(is.null(spot.dist)){
-    spot.dist = min(dist(xy[,c('imagerow','imagecol')]))*0.5
+    #spot.dist = min(dist(xy[,c('imagerow','imagecol')]))*0.5
+    spot.dist = v@images$slice1@spot.radius*max(dim(img))/scale.factors/2
   }
   xlim. = range(xy$imagecol*scale.factor)
   ylim. = range(nrow(img) - xy$imagerow*scale.factor)

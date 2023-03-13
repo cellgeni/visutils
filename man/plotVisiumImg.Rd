@@ -8,6 +8,7 @@ plotVisiumImg(
   xy,
   img,
   scale.factor,
+  spot.radius,
   cex = 1,
   col = "red",
   border = NA,
@@ -31,7 +32,9 @@ plotVisiumImg(
 
 \item{img}{image (3D array)}
 
-\item{scale.factor}{seu@images$slice1@scale.factors$lowres}
+\item{scale.factor}{see @images$slice1@scale.factors$lowres}
+
+\item{spot.radius}{see @images$slice1@spot.radius}
 
 \item{cex}{spot size}
 
