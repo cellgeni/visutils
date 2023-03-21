@@ -96,10 +96,10 @@ mergeSpots = function(v,gr){
   object@assays$Spatial@meta.features = v@assays$Spatial@meta.features
 
   cols = setdiff(colnames(v@meta.data),c(colnames(object@meta.data)))
-  object@meta.data = cbind(object@meta.data,v@meta.data[rownames(object@meta.data),cols])
+  object@meta.data = cbind(object@meta.data,v@meta.data[rownames(object@meta.data),cols,drop=FALSE])
 
   # add info about merged spots
-  object@meta.data$nspots = gr_$group.size
+  object@meta.data$nspots = gr_$nspots
   object@meta.data$merged_spots = gr_$merged_spots
 
   object
