@@ -1,0 +1,91 @@
+---
+title: "Merge spots"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Merge low coverage visium spots
+This document demonstrates how to group and merge visium spots with low coverage using https://github.com/iaaka/visutils
+The spots are grouped into coarser mesh by seven spots preserving hexagonal layout. All spots from single groups with coverage below certain threshold are merged, their counts are summed and  on spot is used as the representative: either the central one (if its coverage below the threshold) or the spot with highest coverage.
+
+First lets install the package, you need to do it only once
+```{r}
+devtools::install_github("iaaka/visutils",force = TRUE)
+```
+
+# Load libraries
+```{r}
+library(visutils)
+library(Seurat)
+```
+
+# Download public dataset from 10x web site
+```{r, cache=TRUE, results='hide'}
+loadVisiumFrom10x("https://cf.10xgenomics.com/samples/spatial-exp/1.3.0","Visium_Mouse_Olfactory_Bulb",outdir="data")
+```
+```{r}
+mob = Load10X_Spatial('data/Visium_Mouse_Olfactory_Bulb/')
+```
+
+
+```{r}
+SpatialFeaturePlot(mob,'nCount_Spatial')
+```
+# Quick start
+everything can be done just in one line
+```{r}
+umi.thr = 20000
+mobm0 = mergeSpots(mob,getCenters(mob,to.merge = mob$nCount_Spatial<umi.thr))
+# lets compare merged object mobm0 with the original one
+cex = scaleTo(sqrt(mobm0$nspots),1,sqrt(8),minx = 1,maxx = sqrt(7))*0.9
+SpatialFeaturePlot(mob,'nCount_Spatial') + SpatialFeaturePlot(mobm0,'nCount_Spatial',pt.size.factor = cex*2) 
+```
+
+# Details
+Chose coverage threshold
+```{r}
+hist(mob$nCount_Spatial,100)
+```
+```{r}
+table(mob$nCount_Spatial<20000)
+```
+
+This sample has good coverge and it is not very reasonable to group spots here. However for demonstration purposes I'll merge all the spots with coverage less than 20000 UMIs. Normally this threshold should be about 500-1000.
+```{r}
+groups = getCenters(mob,to.merge = mob$nCount_Spatial<20000)
+groups[1:5,]
+```
+```{r}
+mob$group = groups$group
+mob@meta.data[1:5,]
+```
+
+Here I color spots that are going to be merged by same color. Note that some of them form hexagons (when all spots have coverage below threshold) and some groups are smaller or even singletons
+```{r,fig.height = 6, fig.width = 6}
+SpatialPlot(mob,'group',cols = char2col(mob$group,palette = TRUE),pt.size.factor = 2) +NoLegend()
+```
+
+Lets use visutils visualisations since it is a bit cleare (specificall hex one)
+```{r,fig.height = 6, fig.width = 12}
+par(mfrow=c(1,2),mar=c(1,1,1,1))
+plotVisium(mob,mob$group,plot.legend = F)
+plotVisium(mob,mob$group,plot.legend = F,type='hex')
+```
+
+Now we have groups, lets use them to merge spots
+```{r}
+mobm = mergeSpots(mob,groups)
+mobm@meta.data[1:5,]
+```
+
+The resultant seurat object contains summed counts, metadata table provides informatin about number of spots merged (nspots) and their identity (merged_spots)
+
+```{r,fig.height = 6, fig.width = 12}
+par(mar=c(1,1,1,5))
+cex = scaleTo(sqrt(mobm$nspots),1,sqrt(8),minx = 1,maxx = sqrt(7))*0.9
+#plotVisium(mobm,mobm$nCount_Spatial,zfun = log1p,cex=cex)
+SpatialFeaturePlot(mob,'nCount_Spatial') + SpatialFeaturePlot(mobm,'nCount_Spatial',pt.size.factor = cex*2) 
+```
