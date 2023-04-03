@@ -1,0 +1,147 @@
+---
+title: "Visium visualization"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+visutils uses R basic graphics to visualize visium data in vareity of ways. The Main plotting function is plotVisium.
+
+# Install package
+```{r cars}
+#devtools::install_github("iaaka/visutils")
+library(visutils)
+library(Seurat)
+```
+
+# Download public dataset from 10x web site
+```{r, cache=TRUE, results='hide'}
+loadVisiumFrom10x("https://cf.10xgenomics.com/samples/spatial-exp/1.3.0","Visium_Mouse_Olfactory_Bulb",outdir="data")
+```
+```{r}
+mob = Load10X_Spatial('data/Visium_Mouse_Olfactory_Bulb/')
+```
+
+# Plot visium
+## Categorical varible
+Lets loa clustering information from just downloaded spaceranger output
+```{r}
+cl = read.csv('data/Visium_Mouse_Olfactory_Bulb/analysis/clustering/graphclust/clusters.csv',row.names = 1)
+mob$clusters = as.character(cl[colnames(mob),1])
+table(mob$clusters,useNA = 'always')
+```
+```{r,fig.height = 4, fig.width = 4}
+plotVisium(mob,z = mob$clusters)
+```
+## Quantitative variable
+```{r,fig.height = 4, fig.width = 4}
+plotVisium(mob,z = mob$nCount_Spatial)
+```
+
+Lets explore the parameters
+```{r,fig.height = 4, fig.width = 5}
+par(mar=c(0,0,1,6),bty='n')
+plotVisium(mob,z = mob$nCount_Spatial,
+          zfun = log1p, # log scale
+          z2col = function(x)num2col(x,col = c('black','gray','orange','red')), # change colors
+          cex = scaleTo(log1p(mob$nCount_Spatial)),                             # spot size it proportional to log1p of coverage
+          legend.args = list(title='UMIs')                                      # set legend title  
+          )
+```
+
+## Control H&E appearance
+Visualization of visium on top of H&E image internally performed by plotVisiumImg, plotVisium passes arguments to it. Check manual of plotVisiumImg to get more control over plotting
+```{r,fig.height = 4, fig.width = 5}
+par(mar=c(0,0,1,6),bty='n')
+plotVisium(mob,z = mob$nCount_Spatial,
+          zfun = log1p, # log scale
+          z2col = function(x)num2col(x,col = c('black','gray','orange','red')), # change colors
+          cex = scaleTo(log1p(mob$nCount_Spatial)),                             # spot size it proportional to log1p of coverage
+          zlim= c(500,2e4),                                                     # specify limits of value shown by color, all values outside of the range will be trimmed to the range
+          legend.args = list(title='UMIs'),                                     # set legend title  
+          he.grayscale = TRUE,                                                  # show H&E image in grayscale
+          img.alpha = 0.5,                                                      # make H&E image semi-transparent
+          he.img.width = 400                                                    # reduce resolution of H&E image (helps to reduce file size when saving to pdf)
+          )
+```
+
+If you need H&E only
+```{r,fig.height = 4, fig.width = 5}
+par(mar=c(0,0,1,6),bty='n')
+plotVisium(mob,cex=0)
+```
+
+## Multiple genes (or celltypes)
+There are two ways to show multiple variable (for example genes): pie plots  or mean colors. Lets first find genes to be shown.
+```{r}
+mob = NormalizeData(mob)
+Idents(mob) = "clusters"
+markers = FindAllMarkers(mob)
+```
+```{r}
+markers[1:5,]
+```
+
+Lets select one genes per cluster
+```{r}
+m = markers[markers$pct.1-markers$pct.2 > 0.3,]
+m = do.call(rbind,lapply(split(m,m$cluster),function(x)x[order(x$avg_log2FC,decreasing = TRUE)[1],]))
+m = m[order(as.character(m$cluster)),]
+m
+```
+```{r,fig.height = 6, fig.width = 12}
+par(mfrow=c(2,4),mar=c(0,0,1,0),bty='n')
+for(gid in m$gene)
+  plotVisium(mob,mob@assays$Spatial@data[gid,],main=gid,plot.legend = FALSE)
+```
+
+### Mean color
+```{r,fig.height = 5, fig.width = 14}
+# select genes to be plotted, matrix should be cell-by-gene, so lets transpose it
+exps = t(as.matrix(mob@assays$Spatial@data[m$gene,]))
+cols = RColorBrewer::brewer.pal(nrow(m),'Set1')
+par(mfrow=c(1,2),mar=c(0,0,1,10),bty='n')
+plotVisiumMultyColours(mob,exps,
+                       cols = cols,
+                       zfun = function(x)x^2,     # kernel to transform gene expression. Higher powers will give more sharp figure (each spot will be dominated by single cell type)
+                       mode = 'mean',             # colors are averaged not overlayed (in this mode gene order makes no difference)
+                       legend.ncol = 2,           # show legend in two columns
+                       he.grayscale = TRUE,       # show H&E in grayscale
+                       min.opacity = 255,         # be default total cell density is shown by opacity, set min.opacity to max (255) to disable it.
+                       bg = '#00000000',          # set transparent background, so spots where neither of genes is expressed will be invisible 
+                       main='Kernel x^2'
+)
+# make it sharper (the only difference is zfun)
+plotVisiumMultyColours(mob,exps,
+                       cols = cols,
+                       zfun = function(x)x^6,     # kernel to transform gene expression. Higher powers will give more sharp figure (each spot will be dominated by single cell type)
+                       mode = 'mean',             # colors are averaged not overlayed (in this mode gene order makes no difference)
+                       legend.ncol = 2,           # show legend in two columns
+                       he.grayscale = TRUE,       # show H&E in grayscale
+                       min.opacity = 255,         # be default total cell density is shown by opacity, set min.opacity to max (255) to disable it.
+                       bg = '#00000000',          # set transparent background, so spots where neither of genes is expressed will be invisible 
+                       main='Kernel x^6'
+)
+
+```
+
+Seven genes looks too many here to show them clearly all because some of them overlap.
+
+IMPORTANT! By default each cell types is scaled individually so genes with high and low expression contributes equally to the plot. Use scale.per.colour = FALSE to disable it.
+
+### Pies
+Usually pies are more confusing than mean colors, however in this case it allows to show overlapping Ptj2b/Penk and Lcat/Ly6g6e
+
+```{r,fig.height = 5, fig.width = 7}
+par(mar=c(0,0,1,10),bty='n')
+plotVisium(mob,pie.fracs=exps,
+                       pie.cols = cols,
+                       he.grayscale = TRUE,       # show H&E in grayscale
+)
+legend(grconvertX(1,'npc','user'),grconvertY(1,'npc','user'),fill=cols,legend = paste0(m$gene,' (cl',m$cluster,')'),xpd=TRUE)
+```
+
+
