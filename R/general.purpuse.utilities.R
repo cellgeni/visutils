@@ -565,7 +565,7 @@ number2bin = function(v,n){
 #' @return matrix with number of rows equal to nrow(d) and number of columns equal to number of unique(f)
 #' @export
 calcMeanCols = function(d,f,FUN=base::mean,verbose=FALSE){
-  stop('use calcColSums')
+  stop('deprecated, use calcColSums')
   u = sort(unique(as.character(f)))
   r = matrix(ncol=length(u),nrow=nrow(d))
   colnames(r) = u
@@ -582,12 +582,12 @@ calcMeanCols = function(d,f,FUN=base::mean,verbose=FALSE){
 #'
 #' @param d matrix
 #' @param f character vector, factor to split matrix columns (length should be equal to nrow(d))
-#' @param FUN function to be applied to matrix slices (mean by default)
+#' @param mean logical, calculate mean instead of sum
 #' @param verbose
 #'
 #' @return matrix with number of rows equal to nrow(d) and number of columns equal to number of unique(f)
 #' @export
-calcColSums = function(d,f,verbose=FALSE,mean=FALSE){
+calcColSums = function(d,f,mean=FALSE,verbose=FALSE){
   u = sort(unique(as.character(f)))
   r = matrix(ncol=length(u),nrow=nrow(d))
   colnames(r) = u

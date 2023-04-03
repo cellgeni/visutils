@@ -332,9 +332,12 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=T
 
 
     col = weightedColourMeans(cols,zscaled)
-    col[is.na(col)] = bg
+    na = is.na(col)
+    col[na] = bg
     col = rbind(col2rgb(col),opacity)
     col = apply(col,2,function(x)rgb(x[1],x[2],x[3],x[4],maxColorValue = 255))
+    # to overwrite transparency for empty spots
+    col[na] = bg
   }else{
     stop("mode should be either mean or overlay")
   }
