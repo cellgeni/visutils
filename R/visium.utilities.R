@@ -15,7 +15,6 @@ rotateVisium = function(v,n=1,mirror=FALSE){
   if(mirror){
     v@images$slice1@image = applyTransforms(v@images$slice1@image,ts$m0)
     t = v@images$slice1@coordinates$imagerow
-    #v@images$slice1@coordinates$imagecol = v@images$slice1@coordinates$imagerow
     v@images$slice1@coordinates$imagerow = dim(v@images$slice1@image)[1]/v@images$slice1@scale.factors$lowres - t + 1/v@images$slice1@scale.factors$lowres
   }
   if(n>0){

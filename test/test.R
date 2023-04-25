@@ -11,7 +11,7 @@ devtools::install_github("iaaka/visutils")
 
 devtools::install_local()
 # git add -u
-# git commit -m "add spot merging"
+# git commit -m "add slide rotation"
 # git push -u origin main
 ?dotPlot
 
