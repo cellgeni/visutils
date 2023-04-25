@@ -706,7 +706,7 @@ my.make.unique = function(x,sep='.'){
 #' @param scaleWM logical, specifies wheter computed radiuses should be scaled into [0,1] interval (FALSE by default).
 #' @param pch point character (19 by default)
 #' @param plot.legend logical, whether legend should be plotted. Single legend will be plotted if m is identicall to mc.
-#' @param legend.cex.at,legend.cex.at values to be used in legend
+#' @param legend.cex.at,legend.col.at values to be used in legend, set both to have two independent legends for size and colour
 #' @param legend.cex.title,legend.col.title titles of legends
 #' @param rowAnnWidth,colAnnWidth - size of colour annotations in user coordinates
 #' @param ... other parameters to be passed to plot function

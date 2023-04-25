@@ -66,7 +66,7 @@ dotPlot(
 
 \item{plot.legend}{logical, whether legend should be plotted. Single legend will be plotted if m is identicall to mc.}
 
-\item{legend.cex.at, legend.cex.at}{values to be used in legend}
+\item{legend.cex.at, legend.col.at}{values to be used in legend, set both to have two independent legends for size and colour}
 
 \item{legend.cex.title, legend.col.title}{titles of legends}
 

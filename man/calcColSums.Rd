@@ -4,16 +4,16 @@
 \alias{calcColSums}
 \title{Calculates row sums for matrix subsets}
 \usage{
-calcColSums(d, f, verbose = FALSE, mean = FALSE)
+calcColSums(d, f, mean = FALSE, verbose = FALSE)
 }
 \arguments{
 \item{d}{matrix}
 
 \item{f}{character vector, factor to split matrix columns (length should be equal to nrow(d))}
 
-\item{verbose}{}
+\item{mean}{logical, calculate mean instead of sum}
 
-\item{FUN}{function to be applied to matrix slices (mean by default)}
+\item{verbose}{}
 }
 \value{
 matrix with number of rows equal to nrow(d) and number of columns equal to number of unique(f)

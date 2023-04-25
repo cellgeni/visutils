@@ -1,3 +1,34 @@
+#' Rotates Seurat visium slide
+#'
+#' @param v Seurat object
+#' @param n number of counter-clockwise rotations
+#' @param mirror logical, whether to slide should be flipped horisontally
+#'
+#' @return rotated Seurat object
+#' @export
+#'
+#' @examples
+#' vm = rotateVisium(v,n=0,m=T)
+#' SpatialFeaturePlot(v,'lnCount_Spatial')+SpatialFeaturePlot(vm,'lnCount_Spatial')
+rotateVisium = function(v,n=1,mirror=FALSE){
+  ts = getRotations()
+  if(mirror){
+    v@images$slice1@image = applyTransforms(v@images$slice1@image,ts$m0)
+    t = v@images$slice1@coordinates$imagerow
+    #v@images$slice1@coordinates$imagecol = v@images$slice1@coordinates$imagerow
+    v@images$slice1@coordinates$imagerow = dim(v@images$slice1@image)[1]/v@images$slice1@scale.factors$lowres - t + 1/v@images$slice1@scale.factors$lowres
+  }
+  if(n>0){
+    v@images$slice1@image = applyTransforms(v@images$slice1@image,ts$o3)
+    t = v@images$slice1@coordinates$imagecol
+    v@images$slice1@coordinates$imagecol = v@images$slice1@coordinates$imagerow
+    v@images$slice1@coordinates$imagerow = dim(v@images$slice1@image)[1]/v@images$slice1@scale.factors$lowres - t + 1/v@images$slice1@scale.factors$lowres
+    v = rotateVisium(v,n=n-1,mirror = FALSE)
+  }
+  v
+}
+
+
 #' Crop image in Seuart Visium object
 #'
 #' Retain square image that contains all spots (listed in the object). Spot coordinates adjasted accordingly.
