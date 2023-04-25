@@ -16,12 +16,18 @@ rotateVisium = function(v,n=1,mirror=FALSE){
     v@images$slice1@image = applyTransforms(v@images$slice1@image,ts$m0)
     t = v@images$slice1@coordinates$imagerow
     v@images$slice1@coordinates$imagerow = dim(v@images$slice1@image)[1]/v@images$slice1@scale.factors$lowres - t + 1/v@images$slice1@scale.factors$lowres
+    v@images$slice1@coordinates$row = max(v@images$slice1@coordinates$row) - v@images$slice1@coordinates$row
   }
   if(n>0){
     v@images$slice1@image = applyTransforms(v@images$slice1@image,ts$o3)
     t = v@images$slice1@coordinates$imagecol
     v@images$slice1@coordinates$imagecol = v@images$slice1@coordinates$imagerow
     v@images$slice1@coordinates$imagerow = dim(v@images$slice1@image)[1]/v@images$slice1@scale.factors$lowres - t + 1/v@images$slice1@scale.factors$lowres
+
+    t = v@images$slice1@coordinates$col
+    v@images$slice1@coordinates$col = v@images$slice1@coordinates$row
+    v@images$slice1@coordinates$row = max(t) - t
+
     v = rotateVisium(v,n=n-1,mirror = FALSE)
   }
   v
