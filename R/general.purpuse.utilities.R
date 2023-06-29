@@ -478,7 +478,7 @@ plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,le
 #' plot(1)
 #' plotColorLegend(0.4,0.5,0.8,0.3,getPal(n=100),0:10*10,1:10)
 plotColorLegend = function(x0,x1,y0,y1,col,at,legend,title=NULL,title.adj=c(0,-0.5)){
-  xpd = par(xpd=TRUE)
+  xpd = par(xpd=NA)
   y = seq(grconvertY(y0,'nfc','user'),grconvertY(y1,'nfc','user'),length.out = length(col)+1)
   rect(grconvertX(x0,'nfc','user'),y[-length(y)],grconvertX(x0+(x1-x0)*0.25,'nfc','user'),y[-1],col=col,border = NA)
   at = y[at]+(y[2]-y[1])/2
