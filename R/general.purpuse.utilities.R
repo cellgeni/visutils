@@ -221,6 +221,7 @@ trimQ = function(x,q){
 #' @return names colour vector
 #' @export
 char2col = function(t,bpal='Set1',colfun=randomcoloR::distinctColorPalette,palette=TRUE,random.seed=1234){
+  requare(randomcoloR)
   torig = t
   t = sort(unique(t))
   suppressWarnings({
