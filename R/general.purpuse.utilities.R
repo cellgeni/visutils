@@ -44,13 +44,13 @@ weightedColourMeans = function(cols,weights){
 #' @param num.leg.tic desired number of tics in the legend
 #' @param legend logical, should legend be plotted
 #' @param trimZq frequencies outside of quantile(trimZq,1-trimZq) are set to the corresponding (closest) quantiles. Default is 0 (not trimming). See \code{\link{trimQ}}.
-#' @param xlim,ylim,xlab,ylab graphical parameters
+#' @param xlim,ylim,zlim,xlab,ylab graphical parameters
 #' @param new create new plot (default) or add to existing
 #' @param ... other arguments for plot function
 #'
 #' @return list bith bins and frequencies (invisible)
 #' @export hist2D
-hist2D = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange','red'),zfun=identity,leg.title='',num.leg.tic=NULL,legend=TRUE,trimZq=0,xlim=NULL,ylim=NULL,new=TRUE,xlab=deparse(substitute(x)),ylab=deparse(substitute(y)),...){
+hist2D = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange','red'),zfun=identity,leg.title='',num.leg.tic=NULL,legend=TRUE,trimZq=0,xlim=NULL,ylim=NULL,zlim=NULL,new=TRUE,xlab=deparse(substitute(x)),ylab=deparse(substitute(y)),...){
   xlab;ylab;
   f = !is.na(x) & !is.infinite(x) & !is.na(y) & !is.infinite(y)
   if(!is.null(xlim)) f = f & x >= xlim[1] & x <= xlim[2]
@@ -72,9 +72,10 @@ hist2D = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange',
   z = trimQ(z,trimZq)
   if(is.null(xlim)) xlim = range(x)
   if(is.null(ylim)) ylim = range(y)
+  if(is.null(zlim)) zlim = range(z)
   if(new)
     plot(1,t='n',xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,...)
-  z2col=function(x)num2col(zfun(x),cols)
+  z2col=function(x)num2col(zfun(x),cols,minx=zfun(zlim[1]),maxx=zfun(zlim[2]))
   rect(rep(xbins[-length(xbins)],each =length(ybins)-1),
        rep(ybins[-length(ybins)],times=length(xbins)-1),
        rep(xbins[-1]            ,each =length(ybins)-1),
