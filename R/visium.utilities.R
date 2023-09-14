@@ -886,8 +886,16 @@ findTissueBorder = function(rc){
   rc$tissue.piece[1:length(t)] = t
   rc$tissue.piece[rc$tissue==0] = NA
 
+  # problem: isolated spots (no idea how, but spaceranger makes them) have no items in nj
+  emptynj = nj[c(),]
   nj = split(nj,rownames(rc)[nj$inx])
+  # lets add empty items for them
+  for(n in setdiff(rownames(rc),names(nj)))
+    nj[[n]] = emptynj
+  nj = nj[rownames(rc)]
+
   rc$is.border = rc$tissue == 1 & sapply(nj,function(x)sum(x$nj.is.tissue==0)>0)
+
   rc$nnj = sapply(nj,nrow)[rownames(rc)]
   rc$nnj[is.na(rc$nnj)] = 0
   # number border
