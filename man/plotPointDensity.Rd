@@ -13,9 +13,6 @@ plotPointDensity(x, y, pch = 16, bty = "n", log = "", ...)
 
 \item{...}{other parameters to be passed to plot}
 }
-\value{
-
-}
 \description{
 Scatterplot wih point density shown by colour
 }

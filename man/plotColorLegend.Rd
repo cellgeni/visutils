@@ -29,9 +29,6 @@ plotColorLegend(
 
 \item{title.adj}{legend title adj parameter to be passed to text function}
 }
-\value{
-
-}
 \description{
 Gradient legend
 }

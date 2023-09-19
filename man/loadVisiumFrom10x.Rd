@@ -13,9 +13,6 @@ loadVisiumFrom10x(url, sample.name, outdir)
 
 \item{outdir}{folder to save dataset (function will create subfolder named by \code{sample.name})}
 }
-\value{
-
-}
 \description{
 Download Visium dataset from 10x website
 }

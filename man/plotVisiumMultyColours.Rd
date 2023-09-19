@@ -44,9 +44,6 @@ plotVisiumMultyColours(
 
 \item{...}{other parameters to be passed to plotVisium}
 }
-\value{
-
-}
 \description{
 Values are plotted as a sum of color gradients. Be carefull, in overlay mode results can be misleading for spots with two dominant features.
 }

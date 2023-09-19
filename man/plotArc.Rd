@@ -17,9 +17,6 @@ plotArc(from, to, top, n = 100, y.base = 0, ...)
 
 \item{...}{other parameters of lines functoin}
 }
-\value{
-
-}
 \description{
 Plots parabolic arc
 }

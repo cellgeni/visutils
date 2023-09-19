@@ -78,9 +78,6 @@ plotVisium(
 
 \item{...}{other arguments to be passed to graphical functions (see Details)}
 }
-\value{
-
-}
 \description{
 Main function to plot both histological and dimention reduction plots
 }

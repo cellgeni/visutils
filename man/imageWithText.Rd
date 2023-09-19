@@ -33,9 +33,6 @@ imageWithText(
 
 \item{...}{other options to be supplied to image}
 }
-\value{
-
-}
 \description{
 Wraps image functions
 }

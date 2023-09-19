@@ -72,9 +72,6 @@ dotPlot(
 
 \item{...}{other parameters to be passed to plot function}
 }
-\value{
-
-}
 \description{
 Shows values in matix by point size and color. Size matrix (m) is not scaled by default, dot size is defined as m*max.cex
 }

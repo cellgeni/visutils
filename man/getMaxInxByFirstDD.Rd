@@ -9,9 +9,6 @@ getMaxInxByFirstDD(m)
 \arguments{
 \item{m}{}
 }
-\value{
-
-}
 \description{
 Title
 }

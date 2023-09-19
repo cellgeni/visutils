@@ -9,9 +9,6 @@ bandwidth.nrd.not0(x)
 \arguments{
 \item{x}{a data vector}
 }
-\value{
-
-}
 \description{
 ensure that result is not zero: removes the most frequent value in x if bandwidth.nrd return zero
 }

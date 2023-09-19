@@ -9,8 +9,8 @@ plotNMFCons(
   cons,
   clcols = NULL,
   max.cex = 4.5/14 * 8,
-  colfun = function(x) num2col(x, c("blue", "gray", "orange", "violet", "black"), minx
-    = 0, maxx = 1),
+  colfun = function(x) num2col(x, c("blue", "gray", "orange", "violet", "black"), minx =
+    0, maxx = 1),
   title = "",
   ylab.cex = 1,
   xlab.cex = 1
@@ -30,9 +30,6 @@ plotNMFCons(
 \item{title}{title for whole plot}
 
 \item{ylab.cex, xlab.cex}{sizes of axis labels}
-}
-\value{
-
 }
 \description{
 Plots NMF clustering, silhouette and consensuse clustering

@@ -62,9 +62,6 @@ plotVisiumImg(
 
 \item{...}{other parameters to be passed to \code{plot} function}
 }
-\value{
-
-}
 \description{
 Normally this function shouldn't be called directly. Use plotVisium instead
 }

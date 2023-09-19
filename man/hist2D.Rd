@@ -17,6 +17,7 @@ hist2D(
   trimZq = 0,
   xlim = NULL,
   ylim = NULL,
+  zlim = NULL,
   new = TRUE,
   xlab = deparse(substitute(x)),
   ylab = deparse(substitute(y)),
@@ -40,7 +41,7 @@ hist2D(
 
 \item{trimZq}{frequencies outside of quantile(trimZq,1-trimZq) are set to the corresponding (closest) quantiles. Default is 0 (not trimming). See \code{\link{trimQ}}.}
 
-\item{xlim, ylim, xlab, ylab}{graphical parameters}
+\item{xlim, ylim, zlim, xlab, ylab}{graphical parameters}
 
 \item{new}{create new plot (default) or add to existing}
 

@@ -22,9 +22,6 @@ scaleTo(
 
 \item{fraction}{fraction of target range to be used}
 }
-\value{
-
-}
 \description{
 Scale numeric vector
 }

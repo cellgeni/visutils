@@ -645,7 +645,23 @@ plotVisiumImg = function(xy,img,scale.factor,spot.radius,cex=1,col='red',border=
   invisible(data.frame(y=xy$imagecol*scale.factor,y=nrow(img)-xy$imagerow*scale.factor))
 }
 
-plotVisiumHex = function(xy,cex=1,col='red',border=NA,xlab='Cols',ylab='Rows',xlim=c(min(xy$col)-1,max(xy$col)+1),ylim=c(max(xy$row)+1,min(xy$row)-1),hexstep=0.25,transpose=TRUE,...){
+#' Plot Visium as honeycombs
+#'
+#' Normally this function shouldn't be called directly. Use plotVisium instead
+#'
+#' @param xy seu@images$slice1@coordinates
+#' @param cex spot size
+#' @param col spot color
+#' @param border color of spot border (by default)
+#' @param xlim,ylim,xlab,ylab parameters of \code{plot} function
+#' @param hexstep
+#' @param transpose logical, whether to transpose the figure
+#' @param ... other parameters to be passed to \code{plot} function
+#'
+#' @return
+#' @export
+plotVisiumHex = function(xy,cex=1,col='red',border=col,xlab='Cols',ylab='Rows',xlim=c(min(xy$col)-1,max(xy$col)+1),
+                         ylim=c(max(xy$row)+1,min(xy$row)-1),hexstep=0.25,transpose=FALSE,...){
   if(transpose){
     c = xy$row
     r = xy$col

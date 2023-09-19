@@ -19,9 +19,6 @@ symbols.pie(x, y, r, d, cols, border = NA, alpha0 = 0)
 
 \item{alpha0}{start angle}
 }
-\value{
-
-}
 \description{
 Plots set of pie charts in specified positions
 }

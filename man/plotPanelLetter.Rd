@@ -15,9 +15,6 @@ plotPanelLetter(l, cex = 1.2, adj = c(0, 1.1), ...)
 
 \item{...}{other parameters for text function}
 }
-\value{
-
-}
 \description{
 Adds letter into top left corner of the plot
 }

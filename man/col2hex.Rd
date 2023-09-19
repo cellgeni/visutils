@@ -11,9 +11,6 @@ col2hex(c, withAlpha = TRUE)
 
 \item{withAlpha}{}
 }
-\value{
-
-}
 \description{
 Transforms colour to hex representation
 }

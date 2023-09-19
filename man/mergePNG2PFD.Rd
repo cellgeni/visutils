@@ -15,9 +15,6 @@ mergePNG2PFD(dir = NULL, fls = NULL, pdfout, ...)
 
 \item{...}{other parameters for \code{\link{pdf}} function}
 }
-\value{
-
-}
 \description{
 Merge multiple png files into pdf
 }

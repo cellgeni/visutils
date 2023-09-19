@@ -36,9 +36,6 @@ plotReadCov(
 
 \item{...}{other parameters for plot function}
 }
-\value{
-
-}
 \description{
 Plots read coverage
 }

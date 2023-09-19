@@ -36,9 +36,6 @@ plotLine(
 
 \item{...}{other arguments for plot function}
 }
-\value{
-
-}
 \description{
 Wrapper for pllot function
 }

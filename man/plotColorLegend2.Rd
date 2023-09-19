@@ -41,9 +41,6 @@ plotColorLegend2(
 
 \item{title.adj}{legend title adj parameter to be passed to text function}
 }
-\value{
-
-}
 \description{
 Wrapper for plotColorLegend to plot legend for given range
 }

@@ -29,9 +29,6 @@ barplotWithText(
 
 \item{...}{other barplot options}
 }
-\value{
-
-}
 \description{
 Barplot wrapper
 }

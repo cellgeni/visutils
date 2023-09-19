@@ -13,9 +13,6 @@ getColoursByDistance(d, use3D = FALSE, orderBySim = FALSE)
 
 \item{orderBySim}{logical, whether objects should be ordered by similarity. Preserves original order otherwise (default)}
 }
-\value{
-
-}
 \description{
 use MDS (via cmdscale) to map objects into colour space
 }

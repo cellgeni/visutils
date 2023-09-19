@@ -42,9 +42,6 @@ plotArea(
 
 \item{...}{}
 }
-\value{
-
-}
 \description{
 CI is shown by area
 }
