@@ -13,6 +13,7 @@ imageWithText(
   yaxlab = colnames(d),
   centerColors0 = FALSE,
   las = 2,
+  text.adj = c(0.5, 0.5),
   ...
 )
 }
@@ -30,6 +31,8 @@ imageWithText(
 \item{centerColors0}{logical, specifies whether 0 should be considered as palette center (makes sense for correlation matrices)}
 
 \item{las}{orientation of axis labels (see las in ?par)}
+
+\item{text.adj}{adj parameter to be passed to text function}
 
 \item{...}{other options to be supplied to image}
 }
