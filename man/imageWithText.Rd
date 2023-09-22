@@ -13,7 +13,7 @@ imageWithText(
   yaxlab = colnames(d),
   centerColors0 = FALSE,
   las = 2,
-  text.adj = c(0.5, 0.5),
+  text.xadj = 0.5,
   ...
 )
 }
@@ -32,7 +32,7 @@ imageWithText(
 
 \item{las}{orientation of axis labels (see las in ?par)}
 
-\item{text.adj}{adj parameter to be passed to text function}
+\item{text.xadj}{text adjastment by x}
 
 \item{...}{other options to be supplied to image}
 }

@@ -334,12 +334,12 @@ isColors <- function(x) {
 #' @param xaxlab,yaxlab axis labels, dimnames(d) by default
 #' @param centerColors0 logical, specifies whether 0 should be considered as palette center (makes sense for correlation matrices)
 #' @param las orientation of axis labels (see las in ?par)
-#' @param text.adj adj parameter to be passed to text function
+#' @param text.xadj text adjastment by x
 #' @param ... other options to be supplied to image
 #'
 #' @return
 #' @export
-imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxlab=colnames(d),centerColors0=FALSE,las=2,text.adj=c(0.5,0.5),...){
+imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxlab=colnames(d),centerColors0=FALSE,las=2,text.xadj=0.5,...){
   if(is.null(t))
     t = round(d,digits = digits)
   pars = list(...)
@@ -360,7 +360,7 @@ imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxl
   do.call(image,pars)
   if(is.null(text.col))
     text.col = 'black'
-  text(rep(pars$x,times=length(pars$y)),rep(pars$y,each=length(pars$x)),t,col=text.col,adj=text.adj)
+  text(rep(pars$x,times=length(pars$y))+scaleTo(text.xadj,-0.45,0.45,minx=0,maxx=1),rep(pars$y,each=length(pars$x)),t,col=text.col,adj=c(text.xadj,0.5))
   if(!is.null(xaxlab))
     axis(1,pars$x,xaxlab,las=las)
   if(!is.null(yaxlab))
