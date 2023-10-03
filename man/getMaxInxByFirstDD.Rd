@@ -2,13 +2,18 @@
 % Please edit documentation in R/visium.utilities.R
 \name{getMaxInxByFirstDD}
 \alias{getMaxInxByFirstDD}
-\title{Title}
+\title{Find best match between image and RNA counts
+to deal with image swaps/rotations}
 \usage{
 getMaxInxByFirstDD(m)
 }
 \arguments{
 \item{m}{}
 }
+\value{
+data.frame with best mtches
+}
 \description{
-Title
+Find best match between image and RNA counts
+to deal with image swaps/rotations
 }

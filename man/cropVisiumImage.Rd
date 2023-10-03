@@ -9,6 +9,9 @@ cropVisiumImage(v)
 \arguments{
 \item{v}{Seurat object}
 }
+\value{
+visium object with cropped image
+}
 \description{
 Retain square image that contains all spots (listed in the object). Spot coordinates adjasted accordingly.
 }

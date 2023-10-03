@@ -24,6 +24,9 @@ pointKde2d(
 
 \item{k}{subset size to use in approximate mode. 1000 is good starting point}
 }
+\value{
+numeric vector with density estimates
+}
 \description{
 similar to MASS::kde2d but calculates density for supplied points
 }

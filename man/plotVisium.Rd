@@ -78,6 +78,9 @@ plotVisium(
 
 \item{...}{other arguments to be passed to graphical functions (see Details)}
 }
+\value{
+data.frame with user spot coordinates
+}
 \description{
 Main function to plot both histological and dimention reduction plots
 }

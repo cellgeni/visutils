@@ -100,7 +100,7 @@ hist2D = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange',
 #' @param random_seed random seed to chose subset in approximate mode
 #' @param k subset size to use in approximate mode. 1000 is good starting point
 #'
-#' @return
+#' @return numeric vector with density estimates
 #' @export
 #'
 #' @examples
@@ -151,10 +151,8 @@ pointKde2d = function(x,y,kernel=dnorm,approx=length(x)>2000,random_seed=123,k=m
 #'
 #' @param x a data vector
 #'
-#' @return
+#' @return A bandwidth on a scale suitable for the width argument of density.
 #' @export
-#'
-#' @examples
 bandwidth.nrd.not0 = function (x) {
   repeat{
     if(length(x)<2) return(NA)
@@ -173,10 +171,7 @@ bandwidth.nrd.not0 = function (x) {
 #' @param pch,bty,log parameters of plot function
 #' @param ... other parameters to be passed to plot
 #'
-#' @return
 #' @export
-#'
-#' @examples
 plotPointDensity = function(x,y,pch=16,bty='n',log='',...){
   x.=x
   y.=y
@@ -254,7 +249,7 @@ char2col = function(t,bpal='Set1',colfun=randomcoloR::distinctColorPalette,palet
 #' @param use3D logical, specifies whether whole [0,1]^3 space should be used. About equally-bright 2D space is used otherwise (default)
 #' @param orderBySim logical, whether objects should be ordered by similarity. Preserves original order otherwise (default)
 #'
-#' @return
+#' @return vector of colors
 #' @export
 #'
 #' @examples
@@ -342,7 +337,6 @@ isColors <- function(x) {
 #' @param text.xadj text adjastment by x
 #' @param ... other options to be supplied to image
 #'
-#' @return
 #' @export
 imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxlab=colnames(d),centerColors0=FALSE,las=2,text.xadj=0.5,...){
   if(is.null(t))
@@ -396,7 +390,7 @@ overlayTwoColours = function(a,b){
 #' @param c text matrix with colours to be overlayed per row
 #' @param reorderByOpacity logical, should colours be ordered by increased opacity prior to summing
 #'
-#' @return
+#' @return vector of colors
 #' @export
 overlayColours = function(c,reorderByOpacity=FALSE){
   apply(c,1,function(x){
@@ -415,7 +409,7 @@ overlayColours = function(c,reorderByOpacity=FALSE){
 #' @param c character vector with colours
 #' @param withAlpha
 #'
-#' @return
+#' @return color in hex form
 #' @export
 col2hex = function(c,withAlpha = TRUE){
   r = apply(col2rgb(c,alpha = TRUE),2,function(x){
@@ -445,7 +439,6 @@ col2hex = function(c,withAlpha = TRUE){
 #' @param title legend title
 #' @param title.adj legend title adj parameter to be passed to text function
 #'
-#' @return
 #' @export
 plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,leg=NULL,title=NULL,title.adj=c(0,-0.5)){
   # make tics
@@ -479,7 +472,6 @@ plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,le
 #' @param title legend title
 #' @param title.adj legend title adj parameter to be passed to text function
 #'
-#' @return
 #' @export
 #'
 #' @examples
@@ -505,7 +497,6 @@ plotColorLegend = function(x0,x1,y0,y1,col,at,legend,title=NULL,title.adj=c(0,-0
 #' @param pdfout name of output pdf
 #' @param ... other parameters for \code{\link{pdf}} function
 #'
-#' @return
 #' @export
 mergePNG2PFD = function(dir=NULL,fls=NULL,pdfout,...){
   require(png)
@@ -536,7 +527,6 @@ mergePNG2PFD = function(dir=NULL,fls=NULL,pdfout,...){
 #' @param ylim ylim
 #' @param ... other barplot options
 #'
-#' @return
 #' @export
 barplotWithText = function(x,t=x,adj=c(0.5,1.1),srt=0,text.y=x,ylim=c(0,max(x)),...){
   if(length(ylim)==1)
@@ -623,7 +613,6 @@ calcColSums = function(d,f,mean=FALSE,verbose=FALSE){
 #' @param adj see adj parameter of \code{\link{text}}
 #' @param ... other parameters for text function
 #'
-#' @return
 #' @export
 plotPanelLetter = function(l,cex=1.2,adj=c(0,1.1),...){
   x=grconvertX(0,from='nfc',to='user')
@@ -647,7 +636,6 @@ plotPanelLetter = function(l,cex=1.2,adj=c(0,1.1),...){
 #' @param cilim numerical vector with two values, gives lower and apper values to truncate CI. NULL (to truncation) by default.
 #' @param ...
 #'
-#' @return
 #' @export
 plotArea = function(x,p,col,sd.mult=2,new=FALSE,ylim=NULL,xlim=range(x),area.transp=0.2,type='l',area.den=-1,cilim=NULL,...){
   #p should contain either mean and sd
@@ -719,7 +707,6 @@ my.make.unique = function(x,sep='.'){
 #' @param rowAnnWidth,colAnnWidth - size of colour annotations in user coordinates
 #' @param ... other parameters to be passed to plot function
 #'
-#' @return
 #' @export
 #' @examples
 #' c = matrix(1:12,ncol=3)
@@ -854,7 +841,6 @@ dotPlot = function(m,mc=m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yello
 #' @param new logical, create new plot (default) or add to existing
 #' @param ... other arguments for plot function
 #'
-#' @return
 #' @export
 plotLine = function(x,y=NULL,cor.method='pearson',line.col='red',line.lwd=1,plot.ci=FALSE,ci.transparency=0.3,line.on.top=TRUE,new=TRUE,...){
   if(is.null(y)){
@@ -918,7 +904,7 @@ renameClustsBySize = function(x){
 #' @param minx,maxx true min of "real x" (in case if given x is just subset of the real)
 #' @param fraction fraction of target range to be used
 #'
-#' @return
+#' @return scaled value
 #' @export
 scaleTo = function(x,from=0,to=1,minx=min(x,na.rm=TRUE),maxx=max(x,na.rm=TRUE),fraction=1){
   x = (x-minx)/(maxx-minx)
@@ -976,7 +962,6 @@ getReadCoverage = function(bams,chr,start,end,strand=NA){
 #' @param junc.lwd line width for jucntion line
 #' @param ... other parameters for plot function
 #'
-#' @return
 #' @export
 plotReadCov = function(r,min.junc.cov=0,min.junc.cov.f=0,plot.junc.only.within=FALSE,ylim=NULL,xlim=range(r$x),reverse=FALSE,junc.col='red',junc.lwd=3,...){
   f = r$x >= xlim[1] & r$x <=xlim[2]
@@ -1009,8 +994,6 @@ plotReadCov = function(r,min.junc.cov=0,min.junc.cov.f=0,plot.junc.only.within=F
 #' @param n number of points
 #' @param y.base bottom coordinate of arc
 #' @param ... other parameters of lines functoin
-#'
-#' @return
 plotArc = function(from,to,top,n=100,y.base=0,...){
   len = to - from
   x = seq(from=0,to=len,length.out = n)

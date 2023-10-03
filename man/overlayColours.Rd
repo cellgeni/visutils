@@ -11,6 +11,9 @@ overlayColours(c, reorderByOpacity = FALSE)
 
 \item{reorderByOpacity}{logical, should colours be ordered by increased opacity prior to summing}
 }
+\value{
+vector of colors
+}
 \description{
 Calculate per-row mean colour according to opacity
 }

@@ -31,6 +31,9 @@ plotNMFCons(
 
 \item{ylab.cex, xlab.cex}{sizes of axis labels}
 }
+\value{
+list of clusters, colors and silhouette
+}
 \description{
 Plots NMF clustering, silhouette and consensuse clustering
 }

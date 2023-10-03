@@ -9,6 +9,9 @@ bandwidth.nrd.not0(x)
 \arguments{
 \item{x}{a data vector}
 }
+\value{
+A bandwidth on a scale suitable for the width argument of density.
+}
 \description{
 ensure that result is not zero: removes the most frequent value in x if bandwidth.nrd return zero
 }

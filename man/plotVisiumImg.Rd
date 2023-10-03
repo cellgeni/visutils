@@ -62,6 +62,9 @@ plotVisiumImg(
 
 \item{...}{other parameters to be passed to \code{plot} function}
 }
+\value{
+data.frame with user spot coordinates
+}
 \description{
 Normally this function shouldn't be called directly. Use plotVisium instead
 }

@@ -40,7 +40,7 @@ rotateVisium = function(v,n=1,mirror=FALSE){
 #'
 #' @param v Seurat object
 #'
-#' @return
+#' @return visium object with cropped image
 #' @export
 cropVisiumImage = function(v){
   c = v@images$slice1@coordinates
@@ -83,7 +83,6 @@ cropVisiumImage = function(v){
 #' @param border colour of pie borders, NA (default) for no borders.
 #' @param alpha0 start angle
 #'
-#' @return
 #' @export symbols.pie
 #'
 #' @examples
@@ -339,7 +338,7 @@ enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
 #' @param min.opacity minumal spot opacity for mean mode (from 0 to 255)m default is 150
 #' @param ... other parameters to be passed to plotVisium
 #'
-#' @return
+#' @return data.frame with user spot coordinates
 #' @export
 plotVisiumMultyColours = function(v,z,cols=NULL,zfun=function(x)x^2,scale.per.colour=TRUE,mode='mean',reorderByOpacity=FALSE,min.opacity=150,title.adj=c(0,-0.5),bg='#FFFFFF00',legend.ncol=1,...){
   zscaled = zfun(z)
@@ -446,7 +445,7 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=function(x)x^2,scale.per.co
 #' coordinates either directly rpovided in \code{v} (as two-column data.frame) or extracted from umap slot of \code{v},
 #' in the later case function attempts to use seurat_clusters if \code{z} is not specified
 #'
-#' @return
+#' @return data.frame with user spot coordinates
 #' @export
 plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.legend=TRUE,zlim=NULL,zfun = identity,spot.filter=NULL,pch=16,
                       num.leg.tic=NULL,label.clusters=FALSE,legend.args=list(),randomize.points=FALSE,order.points.by.z=FALSE,xaxt='n',yaxt='n',
@@ -596,7 +595,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
 #' @param he.grayscale logical, specifies whether H&E image should be converted to grayscale
 #' @param ... other parameters to be passed to \code{plot} function
 #'
-#' @return
+#' @return data.frame with user spot coordinates
 #' @export
 plotVisiumImg = function(xy,img,scale.factor,spot.radius,cex=1,col='red',border=NA,spot.dist=NULL,img.alpha=1,xlim=NULL,
                          ylim=NULL,symmetric.lims=TRUE,xlab='',ylab='',pie.fracs=NULL,pie.cols=NULL,pie.min.frac=0.05,
@@ -656,11 +655,11 @@ plotVisiumImg = function(xy,img,scale.factor,spot.radius,cex=1,col='red',border=
 #' @param col spot color
 #' @param border color of spot border (by default)
 #' @param xlim,ylim,xlab,ylab parameters of \code{plot} function
-#' @param hexstep
+#' @param hexstep size of spot hex, do not change unless you know what you are doing
 #' @param transpose logical, whether to transpose the figure
 #' @param ... other parameters to be passed to \code{plot} function
 #'
-#' @return
+#' @return data.frame with spot coordinates
 #' @export
 plotVisiumHex = function(xy,cex=1,col='red',border=col,xlab='Cols',ylab='Rows',xlim=c(min(xy$col)-1,max(xy$col)+1),
                          ylim=c(max(xy$row)+1,min(xy$row)-1),hexstep=0.25,transpose=FALSE,...){
@@ -718,7 +717,6 @@ plotVisiumRect = function(xy,cex=1,col='red',border=NA,xlab='x',ylab='y',
 #' @param sample.name name of the dataset
 #' @param outdir folder to save dataset (function will create subfolder named by \code{sample.name})
 #'
-#' @return
 #' @export
 #'
 #' @examples
@@ -802,11 +800,12 @@ getMeanSpotColor = function(vis,scalefactors){
 
 
 
-#' Title
+#' Find best match between image and RNA counts
+#' to deal with image swaps/rotations
 #'
 #' @param m
 #'
-#' @return
+#' @return data.frame with best mtches
 #' @export
 getMaxInxByFirstDD = function(m){
   r = do.call(rbind,lapply(1:dim(m)[1],function(i){
@@ -1027,7 +1026,7 @@ scaleVisiumImage = function(v,wpx=500){
 #' @param title title for whole plot
 #' @param ylab.cex,xlab.cex sizes of axis labels
 #'
-#' @return
+#' @return list of clusters, colors and silhouette
 #' @export
 plotNMFCons = function(coefs,cons,clcols=NULL,max.cex = 4.5/14*8,
                        colfun=function(x)num2col(x,c('blue','gray','orange','violet','black'),minx = 0,maxx = 1),
