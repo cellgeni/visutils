@@ -329,19 +329,19 @@ enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
 #' @param v Seurat object
 #' @param z matrix with values (in columns) to be plotted
 #' @param cols colour to be used for x columns
-#' @param zfun function to transform values in z
+#' @param zfun function to transform values in z (z^2 is default)
 #' @param scale.per.colour logical, specifies whether each colour should cover whole range (that is, should x be sclaed per column)
-#' @param mode 'overlay' or 'mean'.
-#' @param reorderByOpacity logical, specifes whether colours should be ordered by increasing opacity prior to summing
+#' @param mode mean' (default) or 'overlay' (use with caution: result depends on order)
+#' @param reorderByOpacity logical, specifes whether colours should be ordered by increasing opacity prior to summing, only makes sense for mode='overlay'
 #' @param title.adj legend title adj (to be passed to text function)
 #' @param bg color to use as spot background. NULL (default) for transparent background.
 #' @param legend.ncol number of legend columns. Set to 0 to suppress legend plotting.
-#' @param min.opacity minumal spot opacity for mean mode (from 0 to 255)
+#' @param min.opacity minumal spot opacity for mean mode (from 0 to 255)m default is 150
 #' @param ... other parameters to be passed to plotVisium
 #'
 #' @return
 #' @export
-plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=TRUE,mode='overlay',reorderByOpacity=FALSE,min.opacity=0,title.adj=c(0,-0.5),bg='#FFFFFFFF',legend.ncol=1,...){
+plotVisiumMultyColours = function(v,z,cols=NULL,zfun=function(x)x^2,scale.per.colour=TRUE,mode='mean',reorderByOpacity=FALSE,min.opacity=150,title.adj=c(0,-0.5),bg='#FFFFFF00',legend.ncol=1,...){
   zscaled = zfun(z)
   if(scale.per.colour){
     for(i in 1:ncol(zscaled)) zscaled[,i] = scaleTo(zscaled[,i])
@@ -377,7 +377,7 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=T
   }else{
     stop("mode should be either mean or overlay")
   }
-  r = plotVisium(v,col,...)
+  res = plotVisium(v,col,...)
 
 
   # plot legends
@@ -409,7 +409,7 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=T
                        z2col=function(x)num2col(x,c(col1,col2)),title=colnames(z)[i],title.adj = title.adj)
     }
   }
-  invisible(r)
+  invisible(res)
 }
 
 
@@ -422,7 +422,7 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=identity,scale.per.colour=T
 #' @param cex relative size of symbols
 #' @param type character, one of img, hex, rect, or xy, see Details.
 #' @param border colour of symbol borders
-#' @param z2col function to transform z to colous (if z is numeric) or named vector of colours if z is character (names are levels of \code{z})
+#' @param z2col function to transform z to colous (if z is numeric) or one of viridis gradients (for example 'magma') or named vector of colours if z is character (names are levels of \code{z})
 #' @param plot.legend logical
 #' @param zlim numerical vector with two items, used to trim z
 #' @param zfun function, transformation (log1p, sqrt, ect) of z (used only if z is numerical). Identity by default.
@@ -464,6 +464,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
     if(!all(colnames(xy) %in% c('x','y')) & type != 'hex')
       colnames(xy) = c('x','y')
   }
+  zorig = z
   if(all(is.na(z)))
     z = 'gray'
   # recycle
@@ -479,8 +480,16 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
     cex = cex[spot.filter]
     border = border[spot.filter]
   }
+  # if z2col one of viridis gradientds
+  if(length(z2col)==1 && is.character(z2col) && z2col %in% c('magma','inferno','plasma','cividis','rocket','mako','turbo')){
+    require(viridis)
+    ccc=viridis::viridis(100,option=z2col)
+    z2col = function(x){
+      num2col(x,ccc)
+    }
+  }
   # make color
-  if(is.factor(z))
+  if(is.factor(z) | is.logical(z))
     z = as.character(z)
   if(is.numeric(z)){
     if(!is.null(zlim)){
@@ -488,11 +497,9 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
       z[z<zlim[1]] = zlim[1]
     }else
       zlim=range(z,na.rm = TRUE)
-    zorig = z
     z = zfun(z)
     col = z2col(c(zfun(zlim),z))[-(1:length(zlim))]
   }else if(all(isColors(z))){
-    plot.legend = FALSE
     col = z
   }else{
     if(!is.character(z2col)){
@@ -500,6 +507,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
     }
     col = z2col[z]
   }
+
   # plot
   if(type=='img'){
     xy=plotVisiumImg(xy,v@images$slice1@image,v@images$slice1@scale.factors$lowres,v@images$slice1@spot.radius,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,...)
@@ -540,7 +548,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
         legend.args$legend = paste0(legend.args$legend,' (',table(col)[z2col],')')
       }
       do.call(legend,legend.args)
-    }else{
+    }else if(is.function(z2col) && !is.null(zorig) && is.numeric(zorig)){
       # numerical
       plotColorLegend2(grconvertX(1,'npc','nfc'),1,grconvertY(0.1,'npc','nfc'),grconvertY(0.9,'npc','nfc'),zlim,range(zorig,na.rm=TRUE),zfun,z2col,leg=num.leg.tic,title=legend.args$title)
     }
@@ -593,12 +601,6 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
 plotVisiumImg = function(xy,img,scale.factor,spot.radius,cex=1,col='red',border=NA,spot.dist=NULL,img.alpha=1,xlim=NULL,
                          ylim=NULL,symmetric.lims=TRUE,xlab='',ylab='',pie.fracs=NULL,pie.cols=NULL,pie.min.frac=0.05,
                          he.img.width=NULL,he.grayscale=FALSE,...){
-  # remove on new update
-  par = list(...)
-  if(!is.null(par$pie.fraqs))
-    pie.fracs = par$pie.fraqs
-  if(!is.null(par$pie.min.fraq))
-    pie.min.frac = par$pie.min.fraq
 
   if(!is.null(he.img.width)){
     require(EBImage)

@@ -29,3 +29,8 @@ names colour vector
 \description{
 Sorts t numerically if possible, alphabetically otherwise.
 }
+\examples{
+char2col(c('a','a','b'))
+char2col(c(1,1,11,2))
+char2col(c(T,F))
+}

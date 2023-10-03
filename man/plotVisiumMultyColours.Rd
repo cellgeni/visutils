@@ -8,13 +8,13 @@ plotVisiumMultyColours(
   v,
   z,
   cols = NULL,
-  zfun = identity,
+  zfun = function(x) x^2,
   scale.per.colour = TRUE,
-  mode = "overlay",
+  mode = "mean",
   reorderByOpacity = FALSE,
-  min.opacity = 0,
+  min.opacity = 150,
   title.adj = c(0, -0.5),
-  bg = "#FFFFFFFF",
+  bg = "#FFFFFF00",
   legend.ncol = 1,
   ...
 )
@@ -26,15 +26,15 @@ plotVisiumMultyColours(
 
 \item{cols}{colour to be used for x columns}
 
-\item{zfun}{function to transform values in z}
+\item{zfun}{function to transform values in z (z^2 is default)}
 
 \item{scale.per.colour}{logical, specifies whether each colour should cover whole range (that is, should x be sclaed per column)}
 
-\item{mode}{'overlay' or 'mean'.}
+\item{mode}{mean' (default) or 'overlay' (use with caution: result depends on order)}
 
-\item{reorderByOpacity}{logical, specifes whether colours should be ordered by increasing opacity prior to summing}
+\item{reorderByOpacity}{logical, specifes whether colours should be ordered by increasing opacity prior to summing, only makes sense for mode='overlay'}
 
-\item{min.opacity}{minumal spot opacity for mean mode (from 0 to 255)}
+\item{min.opacity}{minumal spot opacity for mean mode (from 0 to 255)m default is 150}
 
 \item{title.adj}{legend title adj (to be passed to text function)}
 

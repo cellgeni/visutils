@@ -42,7 +42,7 @@ plotVisium(
 
 \item{border}{colour of symbol borders}
 
-\item{z2col}{function to transform z to colous (if z is numeric) or named vector of colours if z is character (names are levels of \code{z})}
+\item{z2col}{function to transform z to colous (if z is numeric) or one of viridis gradients (for example 'magma') or named vector of colours if z is character (names are levels of \code{z})}
 
 \item{plot.legend}{logical}
 

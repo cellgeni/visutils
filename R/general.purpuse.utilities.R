@@ -220,14 +220,19 @@ trimQ = function(x,q){
 #' @param random.seed seed to be set befor color generation (for stochastic colfuns)
 #'
 #' @return names colour vector
+#' @examples
+#' char2col(c('a','a','b'))
+#' char2col(c(1,1,11,2))
+#' char2col(c(T,F))
 #' @export
 char2col = function(t,bpal='Set1',colfun=randomcoloR::distinctColorPalette,palette=TRUE,random.seed=1234){
   require(randomcoloR)
+  t = as.character(t)
   torig = t
   t = sort(unique(t))
   suppressWarnings({
-    if(all(!is.na(as.integer(t)))){
-      t = as.character(sort(as.integer(t)))
+    if(all(!is.na(as.numeric(t)))){
+      t = as.character(sort(as.numeric(t)))
     }
   })
   if(length(t) <= RColorBrewer::brewer.pal.info[bpal,'maxcolors'])
