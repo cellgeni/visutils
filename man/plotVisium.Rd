@@ -28,17 +28,18 @@ plotVisium(
   cluster.lab.font = 1,
   cluster.lab2col = NULL,
   show.cluster.sizes = FALSE,
+  bg = NA,
   ...
 )
 }
 \arguments{
-\item{v}{Seurat object or data.frame with two columns (x and y coordinates)}
+\item{v}{Seurat object or data.frame with two columns (x and y coordinates) or list of polygons (list with x and y items) in case of type='tiles')}
 
 \item{z}{z coordinate. Either numeric or categorical (factor/character)}
 
 \item{cex}{relative size of symbols}
 
-\item{type}{character, one of img, hex, rect, or xy, see Details.}
+\item{type}{character, one of img, hex, rect, tiles, or xy, see Details.}
 
 \item{border}{colour of symbol borders}
 
@@ -76,6 +77,8 @@ plotVisium(
 
 \item{show.cluster.sizes}{logical, specifies whether number of cell per cluster should be shown in the legend}
 
+\item{bg}{color to be used as background on xy/tiles plots}
+
 \item{...}{other arguments to be passed to graphical functions (see Details)}
 }
 \value{
@@ -87,6 +90,7 @@ Main function to plot both histological and dimention reduction plots
 \details{
 Plots spots on top of H&E image, if type is 'img' (see \code{\link{plotVisiumImg}} for additional parameters),
 plots hexagonal representation if type is 'hex' (see \code{\link{plotVisiumHex}}). Type 'xy' forces dimention redutcion plot (by \code{plot}),
-coordinates either directly rpovided in \code{v} (as two-column data.frame) or extracted from umap slot of \code{v},
-in the later case function attempts to use seurat_clusters if \code{z} is not specified
+coordinates either directly povided in \code{v} (as two-column data.frame) or extracted from umap slot of \code{v},
+in the later case function attempts to use seurat_clusters if \code{z} is not specified.
+Type 'tiles' plots each spot as polygon, for example from Voronoi diagram (see deldir::deldir). Polygons should be supplied as first argument
 }

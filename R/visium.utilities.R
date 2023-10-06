@@ -340,7 +340,9 @@ enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
 #'
 #' @return data.frame with user spot coordinates
 #' @export
-plotVisiumMultyColours = function(v,z,cols=NULL,zfun=function(x)x^2,scale.per.colour=TRUE,mode='mean',reorderByOpacity=FALSE,min.opacity=150,title.adj=c(0,-0.5),bg='#FFFFFF00',legend.ncol=1,...){
+plotVisiumMultyColours = function(v,z,cols=NULL,zfun=function(x)x^2,scale.per.colour=TRUE,mode='mean',
+                                  reorderByOpacity=FALSE,min.opacity=150,title.adj=c(0,-0.5),bg='#FFFFFF00',
+                                  legend.ncol=1,...){
   zscaled = zfun(z)
   if(scale.per.colour){
     for(i in 1:ncol(zscaled)) zscaled[,i] = scaleTo(zscaled[,i])
@@ -416,10 +418,10 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=function(x)x^2,scale.per.co
 #'
 #' Main function to plot both histological and dimention reduction plots
 #'
-#' @param v Seurat object or data.frame with two columns (x and y coordinates)
+#' @param v Seurat object or data.frame with two columns (x and y coordinates) or list of polygons (list with x and y items) in case of type='tiles')
 #' @param z z coordinate. Either numeric or categorical (factor/character)
 #' @param cex relative size of symbols
-#' @param type character, one of img, hex, rect, or xy, see Details.
+#' @param type character, one of img, hex, rect, tiles, or xy, see Details.
 #' @param border colour of symbol borders
 #' @param z2col function to transform z to colous (if z is numeric) or one of viridis gradients (for example 'magma') or named vector of colours if z is character (names are levels of \code{z})
 #' @param plot.legend logical
@@ -438,18 +440,20 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=function(x)x^2,scale.per.co
 #' @param cluster.lab.font font of cluster labels
 #' @param cluster.lab2col named vector that maps cluster names to colors to be used as text colors. All labels are black if NULL (default). Lables not mentioned in here will be shown in black as well.
 #' @param show.cluster.sizes logical, specifies whether number of cell per cluster should be shown in the legend
+#' @param bg color to be used as background on xy/tiles plots
 #' @param ... other arguments to be passed to graphical functions (see Details)
 #'
 #' @details Plots spots on top of H&E image, if type is 'img' (see \code{\link{plotVisiumImg}} for additional parameters),
 #' plots hexagonal representation if type is 'hex' (see \code{\link{plotVisiumHex}}). Type 'xy' forces dimention redutcion plot (by \code{plot}),
-#' coordinates either directly rpovided in \code{v} (as two-column data.frame) or extracted from umap slot of \code{v},
-#' in the later case function attempts to use seurat_clusters if \code{z} is not specified
+#' coordinates either directly povided in \code{v} (as two-column data.frame) or extracted from umap slot of \code{v},
+#' in the later case function attempts to use seurat_clusters if \code{z} is not specified.
+#' Type 'tiles' plots each spot as polygon, for example from Voronoi diagram (see deldir::deldir). Polygons should be supplied as first argument
 #'
 #' @return data.frame with user spot coordinates
 #' @export
 plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.legend=TRUE,zlim=NULL,zfun = identity,spot.filter=NULL,pch=16,
                       num.leg.tic=NULL,label.clusters=FALSE,legend.args=list(),randomize.points=FALSE,order.points.by.z=FALSE,xaxt='n',yaxt='n',
-                      cluster.lab.adj=c(0.5,0.5),cluster.lab.cex=1,cluster.lab.font=1,cluster.lab2col=NULL,show.cluster.sizes=FALSE,...){
+                      cluster.lab.adj=c(0.5,0.5),cluster.lab.cex=1,cluster.lab.font=1,cluster.lab2col=NULL,show.cluster.sizes=FALSE,bg=NA,...){
   if('Seurat' %in% class(v) & type=='xy'){
     if(is.null(z))
       z = as.character(v$seurat_clusters)
@@ -460,7 +464,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
   else{
     if(type %in% c('img')) stop('img types can be used only with Seurat (Visium) object as input. For Dim plot set type="xy"')
     xy = v
-    if(!all(colnames(xy) %in% c('x','y')) & type != 'hex')
+    if(!is.null(dim(xy)) && !all(colnames(xy) %in% c('x','y')) && type != 'hex')
       colnames(xy) = c('x','y')
   }
   zorig = z
@@ -474,7 +478,11 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
   if(!is.null(spot.filter)){
     if(length(label.clusters) == nrow(xy))
       label.clusters = label.clusters[spot.filter]
-    xy = xy[spot.filter,]
+    if(!is.null(dim(xy))){
+      xy = xy[spot.filter,]
+    }else{
+      xy = xy[spot.filter] # for tiles
+    }
     z = z[spot.filter]
     cex = cex[spot.filter]
     border = border[spot.filter]
@@ -530,7 +538,12 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
       if(length(label.clusters) == length(o))
         label.clusters = label.clusters[o]
     }
-    plot(xy[,1:2],cex=cex,col=col,xaxt=xaxt,yaxt=yaxt,pch=pch,...)
+    plot(xy[,1:2],t='n',xaxt=xaxt,yaxt=yaxt,...)
+    fillBackground(bg)
+    points(xy[,1:2],cex=cex,col=col,pch=pch)
+  }
+  if(type ==' tiles'){
+    plotTiles(col=col,tiles=xy,border=border,bg=bg,...)
   }
   #legend
   if(plot.legend){
@@ -690,6 +703,26 @@ plotVisiumHex = function(xy,cex=1,col='red',border=col,xlab='Cols',ylab='Rows',x
       polygon(c[i]+cmask*cexi,r[i]+rmask*cexi,col=col[(i-1) %% length(col)+1],border=border[(i-1) %% length(border)+1])
   }
   invisible(data.frame(x=c,y=r))
+}
+
+
+plotTiles = function(col,tiles,border=NA,bg = NA,...){
+  col = recycle(col,length(ts))
+  border = recycle(border,length(ts))
+  xlim = range(unlist(lapply(ts,function(z)z$x)))
+  ylim = range(unlist(lapply(ts,function(z)z$y)))
+  plot(1,t='n',xlim=xlim,ylim=ylim,...)
+  fillBackground(bg)
+  for(i in 1:length(ts))
+    polygon(ts[[i]]$x,ts[[i]]$y,col=col[i],border=border[i])
+}
+
+
+fillBackground = function(bg,...){
+  if(!is.na(bg)){
+    rect(grconvertX(0,'nfc','user'),grconvertY(0,'nfc','user'),
+         grconvertX(1,'nfc','user'),grconvertY(1,'nfc','user'),col = bg,border = NA,...)
+  }
 }
 
 
