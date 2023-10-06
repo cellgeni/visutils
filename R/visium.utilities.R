@@ -471,12 +471,17 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
   if(all(is.na(z)))
     z = 'gray'
   # recycle
-  z = recycle(z,1:nrow(xy))
-  cex = recycle(cex,1:nrow(xy))
-  border= recycle(border,1:nrow(xy))
+  if(!is.null(dim(xy))){
+    N = nrow(xy)
+  }else{
+    N = length(xy) # for tiles
+  }
+  z = recycle(z,1:N)
+  cex = recycle(cex,1:N)
+  border= recycle(border,1:N)
   # subset spots
   if(!is.null(spot.filter)){
-    if(length(label.clusters) == nrow(xy))
+    if(length(label.clusters) == N)
       label.clusters = label.clusters[spot.filter]
     if(!is.null(dim(xy))){
       xy = xy[spot.filter,]
@@ -486,6 +491,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
     z = z[spot.filter]
     cex = cex[spot.filter]
     border = border[spot.filter]
+    N = length(z)
   }
   # if z2col one of viridis gradientds
   if(length(z2col)==1 && is.character(z2col) && z2col %in% c('magma','inferno','plasma','cividis','rocket','mako','turbo')){
@@ -514,7 +520,6 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
     }
     col = z2col[z]
   }
-
   # plot
   if(type=='img'){
     xy=plotVisiumImg(xy,v@images$slice1@image,v@images$slice1@scale.factors$lowres,v@images$slice1@spot.radius,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,...)
@@ -542,7 +547,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
     fillBackground(bg)
     points(xy[,1:2],cex=cex,col=col,pch=pch)
   }
-  if(type ==' tiles'){
+  if(type == 'tiles'){
     plotTiles(col=col,tiles=xy,border=border,bg=bg,...)
   }
   #legend
@@ -582,8 +587,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
     }
     text(xl,yl,uclusters,adj = cluster.lab.adj,cex=cluster.lab.cex,font=cluster.lab.font,col=clcol)
   }
-  #cat(nrow(xy),',',ncol(xy),', ',length(z),',',length(col),'\n')
-  invisible(data.frame(x=xy[,1],y=xy[,2],z=z,col=col))
+  invisible(list(xy=xy,z=z,col=col))
 }
 
 #' Plot Visium sample on top of H&E
@@ -707,14 +711,14 @@ plotVisiumHex = function(xy,cex=1,col='red',border=col,xlab='Cols',ylab='Rows',x
 
 #' @export
 plotTiles = function(col,tiles,border=NA,bg = NA,...){
-  col = recycle(col,length(ts))
-  border = recycle(border,length(ts))
-  xlim = range(unlist(lapply(ts,function(z)z$x)))
-  ylim = range(unlist(lapply(ts,function(z)z$y)))
+  col = recycle(col,length(tiles))
+  border = recycle(border,length(tiles))
+  xlim = range(unlist(lapply(tiles,function(z)z$x)))
+  ylim = range(unlist(lapply(tiles,function(z)z$y)))
   plot(1,t='n',xlim=xlim,ylim=ylim,...)
   fillBackground(bg)
-  for(i in 1:length(ts))
-    polygon(ts[[i]]$x,ts[[i]]$y,col=col[i],border=border[i])
+  for(i in 1:length(tiles))
+    polygon(tiles[[i]]$x,tiles[[i]]$y,col=col[i],border=border[i])
 }
 
 
