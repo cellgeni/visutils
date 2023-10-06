@@ -548,7 +548,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
     points(xy[,1:2],cex=cex,col=col,pch=pch)
   }
   if(type == 'tiles'){
-    plotTiles(col=col,tiles=xy,border=border,bg=bg,...)
+    plotTiles(col=col,tiles=xy,border=border,bg=bg,xaxt=xaxt,yaxt=yaxt,...)
   }
   #legend
   if(plot.legend){
