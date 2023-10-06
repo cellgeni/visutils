@@ -705,7 +705,7 @@ plotVisiumHex = function(xy,cex=1,col='red',border=col,xlab='Cols',ylab='Rows',x
   invisible(data.frame(x=c,y=r))
 }
 
-
+#' @export
 plotTiles = function(col,tiles,border=NA,bg = NA,...){
   col = recycle(col,length(ts))
   border = recycle(border,length(ts))
