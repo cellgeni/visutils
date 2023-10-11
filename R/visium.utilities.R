@@ -321,27 +321,24 @@ enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
 
 
 
-#' Plot multiple numerical values (gene expression or cell abundancies) on H&E image
+#' Plot multiple numerical values (gene expression or cell abundances) on H&E image
 #'
-#' Values are plotted as a sum of color gradients. Be carefull, in overlay mode results can be misleading for spots with two dominant features.
+#' Each spot is colored by weighted mean colour. Opacity of spot is proportional to maximal feature intensity.
 #'
 #' @param v Seurat object
 #' @param z matrix with values (in columns) to be plotted
-#' @param cols colour to be used for x columns
+#' @param cols colors to be used for columns in z
 #' @param zfun function to transform values in z (z^2 is default)
-#' @param scale.per.colour logical, specifies whether each colour should cover whole range (that is, should x be sclaed per column)
-#' @param mode mean' (default) or 'overlay' (use with caution: result depends on order)
-#' @param reorderByOpacity logical, specifes whether colours should be ordered by increasing opacity prior to summing, only makes sense for mode='overlay'
+#' @param scale.per.colour logical, specifies whether each color should cover whole range (that is, should z be scaled per column)
+#' @param min.opacity minimal spot opacity. Default is 0, that means that spots with low intensity of all features will be almost transparent. Set it higer if you want at least one feature to be visible in each spot.
 #' @param title.adj legend title adj (to be passed to text function)
-#' @param bg color to use as spot background. NULL (default) for transparent background.
 #' @param legend.ncol number of legend columns. Set to 0 to suppress legend plotting.
-#' @param min.opacity minumal spot opacity for mean mode (from 0 to 255)m default is 150
 #' @param ... other parameters to be passed to plotVisium
 #'
 #' @return data.frame with user spot coordinates
 #' @export
-plotVisiumMultyColours = function(v,z,cols=NULL,zfun=function(x)x^2,scale.per.colour=TRUE,mode='mean',
-                                  reorderByOpacity=FALSE,min.opacity=150,title.adj=c(0,-0.5),bg='#FFFFFF00',
+plotVisiumMultyColours = function(v,z,cols=NULL,zfun=function(x)x^2,scale.per.colour=TRUE,
+                                  min.opacity=0,title.adj=c(0,-0.5),
                                   legend.ncol=1,...){
   zscaled = zfun(z)
   if(scale.per.colour){
@@ -349,35 +346,30 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=function(x)x^2,scale.per.co
   }else{
     zscaled = scaleTo(zscaled)
   }
+
   zscaled[is.na(zscaled)] = 0
   cols = col2hex(cols,withAlpha = FALSE)
-  if(mode == 'overlay'){
-    col = sapply(1:ncol(zscaled),function(i)num2col(zscaled[,i],paste0(cols[i],c('00','FF')),minx = 0,maxx = 1))
-    col = overlayColours(col,reorderByOpacity = reorderByOpacity)
-    if(!is.null(bg))
-      col = overlayColours(cbind(bg,col),reorderByOpacity = FALSE)
-  }else if(mode  == 'mean'){
-    # opacity is proportional to untransformed z, maybe I'll need to add opacity transformation function, lets see
-    opacity = z
-    if(scale.per.colour){
-      for(i in 1:ncol(opacity)) opacity[,i] = scaleTo(opacity[,i])
-    }else{
-      opacity = scaleTo(opacity)
-    }
-    opacity = scaleTo(apply(opacity,1,max,na.rm=TRUE),from=min.opacity,to=255)
-    opacity[is.na(opacity)] = 0
 
-
-    col = weightedColourMeans(cols,zscaled)
-    na = is.na(col)
-    col[na] = bg
-    col = rbind(col2rgb(col),opacity)
-    col = apply(col,2,function(x)rgb(x[1],x[2],x[3],x[4],maxColorValue = 255))
-    # to overwrite transparency for empty spots
-    col[na] = bg
+  # opacity is proportional to untransformed z, maybe I'll need to add opacity transformation function, lets see
+  opacity = z
+  if(scale.per.colour){
+    for(i in 1:ncol(opacity)) opacity[,i] = scaleTo(opacity[,i])
   }else{
-    stop("mode should be either mean or overlay")
+    opacity = scaleTo(opacity)
   }
+  # opacity is proportional to max opacity, maybe sum can be used instead.
+  opacity = scaleTo(apply(opacity,1,max,na.rm=TRUE),from=min.opacity,to=255)
+  opacity[is.na(opacity)] = 0
+
+
+  col = weightedColourMeans(cols,zscaled)
+  na = is.na(col)
+  col[na] = '#000000' # just to make col2rgb below works, anyway all NA spots (ones with zero intensity in all chanels) will be set transparent
+  col = rbind(col2rgb(col),opacity)
+  col = apply(col,2,function(x)rgb(x[1],x[2],x[3],x[4],maxColorValue = 255))
+  # to overwrite transparency for empty spots
+  col[na] = '#00000000'
+
   res = plotVisium(v,col,...)
 
 

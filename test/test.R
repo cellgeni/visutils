@@ -11,7 +11,7 @@ devtools::install_github("iaaka/visutils")
 
 devtools::install_local()
 # git add -u
-# git commit -m "add bg and tiles plot"
+# git commit -m "add splitSub"
 # git push -u origin main
 ?dotPlot
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/visium.utilities.R
 \name{plotVisiumMultyColours}
 \alias{plotVisiumMultyColours}
-\title{Plot multiple numerical values (gene expression or cell abundancies) on H&E image}
+\title{Plot multiple numerical values (gene expression or cell abundances) on H&E image}
 \usage{
 plotVisiumMultyColours(
   v,
@@ -10,11 +10,8 @@ plotVisiumMultyColours(
   cols = NULL,
   zfun = function(x) x^2,
   scale.per.colour = TRUE,
-  mode = "mean",
-  reorderByOpacity = FALSE,
-  min.opacity = 150,
+  min.opacity = 0,
   title.adj = c(0, -0.5),
-  bg = "#FFFFFF00",
   legend.ncol = 1,
   ...
 )
@@ -24,21 +21,15 @@ plotVisiumMultyColours(
 
 \item{z}{matrix with values (in columns) to be plotted}
 
-\item{cols}{colour to be used for x columns}
+\item{cols}{colors to be used for columns in z}
 
 \item{zfun}{function to transform values in z (z^2 is default)}
 
-\item{scale.per.colour}{logical, specifies whether each colour should cover whole range (that is, should x be sclaed per column)}
+\item{scale.per.colour}{logical, specifies whether each color should cover whole range (that is, should z be scaled per column)}
 
-\item{mode}{mean' (default) or 'overlay' (use with caution: result depends on order)}
-
-\item{reorderByOpacity}{logical, specifes whether colours should be ordered by increasing opacity prior to summing, only makes sense for mode='overlay'}
-
-\item{min.opacity}{minumal spot opacity for mean mode (from 0 to 255)m default is 150}
+\item{min.opacity}{minimal spot opacity. Default is 0, that means that spots with low intensity of all features will be almost transparent. Set it higer if you want at least one feature to be visible in each spot.}
 
 \item{title.adj}{legend title adj (to be passed to text function)}
-
-\item{bg}{color to use as spot background. NULL (default) for transparent background.}
 
 \item{legend.ncol}{number of legend columns. Set to 0 to suppress legend plotting.}
 
@@ -48,5 +39,5 @@ plotVisiumMultyColours(
 data.frame with user spot coordinates
 }
 \description{
-Values are plotted as a sum of color gradients. Be carefull, in overlay mode results can be misleading for spots with two dominant features.
+Each spot is colored by weighted mean colour. Opacity of spot is proportional to maximal feature intensity.
 }
