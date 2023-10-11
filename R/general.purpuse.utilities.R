@@ -11,6 +11,25 @@ log10p1 = function(x){
   log1p(x)/log(10)
 }
 
+#' Cuts part of delimited text
+#' analogous to bash cut
+#'
+#' @param x character vector to cut from
+#' @param del delimiter
+#' @param inx indexes of items to return
+#' @param fixed logical, whether del is fixed (to be passed to strsplit)
+#' @param simplify logical, whether output should be simplified (to be passed to sapply)
+#'
+#' @return character vector or
+#' @export
+#'
+#' @examples
+#' splitSub(c('a,b','d,c'),',',2)
+splitSub = function(x,del,inx,fixed=TRUE,simplify=TRUE){
+  sapply(strsplit(x,del,fixed=fixed),'[',inx,simplify = simplify)
+}
+
+
 #' Calculate weighted mean colour
 #'
 #' Weights are normalized per row by total
