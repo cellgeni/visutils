@@ -184,6 +184,12 @@ myLoadH5AD_Spatial = function (filename){
   return(object)
 }
 
+loadRequiredPackages = function(pkgs){
+  for(pkg in pkgs){
+    if(!require(pkg,character.only =TRUE))
+      stop(paste0('Please install package "',pkg,'"'))
+  }
+}
 
 #' Extracts dataframe from H5AD list
 #' function is used in conjunction with rhdf5::H5Fopen from myLoadH5AD_Spatials function
@@ -226,6 +232,46 @@ parseH5ADdataframe = function(collist,attr){
   }
   rownames(res) = collist[[attr$`_index`]]
   res[,c(attr$`_index`,attr$`column-order`)]
+}
+
+#' Loads h5ad scanpy single cell file as SingleCellExperiment
+#'
+#' functions exports X,obs,var and obsm
+#' it is very experimental and comes with no warranty
+#'
+#' @param filename path to h5ad file
+#'
+#' @return SingleCellExperiment object
+#' @export
+#'
+#' @examples
+h5ad_sce = function(filename){
+  loadRequiredPackages(c('Matrix','rhdf5','SingleCellExperiment'))
+
+
+  obsattr = h5readAttributes(filename,'obs')
+  varattr = h5readAttributes(filename,'var')
+
+  a = rhdf5::H5Fopen(filename,flags = 'H5F_ACC_RDONLY')
+
+  obs = parseH5ADdataframe(a$obs,obsattr)
+  var = parseH5ADdataframe(a$var,varattr)
+
+  m = a$X
+  mtx = sparseMatrix(i=m$indices+1, p=m$indptr,x = as.numeric(m$data),dims = c(nrow(var),nrow(obs)))
+  rownames(mtx) = rownames(var)
+  colnames(mtx) = rownames(obs)
+
+  sce = SingleCellExperiment(list(counts=mtx),
+                              colData=obs,
+                              rowData=var
+  )
+  # reduced dims
+  for(n in names(a$obsm)){
+    reducedDim(sce,n) = t(a$obsm[[n]])
+  }
+  rhdf5::H5Fclose(a)
+  sce
 }
 
 
