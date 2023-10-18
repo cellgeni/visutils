@@ -222,12 +222,12 @@ parseH5ADdataframe = function(collist,attr){
 
   # first way to store factors
   for(fn in names(collist[['__categories']])){
-    res[[fn]] = collist[['__categories']][[fn]][res[[fn]]+1]
+    res[[fn]] = as.vector(collist[['__categories']][[fn]][res[[fn]]+1])
   }
-  # another way to store factord
+  # another way to store factors
   for(fn in names(ll)[ll==2]){
     if(all(names(collist[[fn]]) %in% c("categories","codes"))){
-      res[[fn]] = collist[[fn]]$categories[collist[[fn]]$codes+1]
+      res[[fn]] = as.vector(collist[[fn]]$categories[collist[[fn]]$codes+1])
     }
   }
   rownames(res) = collist[[attr$`_index`]]
@@ -262,7 +262,7 @@ h5ad_sce = function(filename){
   rownames(mtx) = rownames(var)
   colnames(mtx) = rownames(obs)
 
-  sce = SingleCellExperiment(list(counts=mtx),
+  sce = SingleCellExperiment(list(X=mtx),
                               colData=obs,
                               rowData=var
   )
