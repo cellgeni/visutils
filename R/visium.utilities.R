@@ -185,81 +185,106 @@ myLoadH5AD_Spatial = function (filename){
 }
 
 
+#' Extracts dataframe from H5AD list
+#' function is used in conjunction with rhdf5::H5Fopen from myLoadH5AD_Spatials function
+#'
+#' @param collist list read from H5AD object
+#' @param attr
+#'
+#' @return
+#' @export
+#'
+#' @examples
+parseH5ADdataframe = function(collist,attr){
+  # slashes in names leads to nested structure, lets fix it
+  ll = sapply(collist,length)
+  for(i in which(ll==1)){
+    n = names(collist)[[i]]
+    repeat{
+      if(length(collist[[i]])>1)
+        break
+      n = paste0(n,'/',names(collist[[i]]))
+      collist[[i]] = collist[[i]][[1]]
+    }
+    names(collist)[i] = n
+  }
+
+  # factors are stored as list of categories and names, other types are stored as vectors
+  # take them first
+  ll = sapply(collist,length)
+  res = as.data.frame(collist[ll==max(ll)],check.names=FALSE)
+
+  # first way to store factors
+  for(fn in names(collist[['__categories']])){
+    res[[fn]] = collist[['__categories']][[fn]][res[[fn]]+1]
+  }
+  # another way to store factord
+  for(fn in names(ll)[ll==2]){
+    if(all(names(collist[[fn]]) %in% c("categories","codes"))){
+      res[[fn]] = collist[[fn]]$categories[collist[[fn]]$codes+1]
+    }
+  }
+  rownames(res) = collist[[attr$`_index`]]
+  res[,c(attr$`_index`,attr$`column-order`)]
+}
+
 
 #' Loads scanpy h5ad file with multiple Visium data into list of Seurat object
 #'
 #' @param filename character, path to h5ad file
-#' @param library_id_field name of adata.obs that specifies visium library. 'library_id' by default
+#' @param library_id_field name of adata.obs that specifies visium library. Function trys to guess it if set to NULL (default).
 #'
 #' @return list of Seurat object
 #' @export
-myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
+myLoadH5AD_Spatials = function (filename,library_id_field=NULL){
   require(Matrix)
   require(rhdf5)
-  a = rhdf5::H5Fopen(filename)
-  ll = sapply(a$obs,length)
-  obs = as.data.frame(a$obs[ll==max(ll)],check.names=F)
-  rownames(obs) = a$obs[["_index"]]
-  # one way to store factord
-  for(fn in names(a$obs[['__categories']])){
-    obs[[fn]] = a$obs[['__categories']][[fn]][obs[[fn]]+1]
-  }
-  # another way to store factord
-  for(fn in names(ll)[ll==2]){
-    if(all(names(a$obs[[fn]]) %in% c("categories","codes"))){
-      obs[[fn]] = a$obs[[fn]]$categories[a$obs[[fn]]$codes+1]
-    }
-  }
+  obsattr = h5readAttributes(filename,'obs')
+  varattr = h5readAttributes(filename,'var')
 
-  ll = sapply(a$var,length)
-  var = as.data.frame(a$var[ll==max(ll)],check.names=F)
+  a = rhdf5::H5Fopen(filename,flags = 'H5F_ACC_RDONLY')
 
-  # one way to store factord
-  for(fn in names(a$var[['__categories']])){
-    var[[fn]] = a$var[['__categories']][[fn]][var[[fn]]+1]
-  }
-  # another way to store factord
-  for(fn in names(ll)[ll==2]){
-    if(all(names(a$var[[fn]]) %in% c("categories","codes"))){
-      var[[fn]] = a$var[[fn]]$categories[a$var[[fn]]$codes+1]
-    }
-  }
-
-  if(!is.null(var$gene_ids)){
-    rownames(var) = var$gene_ids
-  }else if (!is.null(var$SYMBOL)){
-    rownames(var) = var$SYMBOL
-  }
-
-  #var = as.data.frame(a$var[-1:-2],check.names=F)
-  #rownames(var) = a$var[["_index"]]
+  obs = parseH5ADdataframe(a$obs,obsattr)
+  var = parseH5ADdataframe(a$var,varattr)
 
   m = a$X
   mtx = sparseMatrix(i=m$indices+1, p=m$indptr,x = as.numeric(m$data),dims = c(nrow(var),nrow(obs)))
   rownames(mtx) = rownames(var)
   colnames(mtx) = rownames(obs)
 
+  # find column in obs all values of each has spatial data in a$uns$spatial
+  if(is.null(library_id_field)){
+    imglibs = names(a$uns$spatial)
+    for(obsf in colnames(obs)){
+      if(all(obs[,obsf] %in% imglibs)){
+        library_id_field = obsf
+        break
+      }
+    }
+  }
+
   res = list()
   for(lid in unique(obs[[library_id_field]])){
+    # subset obs
     f = obs[[library_id_field]] == lid
     obs_ = obs[f,]
     if(!is.null(obs_$barcode)){
       rownames(obs_) = obs_$barcode
     }
+    # subset counts
     mtx_ = mtx[,which(f)]
     colnames(mtx_) = rownames(obs_)
 
     object <- CreateSeuratObject(counts = mtx_, assay = 'Spatial')
 
+    # extract image
     image <- aperm(a$uns$spatial[[lid]]$images$hires,3:1)
 
     scale.factors <- a$uns$spatial[[lid]]$scalefactors
-    # looks like in stomics both images are hires actually (at least they were identical for example I tried)
+    # looks like in scanpy both images are hires actually (at least they were identical for example I tried)
     scale.factors$tissue_lowres_scalef = scale.factors$tissue_hires_scalef
     tissue.positions = cbind(obs[f,c('in_tissue','array_row','array_col')], t(a$obsm$spatial[,f])[,2:1])
     colnames(tissue.positions) = c("tissue", "row", "col", "imagerow", "imagecol")
-
-
 
     rownames(tissue.positions) = rownames(obs_)
 
@@ -267,8 +292,8 @@ myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
     spot.radius <- unnormalized.radius/max(dim(x = image))
     image = new(Class = "VisiumV1", image = image, scale.factors = scalefactors(spot = scale.factors$tissue_hires_scalef,
                                                                                 fiducial = scale.factors$fiducial_diameter_fullres, hires = scale.factors$tissue_hires_scalef,
-                                                                                scale.factors$tissue_lowres_scalef), coordinates = tissue.positions, spot.radius = spot.radius)
-
+                                                                                scale.factors$tissue_lowres_scalef),
+                coordinates = tissue.positions, spot.radius = spot.radius)
 
     image <- image[Cells(x = object)]
     DefaultAssay(object = image) = 'Spatial'
@@ -283,7 +308,6 @@ myLoadH5AD_Spatials = function (filename,library_id_field='library_id'){
 
   rhdf5::H5Fclose(a)
   return(res)
-
 }
 
 #' Adjast image brightnes and contrast
