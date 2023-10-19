@@ -11,7 +11,7 @@ devtools::install_github("iaaka/visutils")
 
 devtools::install_local()
 # git add -u
-# git commit -m "fix h5ad_sce"
+# git commit -m "move loadh5ad to https://github.com/cellgeni/schard"
 # git push -u origin main
 ?dotPlot
 
