@@ -197,10 +197,8 @@ loadRequiredPackages = function(pkgs){
 #' @param collist list read from H5AD object
 #' @param attr
 #'
-#' @return
+#' @return a data.frame
 #' @export
-#'
-#' @examples
 parseH5ADdataframe = function(collist,attr){
   # slashes in names leads to nested structure, lets fix it
   ll = sapply(collist,length)
@@ -245,32 +243,41 @@ parseH5ADdataframe = function(collist,attr){
 #' @export
 #'
 #' @examples
+#' sce = h5ad_sce('adata.h5ad')
 h5ad_sce = function(filename){
   loadRequiredPackages(c('Matrix','rhdf5','SingleCellExperiment'))
-
-
   obsattr = h5readAttributes(filename,'obs')
   varattr = h5readAttributes(filename,'var')
 
   a = rhdf5::H5Fopen(filename,flags = 'H5F_ACC_RDONLY')
 
-  obs = parseH5ADdataframe(a$obs,obsattr)
-  var = parseH5ADdataframe(a$var,varattr)
+  tryCatch({
+    obs = parseH5ADdataframe(a$obs,obsattr)
+    var = parseH5ADdataframe(a$var,varattr)
 
-  m = a$X
-  mtx = sparseMatrix(i=m$indices+1, p=m$indptr,x = as.numeric(m$data),dims = c(nrow(var),nrow(obs)))
-  rownames(mtx) = rownames(var)
-  colnames(mtx) = rownames(obs)
+    m = a$X
+    if(is.array(m)){
+      mtx = m
+    }else{
+      mtx = sparseMatrix(i=m$indices+1, p=m$indptr,x = as.numeric(m$data),dims = c(nrow(var),nrow(obs)))
+    }
+    rownames(mtx) = rownames(var)
+    colnames(mtx) = rownames(obs)
 
-  sce = SingleCellExperiment(list(X=mtx),
-                              colData=obs,
-                              rowData=var
-  )
-  # reduced dims
-  for(n in names(a$obsm)){
-    reducedDim(sce,n) = t(a$obsm[[n]])
-  }
-  rhdf5::H5Fclose(a)
+    sce = SingleCellExperiment(list(X=mtx),
+                                colData=obs,
+                                rowData=var
+    )
+    # reduced dims
+    for(n in names(a$obsm)){
+      reducedDim(sce,n) = t(a$obsm[[n]])
+    }
+    rhdf5::H5Fclose(a)
+  },error=function(e){
+    rhdf5::H5Fclose(a)
+    stop(e)
+  })
+
   sce
 }
 
