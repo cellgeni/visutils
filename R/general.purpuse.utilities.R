@@ -448,8 +448,8 @@ col2hex = function(c,withAlpha = TRUE){
 #' Wrapper for plotColorLegend to plot legend for given range
 #'
 #' @param x0,x1,y0,y1 rectange coordinates of the legend in nfc coordinates
-#' @param fullzlim numeric vector with two items. Full range
-#' @param zlim numeric vector with two items. Range to show (should be within fullzlim)
+#' @param fullzlim numeric vector with two items. Full range to be considered.
+#' @param zlim numeric vector with two items. Range to show, trimmed to fullzlim if wider.
 #' @param zfun transformation for value (gradient will be drawn along transformed value). Identity, log1p, sqrt, ets.
 #' @param z2col function to transform numbers to colors
 #' @param N number of steps in the gradient
@@ -460,6 +460,10 @@ col2hex = function(c,withAlpha = TRUE){
 #'
 #' @export
 plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,leg=NULL,title=NULL,title.adj=c(0,-0.5)){
+  if(zlim[0]<fullzlim[0])
+    zlim[0]=fullzlim[0]
+  if(zlim[1]>fullzlim[1])
+    zlim[1]=fullzlim[1]
   # make tics
   if(is.null(leg)){
     ztic = seq(zlim[1],zlim[2],length.out = 1e5)

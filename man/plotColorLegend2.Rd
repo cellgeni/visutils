@@ -23,9 +23,9 @@ plotColorLegend2(
 \arguments{
 \item{x0, x1, y0, y1}{rectange coordinates of the legend in nfc coordinates}
 
-\item{fullzlim}{numeric vector with two items. Full range}
+\item{fullzlim}{numeric vector with two items. Full range to be considered.}
 
-\item{zlim}{numeric vector with two items. Range to show (should be within fullzlim)}
+\item{zlim}{numeric vector with two items. Range to show, trimmed to fullzlim if wider.}
 
 \item{zfun}{transformation for value (gradient will be drawn along transformed value). Identity, log1p, sqrt, ets.}
 

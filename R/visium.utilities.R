@@ -423,7 +423,8 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
       do.call(legend,legend.args)
     }else if(is.function(z2col) && !is.null(zorig) && is.numeric(zorig)){
       # numerical
-      plotColorLegend2(grconvertX(1,'npc','nfc'),1,grconvertY(0.1,'npc','nfc'),grconvertY(0.9,'npc','nfc'),zlim,range(zorig,na.rm=TRUE),zfun,z2col,leg=num.leg.tic,title=legend.args$title)
+      plotColorLegend2(grconvertX(1,'npc','nfc'),1,grconvertY(0.1,'npc','nfc'),grconvertY(0.9,'npc','nfc'),zlim,range(zorig,na.rm=TRUE),zfun,z2col,
+                       leg=num.leg.tic,title=legend.args$title)
     }
   }
   if(is.character(label.clusters) || (label.clusters[1] & is.character(z))){
