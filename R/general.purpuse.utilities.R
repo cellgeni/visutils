@@ -460,10 +460,10 @@ col2hex = function(c,withAlpha = TRUE){
 #'
 #' @export
 plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,leg=NULL,title=NULL,title.adj=c(0,-0.5)){
-  if(zlim[0]<fullzlim[0])
-    zlim[0]=fullzlim[0]
-  if(zlim[1]>fullzlim[1])
+  if(zlim[1]<fullzlim[1])
     zlim[1]=fullzlim[1]
+  if(zlim[2]>fullzlim[2])
+    zlim[2]=fullzlim[2]
   # make tics
   if(is.null(leg)){
     ztic = seq(zlim[1],zlim[2],length.out = 1e5)
