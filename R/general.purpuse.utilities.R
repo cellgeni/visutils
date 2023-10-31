@@ -464,6 +464,8 @@ plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,le
     zlim[1]=fullzlim[1]
   if(zlim[2]>fullzlim[2])
     zlim[2]=fullzlim[2]
+  if(zlim[1]>zlim[2])
+    zlim[2] = zlim[1]
   # make tics
   if(is.null(leg)){
     ztic = seq(zlim[1],zlim[2],length.out = 1e5)
