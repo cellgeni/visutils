@@ -4,7 +4,7 @@
 \alias{getMeanSpotColor}
 \title{Extracts mean color of spots}
 \usage{
-getMeanSpotColor(vis, scalefactors)
+getMeanSpotColor(vis, scalefactors, image.name = NULL)
 }
 \arguments{
 \item{vis}{Seurat object}

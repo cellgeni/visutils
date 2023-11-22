@@ -4,7 +4,7 @@
 \alias{scaleVisiumImage}
 \title{Resizes H&E image}
 \usage{
-scaleVisiumImage(v, wpx = 500)
+scaleVisiumImage(v, wpx = 500, image.name = NULL)
 }
 \arguments{
 \item{v}{Seurat visium image}

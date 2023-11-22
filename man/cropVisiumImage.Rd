@@ -4,7 +4,7 @@
 \alias{cropVisiumImage}
 \title{Crop image in Seuart Visium object}
 \usage{
-cropVisiumImage(v)
+cropVisiumImage(v, image.name = NULL)
 }
 \arguments{
 \item{v}{Seurat object}

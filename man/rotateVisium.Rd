@@ -4,7 +4,7 @@
 \alias{rotateVisium}
 \title{Rotates Seurat visium slide}
 \usage{
-rotateVisium(v, n = 1, mirror = FALSE)
+rotateVisium(v, n = 1, mirror = FALSE, image.name = NULL)
 }
 \arguments{
 \item{v}{Seurat object}

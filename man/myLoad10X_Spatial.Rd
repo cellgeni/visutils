@@ -4,7 +4,13 @@
 \alias{myLoad10X_Spatial}
 \title{Load spaceranger results}
 \usage{
-myLoad10X_Spatial(data.dir, filter.matrix = TRUE, ens_id = TRUE, ...)
+myLoad10X_Spatial(
+  data.dir,
+  filter.matrix = TRUE,
+  ens_id = TRUE,
+  slice = "slice1",
+  ...
+)
 }
 \arguments{
 \item{data.dir}{path to the folder with h5 files}

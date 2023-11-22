@@ -251,9 +251,12 @@ char2col = function(t,bpal='Set1',colfun=randomcoloR::distinctColorPalette,palet
   })
   if(length(t) <= RColorBrewer::brewer.pal.info[bpal,'maxcolors'])
     r=setNames(RColorBrewer::brewer.pal(max(3,length(t)),bpal),t)[1:length(t)]
-  else{
+  else if(length(t)<=2000){
     set.seed(random.seed)
     r=setNames(colfun(length(t)),t)
+  }else{
+    set.seed(random.seed)
+    r=setNames(randomcoloR::randomColor(length(t)),t)
   }
   if(!palette)
     r = r[torig]

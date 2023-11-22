@@ -1,2 +1,4 @@
 ^visutils\.Rproj$
 ^\.Rproj\.user$
+^examples
+^test

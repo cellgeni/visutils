@@ -4,10 +4,10 @@
 \alias{getCenters}
 \title{Makes one step coarser spot mesh}
 \usage{
-getCenters(coors, cstart = 0L, type = 1L, to.merge = NULL)
+getCenters(coors, cstart = 0L, type = 1L, to.merge = NULL, image.name = NULL)
 }
 \arguments{
-\item{coors}{Seurat object or coors@images$slice1@coordinates}
+\item{coors}{Seurat object or coors seu@images[\link{.}]@coordinates}
 
 \item{cstart}{column coordinate of first (in -2th row) cluster center. Numbers for 0 to 13 will give different groupings.}
 

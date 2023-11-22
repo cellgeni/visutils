@@ -1,6 +1,6 @@
 #' Makes one step coarser spot mesh
 #'
-#' @param coors Seurat object or coors@images$slice1@coordinates
+#' @param coors Seurat object or coors seu@images[[.]]@coordinates
 #' @param cstart column coordinate of first (in -2th row) cluster center. Numbers for 0 to 13 will give different groupings.
 #' @param type orientation of mesh, 1 or -1
 #' @param to.merge logical vector specifying spots to be merged, use v$nCount_Spatial<500 to merge spots with less than 500 UMIs. NULL is identicall to all TRUE.
@@ -13,9 +13,11 @@
 #' @examples
 #' c2 = getCenters(v2)
 #' plotVisium(v2,c2$group)
-getCenters = function(coors,cstart=0L,type=1L,to.merge=NULL){
-  if(class(coors) == 'Seurat')
-    coors = coors@images$slice1@coordinates
+getCenters = function(coors,cstart=0L,type=1L,to.merge=NULL,image.name=NULL){
+  if(class(coors) == 'Seurat'){
+    image.name = getImageName(coors,image.name,stopIfMoreThanOne=TRUE)
+    coors = coors@images[[image.name]]@coordinates
+  }
   if(!(type %in% c(-1,1))) stop("type should be either 1 or -1")
   cstep = 14L
   cstart = cstart %% cstep
@@ -59,9 +61,11 @@ getCenters = function(coors,cstart=0L,type=1L,to.merge=NULL){
 #' c2 = getCenters(v2,to.merge = v2$nCount_Spatial<500)
 #' v2m = mergeSpots(v2,c2)
 #' v2m@meta.data[1:20,]
-#' cex = scaleTo(sqrt(v2m$nspots),1,sqrt(8),minx = 1,maxx = sqrt(7))*0.9
-#' plotVisium(v2m,v2m$nCount_Spatial,zfun = log1p,cex=cex)
-mergeSpots = function(v,gr){
+#' plotVisium(v2m,v2m$nCount_Spatial,zfun = log1p,cex=v2m$cex)
+mergeSpots = function(v,gr,image.name=NULL){
+  if(length(v@images) > 1)
+    stop('mergeSpots can be applied only to single sample! This object contains more than one slide, please subset!')
+  image.name = getImageName(v,image.name,stopIfMoreThanOne=TRUE)
   gr$nCount_Spatial = v$nCount_Spatial
   gr$nspots = as.numeric(table(gr$group)[gr$group])
   gr$barcode = rownames(gr)
@@ -74,7 +78,7 @@ mergeSpots = function(v,gr){
     f = which(x$group == paste0(x$row,'_',x$col))
     if(length(f)==1){
       r = x[f,]
-    }else{ # use max covered spot othervise
+    }else{ # use max covered spot otherwise
       r = x[which.max(x$nCount_Spatial),]
     }
     r$merged_spots = paste(x$barcode,collapse=';')
@@ -86,13 +90,13 @@ mergeSpots = function(v,gr){
 
   object <- CreateSeuratObject(counts = mtx_, assay = "Spatial")
 
-  image = new(Class = "VisiumV1", image = v@images$slice1@image,
-              scale.factors = v@images$slice1@scale.factors,
+  image = new(Class = "VisiumV1", image = v@images[[image.name]]@image,
+              scale.factors = v@images[[image.name]]@scale.factors,
               coordinates = gr_[,1:6],
-              spot.radius = v@images$slice1@spot.radius)
+              spot.radius = v@images[[image.name]]@spot.radius)
   image <- image[Cells(x = object)]
   DefaultAssay(object = image) = "Spatial"
-  object[["slice1"]] = image
+  object[[image.name]] = image
   object@assays$Spatial@meta.features = v@assays$Spatial@meta.features
 
   cols = setdiff(colnames(v@meta.data),c(colnames(object@meta.data)))
@@ -101,6 +105,6 @@ mergeSpots = function(v,gr){
   # add info about merged spots
   object@meta.data$nspots = gr_$nspots
   object@meta.data$merged_spots = gr_$merged_spots
-
+  object@meta.data$cex = scaleTo(sqrt(gr_$nspots),1,sqrt(8),minx = 1,maxx = sqrt(7))*0.9
   object
 }

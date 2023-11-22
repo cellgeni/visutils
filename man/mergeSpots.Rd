@@ -4,7 +4,7 @@
 \alias{mergeSpots}
 \title{Merge grouped spots}
 \usage{
-mergeSpots(v, gr)
+mergeSpots(v, gr, image.name = NULL)
 }
 \arguments{
 \item{v}{Seurat object}
@@ -21,6 +21,5 @@ Merge grouped spots
 c2 = getCenters(v2,to.merge = v2$nCount_Spatial<500)
 v2m = mergeSpots(v2,c2)
 v2m@meta.data[1:20,]
-cex = scaleTo(sqrt(v2m$nspots),1,sqrt(8),minx = 1,maxx = sqrt(7))*0.9
-plotVisium(v2m,v2m$nCount_Spatial,zfun = log1p,cex=cex)
+plotVisium(v2m,v2m$nCount_Spatial,zfun = log1p,cex=v2m$cex)
 }

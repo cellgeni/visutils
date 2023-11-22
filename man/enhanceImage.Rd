@@ -2,7 +2,7 @@
 % Please edit documentation in R/visium.utilities.R
 \name{enhanceImage}
 \alias{enhanceImage}
-\title{Adjast image brightnes and contrast}
+\title{Adjust image brightnes and contrast}
 \usage{
 enhanceImage(p, wb = FALSE, qs = NULL, trim01 = TRUE)
 }
@@ -19,5 +19,5 @@ enhanceImage(p, wb = FALSE, qs = NULL, trim01 = TRUE)
 image (3d numeric array)
 }
 \description{
-Adjast image brightnes and contrast
+Adjust image brightnes and contrast
 }
