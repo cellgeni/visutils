@@ -1,5 +1,5 @@
-#library(visutils)
-devtools::load_all()
+library(visutils)
+# devtools::load_all()
 library(Seurat)
 
 # load data ########

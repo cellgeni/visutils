@@ -69,7 +69,9 @@ weightedColourMeans = function(cols,weights){
 #'
 #' @return list bith bins and frequencies (invisible)
 #' @export hist2D
-hist2D = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange','red'),zfun=identity,leg.title='',num.leg.tic=NULL,legend=TRUE,trimZq=0,xlim=NULL,ylim=NULL,zlim=NULL,new=TRUE,xlab=deparse(substitute(x)),ylab=deparse(substitute(y)),...){
+hist2D = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange','red'),zfun=identity,
+                  leg.title='',num.leg.tic=NULL,legend=TRUE,trimZq=0,xlim=NULL,ylim=NULL,zlim=NULL,
+                  new=TRUE,xlab=deparse(substitute(x)),ylab=deparse(substitute(y)),...){
   xlab;ylab;
   f = !is.na(x) & !is.infinite(x) & !is.na(y) & !is.infinite(y)
   if(!is.null(xlim)) f = f & x >= xlim[1] & x <= xlim[2]
@@ -100,9 +102,11 @@ hist2D = function(x,y,xbins=100,ybins=100,cols=c('white','gray','blue','orange',
        rep(xbins[-1]            ,each =length(ybins)-1),
        rep(ybins[-1]            ,times=length(xbins)-1),
        col=z2col(z),border = NA)
-  if(legend)
-    plotColorLegend2(grconvertX(1,'npc','nfc'),1,grconvertY(0,'npc','nfc'),grconvertY(1,'npc','nfc'),
-                     range(z),range(z),zfun,z2col=z2col,leg=num.leg.tic,title=leg.title)
+  if(legend){
+    z2col=function(x)num2col(x,cols)
+    plotColorLegend2(grconvertX(1,'npc','nfc'),1,grconvertY(0,'npc','nfc'),grconvertY(1,'npc','nfc'),fullzlim = zlim,
+                     zlim = range(z),zfun = zfun,z2col=z2col,leg=num.leg.tic,title=leg.title)
+  }
   invisible(list(x=(xbins[-1]+xbins[-length(xbins)])/2,
                  y=(ybins[-1]+ybins[-length(ybins)])/2,
                  z=z,xbins=xbins,ybins=ybins))

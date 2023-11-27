@@ -204,7 +204,7 @@ myLoad10X_Spatial = function(data.dir,filter.matrix=TRUE,ens_id=TRUE,slice='slic
   if(dir.exists(paste0(data.dir,'/outs'))){
     data.dir = paste0(data.dir,'/outs')
   }
-  d = Load10X_Spatial(data.dir = data.dir,
+  d = Seurat::Load10X_Spatial(data.dir = data.dir,
                       filename = ifelse(filter.matrix,'filtered_feature_bc_matrix.h5','raw_feature_bc_matrix.h5'),
                       filter.matrix=filter.matrix,
                       use.name=!ens_id,
