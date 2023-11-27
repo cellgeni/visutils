@@ -198,6 +198,7 @@ bandwidth.nrd.not0 = function (x) {
 plotPointDensity = function(x,y,pch=16,bty='n',log='',...){
   x.=x
   y.=y
+  pch=recycle(pch,length(x))
   if(grepl('x',log)){
     x. = log(x.)
   }
@@ -205,7 +206,8 @@ plotPointDensity = function(x,y,pch=16,bty='n',log='',...){
     y. = log(y.)
   }
   c = pointKde2d(x.,y.)
-  plot(x,y,col=num2col(c),pch=pch,bty=bty,log=log,...)
+  o = order(c)
+  plot(x[o],y[o],col=num2col(c[o]),pch=pch[o],bty=bty,log=log,...)
 }
 
 
