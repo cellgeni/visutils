@@ -73,7 +73,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
   if(is.null(xy)){
     stop('v should be either Seurat or data.frame or matrix list')
   }
-  if(type == 'xy' && !is.null(dim(xy)) && !all(colnames(xy) %in% c('x','y'))){
+  if(type %in% c('rect','xy') && !is.null(dim(xy)) && !all(colnames(xy) %in% c('x','y'))){
     colnames(xy) = c('x','y')
   }
 
