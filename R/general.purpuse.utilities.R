@@ -1,3 +1,32 @@
+#' Compare two lists of sets
+#'
+#' return matrix of set similarities defined by fun.
+#'
+#' Default is size of intersection divided by minimal size (overlap or Szymkiewicz–Simpson coefficient).
+#'
+#'
+#' @param l1
+#' @param l2
+#' @param fun function to calculate similarity or character. 'o' will result in intersect/min; 'j' in intersect/union
+#'
+#' @return
+#' @export
+#'
+#' @examples
+compareSets = function(l1,l2=l1,fun='o'){
+  if(is.character(fun) && fun=='o')
+    fun = function(x,y){length(intersect(x,y))/min(length(x),length(y))}
+  if(is.character(fun) && fun=='j')
+    fun = function(x,y){length(intersect(x,y))/length(union(x,y))}
+  m = matrix(NA,nrow=length(l1),ncol=length(l2),dimnames = list(names(l1),names(l2)))
+  for(i in 1:length(l1)){
+    for(j in 1:length(l2)){
+      m[i,j] = fun(l1[[i]],l2[[j]])
+    }
+  }
+  m
+}
+
 #' log10(1+x)
 #'
 #' Same as log1p but with base equal to 10
