@@ -5,14 +5,15 @@
 #' Default is size of intersection divided by minimal size (overlap or Szymkiewicz–Simpson coefficient).
 #'
 #'
-#' @param l1
-#' @param l2
+#' @param l1 list of sets to be compared
+#' @param l2 list of sets to be compared (compare l1 with itself if l2 is not set)
 #' @param fun function to calculate similarity or character. 'o' will result in intersect/min; 'j' in intersect/union
 #'
-#' @return
+#' @return matrix if length(l1),length(l2) size
 #' @export
 #'
 #' @examples
+#' compareSets(list(letters[1:6],1:5),list(letters[1:8],4:8,letters[4:10]),fun = 'j')
 compareSets = function(l1,l2=l1,fun='o'){
   if(is.character(fun) && fun=='o')
     fun = function(x,y){length(intersect(x,y))/min(length(x),length(y))}
@@ -275,6 +276,7 @@ trimQ = function(x,q){
 #' char2col(c(T,F))
 #' @export
 char2col = function(t,bpal='Set1',colfun=randomcoloR::distinctColorPalette,palette=TRUE,random.seed=1234){
+  set.seed(random.seed)
   require(randomcoloR)
   t = as.character(t)
   torig = t
@@ -287,10 +289,8 @@ char2col = function(t,bpal='Set1',colfun=randomcoloR::distinctColorPalette,palet
   if(length(t) <= RColorBrewer::brewer.pal.info[bpal,'maxcolors'])
     r=setNames(RColorBrewer::brewer.pal(max(3,length(t)),bpal),t)[1:length(t)]
   else if(length(t)<=2000){
-    set.seed(random.seed)
     r=setNames(colfun(length(t)),t)
   }else{
-    set.seed(random.seed)
     r=setNames(randomcoloR::randomColor(length(t)),t)
   }
   if(!palette)

@@ -31,6 +31,7 @@ plotVisium(
   bg = NA,
   image.name = NULL,
   pie.fracs = NULL,
+  he.img.width = 400,
   ...
 )
 }
@@ -84,6 +85,8 @@ plotVisium(
 \item{image.name}{name of image to plot, uses first if set to NULL. Use this parameter if v contains multiple visium objects.}
 
 \item{pie.fracs}{if specified plots pies instead of simple cycles. Matrix with number of rows equal to the number of spots, and number of columns equal to pie pieces.}
+
+\item{he.img.width}{integer, defines width (in pixels) the H&E figure should be resized to. Helps with speed of plotting and size of output files. Default is 400.}
 
 \item{...}{other arguments to be passed to graphical functions (see Details)}
 }

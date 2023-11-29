@@ -27,6 +27,7 @@
 #' @param bg color to be used as background on xy/tiles plots
 #' @param image.name name of image to plot, uses first if set to NULL. Use this parameter if v contains multiple visium objects.
 #' @param pie.fracs if specified plots pies instead of simple cycles. Matrix with number of rows equal to the number of spots, and number of columns equal to pie pieces.
+#' @param he.img.width integer, defines width (in pixels) the H&E figure should be resized to. Helps with speed of plotting and size of output files. Default is 400.
 #' @param ... other arguments to be passed to graphical functions (see Details)
 #'
 #' @details Plots spots on top of H&E image, if type is 'img' (see \code{\link{plotVisiumImg}} for additional parameters),
@@ -40,7 +41,7 @@
 plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.legend=TRUE,zlim=NULL,zfun = identity,spot.filter=NULL,pch=16,
                       num.leg.tic=NULL,label.clusters=FALSE,legend.args=list(),randomize.points=FALSE,order.points.by.z=FALSE,xaxt='n',yaxt='n',
                       cluster.lab.adj=c(0.5,0.5),cluster.lab.cex=1,cluster.lab.font=1,cluster.lab2col=NULL,show.cluster.sizes=FALSE,bg=NA,image.name=NULL,
-                      pie.fracs=NULL,...){
+                      pie.fracs=NULL,he.img.width=400,...){
   xy = NULL
   if('Seurat' %in% class(v)){
     if(type=='xy'){
@@ -135,7 +136,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
   # plot
   if(type=='img'){
     image = v@images[[image.name]]
-    xy=plotVisiumImg(xy,image@image,image@scale.factors$lowres,image@spot.radius,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,pie.fracs=pie.fracs,...)
+    xy=plotVisiumImg(xy,image@image,image@scale.factors$lowres,image@spot.radius,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,pie.fracs=pie.fracs,he.img.width=he.img.width,...)
   }
   if(type=='hex'){
     xy=plotVisiumHex(xy,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,...)
