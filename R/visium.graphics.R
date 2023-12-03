@@ -176,7 +176,9 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
       for(n in names(legend.args.def))
         if(is.null(legend.args[[n]])) legend.args[[n]] = legend.args.def[[n]]
       if(show.cluster.sizes){
-        legend.args$legend = paste0(legend.args$legend,' (',table(col)[z2col],')')
+        clsize = table(col)[z2col]
+        clsize[is.na(clsize)] = 0
+        legend.args$legend = paste0(legend.args$legend,' (',clsize,')')
       }
       do.call(legend,legend.args)
     }else if(is.function(z2col) && !is.null(zorig) && is.numeric(zorig)){
