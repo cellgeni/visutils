@@ -17,7 +17,14 @@ RoxygenNote: 7.2.3
 Imports:
   png,
   nnls,
-  Matrix
+  Matrix,
+  randomcoloR,
+  EBImage,
+  viridis,
+  doMC,
+  plyr,
+  MASS,
+  igraph
 Suggests: 
     knitr,
     rmarkdown,

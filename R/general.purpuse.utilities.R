@@ -392,16 +392,33 @@ isColors <- function(x) {
 #' @param centerColors0 logical, specifies whether 0 should be considered as palette center (makes sense for correlation matrices)
 #' @param las orientation of axis labels (see las in ?par)
 #' @param text.xadj text adjastment by x
+#' @param colAnns,rowAnns list (or matrix of columns) of column (row) annotation to be shown by color
+#' @param colAnnsCols,rowAnnsCols - colors to be used for col (row) annotation. Defined by char2color if null.
+#' @param legend.cex.at,legend.col.at values to be used in legend, set both to have two independent legends for size and colour
+#' @param legend.cex.title,legend.col.title titles of legends
+#' @param rowAnnWidth,colAnnWidth - size of colour annotations as fraction of plot area
+#' @param annSpacer - spacer between heatmap and annotation as fraction of plot area
 #' @param ... other options to be supplied to image
 #'
 #' @export
-imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxlab=colnames(d),centerColors0=FALSE,las=2,text.xadj=0.5,...){
+#' @examples
+#' par(mar=c(10,6,1,1),bty='n')
+#' imageWithText(mtcars[1:4,1:3],rowAnns=list(r1=c(1,1,2),r2=c('a','a','a')),rowAnnCols=list(r1=c('1'='red','2'='blue'),r2=c(a='green')),colAnns = list(c1=c(1,1,1,2),c2=c(2,1,2,1),c3=c('a','b','b','b')))
+imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxlab=colnames(d),centerColors0=FALSE,las=2,text.xadj=0.5,
+                         colAnns=NULL,rowAnns=NULL,
+                         colAnnCols=NULL,rowAnnCols=NULL,
+                         col= hcl.colors(100, "YlOrRd", rev = TRUE),
+                         rowAnnWidth=0.7,colAnnWidth=0.7,annSpacer=0.1,...){
+
+  d = as.matrix(d)
   if(is.null(t))
     t = round(d,digits = digits)
   pars = list(...)
   if(is.null(pars$col)) pars$col= num2col(1:100)
+  pars$col = col
   pars$x = 1:nrow(d)
   pars$y = 1:ncol(d)
+
   if(is.null(pars$xlab)) pars$xlab=''
   if(is.null(pars$ylab)) pars$ylab=''
   pars$z = d
@@ -417,10 +434,236 @@ imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxl
   if(is.null(text.col))
     text.col = 'black'
   text(rep(pars$x,times=length(pars$y))+scaleTo(text.xadj,-0.45,0.45,minx=0,maxx=1),rep(pars$y,each=length(pars$x)),t,col=text.col,adj=c(text.xadj,0.5))
-  if(!is.null(xaxlab))
+
+  mgp = par('mgp')
+  if(!is.null(colAnns)){
+    par(mgp=mgp+length(colAnns)*colAnnWidth+annSpacer)
+    plotColorAnn(pars$x,colAnns,cex=colAnnWidth,horis=TRUE,col=colAnnCols,spacer = annSpacer)
+  }
+
+  if(!is.null(xaxlab)){
     axis(1,pars$x,xaxlab,las=las)
+  }
+
+  if(!is.null(rowAnns)){
+    par(mgp=mgp+length(rowAnns)*rowAnnWidth+annSpacer)
+    plotColorAnn(pars$y,rowAnns,cex=rowAnnWidth,horis=FALSE,col=rowAnnCols,spacer = annSpacer)
+  }
   if(!is.null(yaxlab))
     axis(2,pars$y,yaxlab,las=las)
+
+  par(mgp=mgp)
+}
+
+#' Returns with of line in user coordinates
+#'
+#' @param axis character, either 'x' or 'y'
+#'
+#' @return with of line in user coordinates
+#' @export
+#'
+#' @examples
+#' getLineWidth('x')
+getLineWidth = function(axis){
+  if(!(axis %in% c('x','y')))
+    stop('axis shold be eitehr x or y')
+  if(axis=='x')
+    r = grconvertX(1:2,'lines','user')
+  if(axis=='y')
+    r = grconvertY(1:2,'lines','user')
+  abs(r[1]-r[2])
+}
+
+#' Plots matrix as dotPlot
+#'
+#' Shows values in matix by point size and color. Size matrix (m) is not scaled by default, dot size is defined as m*max.cex
+#'
+#' @param m numeric matrix to be shown as dot size
+#' @param mc numeric matrix to be shown as dot colour (uses m as default)
+#' @param rfun function to calculate radius from matrix values. Use sqrt (default) to make area proportional to value
+#' @param colfun function to transform values to colour gradient
+#' @param grid logial, should grid be plotted
+#' @param grid.lty lty of grid
+#' @param grid.col line color of grid
+#' @param max.cex max size of dots
+#' @param xlab,ylab axis labels
+#' @param ylab.cex magnification label for ylabs
+#' @param colColours colour matrix to plot annotation for columns (matrix with nrow equal to ncol(m); each column of colColours is annotation)
+#' @param rowColours colour matrix to plot annotation for row (matrix with nrow equal to nrow(m); each column of rowColours is annotation)
+#' @param scaleWM logical, specifies wheter computed radiuses should be scaled into [0,1] interval (FALSE by default).
+#' @param pch point character (19 by default)
+#' @param plot.legend logical, whether legend should be plotted. Single legend will be plotted if m is identicall to mc.
+#' @param legend.cex.at,legend.col.at values to be used in legend, set both to have two independent legends for size and colour
+#' @param legend.cex.title,legend.col.title titles of legends
+#' @param rowAnnWidth,colAnnWidth - size of colour annotations in user coordinates
+#' @param ... other parameters to be passed to plot function
+#'
+#' @export
+#' @examples
+#' c = matrix(1:12,ncol=3)
+#' par(mar=c(4,4,1,10),bty='n')
+#' dotPlot(c/12,-c,max.cex = 3,colColours = cbind(col1=c('red','blue','red'),col2=c('green','green','magenta')),
+#'         rowColours = cbind(rrr1=c('red','blue','blue','red'),rrr2=c('green','green','magenta','green')),
+#'       legend.cex.title='size',legend.col.title='col',
+#'       colAnnWidth = 0.5,
+#'       rowAnnWidth = 0.5)
+dotPlot = function(m,mc=m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','violet','black')),grid=TRUE,grid.lty=2,grid.col='gray',
+                   max.cex=1,xlab='',ylab='',ylab.cex=1,xlab.cex=1,
+                   colColours=NULL,rowColours=NULL,
+                   rowAnnWidth=1,colAnnWidth=1,
+                   scaleWM=FALSE,pch=19,plot.legend=TRUE,
+                   legend.cex.at=NULL,legend.col.at=legend.cex.at,
+                   legend.cex.title='',legend.col.title='',...){
+  x = rep(1:ncol(m),each=nrow(m))
+  y = rep(nrow(m):1,times=ncol(m))
+
+  xlim=c(0,max(x)+1)
+  ylim=c(0,max(y)+1)
+
+  if(!is.null(colColours)){
+    if(!is.array(colColours))
+      colColours = matrix(colColours,ncol=1)
+    ylim[1] = -ncol(colColours)*colAnnWidth
+  }
+
+  if(!is.null(rowColours)){
+    if(!is.array(rowColours))
+      rowColours = matrix(rowColours,ncol=1)
+    xlim[1] = -ncol(rowColours)*rowAnnWidth
+  }
+
+
+  plot(1,t='n',xaxt='n',yaxt='n',xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,yaxs='i',xaxs='i',...)
+  if(grid){
+    abline(v=1:ncol(m),lty=grid.lty,col=grid.col)
+    abline(h=1:nrow(m),lty=grid.lty,col=grid.col)
+  }
+  wh = par('cin')
+  # sym.size=max(c(grconvertX(wh[1],'in','user')-grconvertX(0,'in','user'),grconvertY(wh[2],'in','user')-grconvertY(0,'in','user')))
+  # r = scaleTo(rfun(m))/sym.size*max.cex
+  r = rfun(m)
+  if(scaleWM)
+    r = scaleTo(r)
+  r = r*max.cex
+  points(x,y,cex=r,col=colfun(mc),pch=pch)
+
+  # add col annotation
+  f = colAnnWidth
+  if(!is.null(colColours)){
+    for(i in 1:ncol(colColours))
+      for(j in 1:nrow(colColours)){
+        rect(j-0.5,0-i*f,j+0.5,f-i*f,border = NA,col=colColours[j,i])
+      }
+
+    if(!is.null(colnames(colColours))){
+      text(nrow(colColours)+1,-(1:ncol(colColours))*f+f/2,colnames(colColours),adj=c(0,0.5),xpd=T)
+    }
+  }
+
+  # add row annotation
+  f = rowAnnWidth
+  if(!is.null(rowColours)){
+    for(i in 1:ncol(rowColours))
+      for(j in 1:nrow(rowColours)){
+        rect(0-i*f,nrow(rowColours)-j+1.5,f-i*f,nrow(rowColours)-j+0.5,border = NA,col=rowColours[j,i])
+      }
+    if(!is.null(colnames(rowColours))){
+      text(-(1:ncol(rowColours))*f+f/2,0,colnames(rowColours),srt=90,adj=c(1,0.5),xpd=T)
+    }
+  }
+  if(par('xaxt')=='s'){
+    par.out = par(cex=xlab.cex)
+    axis(1,1:ncol(m),colnames(m))
+    do.call(par,par.out)
+  }
+  if(par('yaxt')=='s'){
+    par.out = par(cex=ylab.cex)
+    axis(2,nrow(m):1,rownames(m))
+    do.call(par,par.out)
+  }
+  # legend
+  legend.col.at
+  if(plot.legend){
+    x = grconvertX(1,'npc','user')
+    y = grconvertY(1,'npc','user')
+
+    if(is.null(legend.cex.at))
+      legend.cex.at = round(seq(min(m),max(m),length.out = 5),digits = 4)
+    if(is.null(legend.col.at))
+      legend.col.at = round(seq(min(mc),max(mc),length.out = 5),digits = 4)
+
+
+    legend.cex = rfun(legend.cex.at)
+    if(scaleWM)
+      legend.cex = scaleTo(legend.cex,minx = rfun(min(m)),maxx = rfun(max(m)))
+
+    legend.cex = legend.cex * max.cex
+    legend.col = colfun(c(min(mc),max(mc),legend.col.at))[-1:-2]
+
+    cexx = legend.cex
+    coll = 'black'
+    if(all(m==mc))
+      coll = legend.col
+    labb = legend.cex.at
+    l = legend(x,y,xpd=NA,pch=19,pt.cex=cexx,col=coll,legend = labb,title=legend.cex.title,bty=par('bty'))
+    if(!all(m==mc)){
+      cexx = 1
+      coll = legend.col
+      if(all(m==mc))
+        coll = legend.col
+      labb = legend.col.at
+      legend(x,l$rect$top-l$rect$h,xpd=NA,pch=19,pt.cex=cexx,col=coll,legend = labb,title=legend.col.title,bty=par('bty'))
+    }
+  }
+}
+
+#' Adds color annotation to plot
+#'
+#' Plots annotation in margins, supposed to be used with image (or imageWithText)
+#'
+#' @param centers coordinates along dimension to be annotated (centers)
+#' @param labs list of character vectors of labels or matrix of columns. Each item in the list results in one annotation. List names will be used to label annotation.
+#' @param cex width (in lines) of each annotation (0.7 is default)
+#' @param cols list  of named color vectors specifying colors for each label, should have same length as labs. Generated by char2col if NULL
+#' @param horis logical, whether annotation should be horizontal or vertical
+#' @param spacer spacer (in lines) between plot and annotation
+#'
+#' @export
+#'
+#' @examples
+#' par(mgp=c(3,2,1.5))
+#' image(1:5,1:2,matrix(1:10,ncol=2))
+#' plotColorAnn(1:5,list(a1=c(1,1,2,3,3),a2=c('a','b','a,','b','a')),horis=T)
+#' plotColorAnn(1:2,cbind(y1=c(1,2),y2=c('a','a')),horis=F)
+plotColorAnn = function(centers,labs,cex=0.7,cols=NULL,horis = FALSE,spacer=0.1){
+  xpd = par('xpd'=NA)
+  if(is.array(labs))
+    labs = as.data.frame(labs)
+  labs = lapply(labs,as.character)
+  line.with = getLineWidth(ifelse(horis,'y','x'))
+  width.range = c(-cex*length(labs)-spacer,-spacer)*line.with
+  if(horis)
+    width.range = width.range + grconvertY(0,'npc','user')
+  else
+    width.range = width.range + grconvertX(0,'npc','user')
+
+  if(is.null(cols)){
+    cols = lapply(labs,char2col)
+  }
+  l = abs(centers[2]-centers[1])
+  w = (width.range[2] - width.range[1])/length(labs)
+  centers = centers - l/2
+
+  for(i in seq_along(labs)){
+    if(horis){
+      rect(centers,width.range[1]+(i-1)*w,centers+l,width.range[1]+i*w,border=NA,col=cols[[i]][labs[[i]]])
+      text(max(centers)+l,width.range[1]+(i-0.5)*w,names(labs)[i],adj=c(0,0.5),cex=cex)
+    }else{
+      rect(width.range[1]+(i-1)*w,centers,width.range[1]+i*w,centers+l,border=NA,col=cols[[i]][labs[[i]]])
+      text(width.range[1]+(i-0.5)*w,min(centers),names(labs)[i],adj=c(1,0.5),srt=90,cex=cex)
+    }
+  }
+  par(xpd)
 }
 
 
@@ -746,150 +989,6 @@ my.make.unique = function(x,sep='.'){
 }
 
 
-#' Plots matrix as dotPlot
-#'
-#' Shows values in matix by point size and color. Size matrix (m) is not scaled by default, dot size is defined as m*max.cex
-#'
-#' @param m numeric matrix to be shown as dot size
-#' @param mc numeric matrix to be shown as dot colour (uses m as default)
-#' @param rfun function to calculate radius from matrix values. Use sqrt (default) to make area proportional to value
-#' @param colfun function to transform values to colour gradient
-#' @param grid logial, should grid be plotted
-#' @param grid.lty lty of grid
-#' @param grid.col line color of grid
-#' @param max.cex max size of dots
-#' @param xlab,ylab axis labels
-#' @param ylab.cex magnification label for ylabs
-#' @param colColours colour matrix to plot annotation for columns (matrix with nrow equal to ncol(m); each column of colColours is annotation)
-#' @param rowColours colour matrix to plot annotation for row (matrix with nrow equal to nrow(m); each column of rowColours is annotation)
-#' @param scaleWM logical, specifies wheter computed radiuses should be scaled into [0,1] interval (FALSE by default).
-#' @param pch point character (19 by default)
-#' @param plot.legend logical, whether legend should be plotted. Single legend will be plotted if m is identicall to mc.
-#' @param legend.cex.at,legend.col.at values to be used in legend, set both to have two independent legends for size and colour
-#' @param legend.cex.title,legend.col.title titles of legends
-#' @param rowAnnWidth,colAnnWidth - size of colour annotations in user coordinates
-#' @param ... other parameters to be passed to plot function
-#'
-#' @export
-#' @examples
-#' c = matrix(1:12,ncol=3)
-#' par(mar=c(4,4,1,10),bty='n')
-#' dotPlot(c/12,-c,max.cex = 3,colColours = cbind(col1=c('red','blue','red'),col2=c('green','green','magenta')),
-#'         rowColours = cbind(rrr1=c('red','blue','blue','red'),rrr2=c('green','green','magenta','green')),
-#'       legend.cex.title='size',legend.col.title='col',
-#'       colAnnWidth = 0.5,
-#'       rowAnnWidth = 0.5)
-dotPlot = function(m,mc=m,rfun=sqrt,colfun=function(x)num2col(x,c('white','yellow','violet','black')),grid=TRUE,grid.lty=2,grid.col='gray',
-                   max.cex=1,xlab='',ylab='',ylab.cex=1,xlab.cex=1,
-                   colColours=NULL,rowColours=NULL,
-                   rowAnnWidth=1,colAnnWidth=1,
-                   scaleWM=FALSE,pch=19,plot.legend=TRUE,
-                   legend.cex.at=NULL,legend.col.at=legend.cex.at,
-                   legend.cex.title='',legend.col.title='',...){
-  x = rep(1:ncol(m),each=nrow(m))
-  y = rep(nrow(m):1,times=ncol(m))
-
-  xlim=c(0,max(x)+1)
-  ylim=c(0,max(y)+1)
-
-  if(!is.null(colColours)){
-    if(!is.array(colColours))
-      colColours = matrix(colColours,ncol=1)
-    ylim[1] = -ncol(colColours)*colAnnWidth
-  }
-
-  if(!is.null(rowColours)){
-    if(!is.array(rowColours))
-      rowColours = matrix(rowColours,ncol=1)
-    xlim[1] = -ncol(rowColours)*rowAnnWidth
-  }
-
-
-  plot(1,t='n',xaxt='n',yaxt='n',xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,yaxs='i',xaxs='i',...)
-  if(grid){
-    abline(v=1:ncol(m),lty=grid.lty,col=grid.col)
-    abline(h=1:nrow(m),lty=grid.lty,col=grid.col)
-  }
-  wh = par('cin')
-  # sym.size=max(c(grconvertX(wh[1],'in','user')-grconvertX(0,'in','user'),grconvertY(wh[2],'in','user')-grconvertY(0,'in','user')))
-  # r = scaleTo(rfun(m))/sym.size*max.cex
-  r = rfun(m)
-  if(scaleWM)
-    r = scaleTo(r)
-  r = r*max.cex
-  points(x,y,cex=r,col=colfun(mc),pch=pch)
-
-  # add col annotation
-  f = colAnnWidth
-  if(!is.null(colColours)){
-    for(i in 1:ncol(colColours))
-      for(j in 1:nrow(colColours)){
-        rect(j-0.5,0-i*f,j+0.5,f-i*f,border = NA,col=colColours[j,i])
-      }
-
-    if(!is.null(colnames(colColours))){
-      text(nrow(colColours)+1,-(1:ncol(colColours))*f+f/2,colnames(colColours),adj=c(0,0.5),xpd=T)
-    }
-  }
-
-  # add row annotation
-  f = rowAnnWidth
-  if(!is.null(rowColours)){
-    for(i in 1:ncol(rowColours))
-      for(j in 1:nrow(rowColours)){
-        rect(0-i*f,nrow(rowColours)-j+1.5,f-i*f,nrow(rowColours)-j+0.5,border = NA,col=rowColours[j,i])
-      }
-    if(!is.null(colnames(rowColours))){
-      text(-(1:ncol(rowColours))*f+f/2,0,colnames(rowColours),srt=90,adj=c(1,0.5),xpd=T)
-    }
-  }
-  if(par('xaxt')=='s'){
-    par.out = par(cex=xlab.cex)
-    axis(1,1:ncol(m),colnames(m))
-    do.call(par,par.out)
-  }
-  if(par('yaxt')=='s'){
-    par.out = par(cex=ylab.cex)
-    axis(2,nrow(m):1,rownames(m))
-    do.call(par,par.out)
-  }
-  # legend
-  legend.col.at
-  if(plot.legend){
-    x = grconvertX(1,'npc','user')
-    y = grconvertY(1,'npc','user')
-
-    if(is.null(legend.cex.at))
-      legend.cex.at = round(seq(min(m),max(m),length.out = 5),digits = 4)
-    if(is.null(legend.col.at))
-      legend.col.at = round(seq(min(mc),max(mc),length.out = 5),digits = 4)
-
-
-    legend.cex = rfun(legend.cex.at)
-    if(scaleWM)
-      legend.cex = scaleTo(legend.cex,minx = rfun(min(m)),maxx = rfun(max(m)))
-
-    legend.cex = legend.cex * max.cex
-    legend.col = colfun(c(min(mc),max(mc),legend.col.at))[-1:-2]
-
-    cexx = legend.cex
-    coll = 'black'
-    if(all(m==mc))
-      coll = legend.col
-    labb = legend.cex.at
-    l = legend(x,y,xpd=NA,pch=19,pt.cex=cexx,col=coll,legend = labb,title=legend.cex.title,bty=par('bty'))
-    if(!all(m==mc)){
-      cexx = 1
-      coll = legend.col
-      if(all(m==mc))
-        coll = legend.col
-      labb = legend.col.at
-      legend(x,l$rect$top-l$rect$h,xpd=NA,pch=19,pt.cex=cexx,col=coll,legend = labb,title=legend.col.title,bty=par('bty'))
-    }
-  }
-}
-
-
 #' Plots scatterplot with regression line
 #'
 #' Wrapper for pllot function
@@ -972,96 +1071,6 @@ renameClustsBySize = function(x){
 scaleTo = function(x,from=0,to=1,minx=min(x,na.rm=TRUE),maxx=max(x,na.rm=TRUE),fraction=1){
   x = (x-minx)/(maxx-minx)
   x*(to-from)*fraction + from + (to-from)*(1-fraction)/2
-}
-
-#' Extract read coverage from bam files
-#'
-#' @param bams character vector with paths to bam files
-#' @param chr contig name
-#' @param start,end coordinates of region
-#' @param strand strand, NA for unstranded (default)
-#'
-#' @return list with three items: x (chr coordinates); cov - number of reads mapped to chr position; juncs - data.frame with introns
-#' @export
-getReadCoverage = function(bams,chr,start,end,strand=NA){
-  require(GenomicAlignments)
-  if(start>end){
-    t = start
-    start = end
-    end=t
-  }
-  r = list(x = start:end,cov = NULL,juncs=NULL)
-  param = ScanBamParam(flag=scanBamFlag(isMinusStrand=strand==-1),which=GRanges(chr, IRanges(start, end)))
-  i = 1
-  for(b in bams){
-    cat('\r',i,'     ')
-    i = i + 1
-    bam = readGAlignments(b,param = param)
-    cov=coverage(bam)[[chr]][start:end]
-    juncs = as.data.frame(summarizeJunctions(bam))
-    rownames(juncs)=paste(juncs$seqnames,juncs$start,juncs$end,sep='-')
-    if(is.null(r$cov)){
-      r$cov=cov
-      r$juncs=juncs
-    }else{
-      r$cov = r$cov + cov
-      cmn = intersect(rownames(juncs),rownames(r$juncs))
-      r$juncs[cmn,'score'] = r$juncs[cmn,'score'] + juncs[cmn,'score']
-      r$juncs = rbind(r$juncs,juncs[setdiff(rownames(juncs),rownames(r$juncs)),])
-    }
-  }
-  invisible(r)
-}
-
-#' Plots read coverage
-#'
-#' @param r read coverage; output of \code{\link{getReadCoverage}}
-#' @param min.junc.cov numeric, plots only junctions (introns) with coverage not less than \code{min.junc.cov}
-#' @param min.junc.cov.f numeric, plots only junctions (introns) with coverage not less than \code{min.junc.cov.f} of maximal junction coverage in the region
-#' @param plot.junc.only.within logical, plot only juctions within the region
-#' @param ylim,xlim see \code{\link{plot}}
-#' @param reverse reverse x coordinates
-#' @param junc.col colour for junction line. Individual color could be specified for each junction
-#' @param junc.lwd line width for jucntion line
-#' @param ... other parameters for plot function
-#'
-#' @export
-plotReadCov = function(r,min.junc.cov=0,min.junc.cov.f=0,plot.junc.only.within=FALSE,ylim=NULL,xlim=range(r$x),reverse=FALSE,junc.col='red',junc.lwd=3,...){
-  f = r$x >= xlim[1] & r$x <=xlim[2]
-  r$x = r$x[f]
-  r$cov = r$cov[f]
-  r$juncs$col = junc.col
-  r$juncs = r$juncs[r$juncs$start <= xlim[2] | r$juncs$end >=xlim[1],]
-
-  r$juncs = r$juncs[r$juncs$score >= min.junc.cov & (!plot.junc.only.within | (r$juncs$start > xlim[1] & r$juncs$end < xlim[2])),]
-  r$juncs = r$juncs[r$juncs$score >= min.junc.cov.f * max(r$juncs$score),]
-
-  start = r$x[1]
-  end = r$x[length(r$x)]
-  r$cov[c(1,length(r$cov))] = 0
-  if(is.null(ylim))
-    ylim = c(0,max(r$cov,r$juncs$score))
-  if(reverse)
-    xlim=rev(xlim)
-  plot(r$x,r$cov,t='n',ylim=ylim,xlim=xlim,...)
-  polygon(r$x,r$cov,col = 'gray',border=NA)
-  if(nrow(r$juncs)>0)
-    for(i in 1:nrow(r$juncs))
-        plotArc(r$juncs$start[i],r$juncs$end[i],r$juncs$score[i],col=r$juncs$col[i],lwd=junc.lwd)
-}
-
-#' Plots parabolic arc
-#'
-#' @param from,to x coordinates of arc
-#' @param top highest point of arc
-#' @param n number of points
-#' @param y.base bottom coordinate of arc
-#' @param ... other parameters of lines functoin
-plotArc = function(from,to,top,n=100,y.base=0,...){
-  len = to - from
-  x = seq(from=0,to=len,length.out = n)
-  y = x*4*top/len - x^2*(4*top/len^2)
-  lines(x+from,y+y.base,...)
 }
 
 #' Capitalize first letter of input text

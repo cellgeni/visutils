@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 ^examples
 ^test
+^doc$
+^Meta$

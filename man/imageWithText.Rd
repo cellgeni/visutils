@@ -14,6 +14,14 @@ imageWithText(
   centerColors0 = FALSE,
   las = 2,
   text.xadj = 0.5,
+  colAnns = NULL,
+  rowAnns = NULL,
+  colAnnCols = NULL,
+  rowAnnCols = NULL,
+  col = hcl.colors(100, "YlOrRd", rev = TRUE),
+  rowAnnWidth = 0.7,
+  colAnnWidth = 0.7,
+  annSpacer = 0.1,
   ...
 )
 }
@@ -34,8 +42,30 @@ imageWithText(
 
 \item{text.xadj}{text adjastment by x}
 
+\item{colAnns, rowAnns}{list (or matrix of columns) of column (row) annotation to be shown by color}
+
+\item{rowAnnWidth, colAnnWidth}{\itemize{
+\item size of colour annotations as fraction of plot area
+}}
+
+\item{annSpacer}{\itemize{
+\item spacer between heatmap and annotation as fraction of plot area
+}}
+
 \item{...}{other options to be supplied to image}
+
+\item{colAnnsCols, rowAnnsCols}{\itemize{
+\item colors to be used for col (row) annotation. Defined by char2color if null.
+}}
+
+\item{legend.cex.at, legend.col.at}{values to be used in legend, set both to have two independent legends for size and colour}
+
+\item{legend.cex.title, legend.col.title}{titles of legends}
 }
 \description{
 Wraps image functions
+}
+\examples{
+par(mar=c(10,6,1,1),bty='n')
+imageWithText(mtcars[1:4,1:3],rowAnns=list(r1=c(1,1,2),r2=c('a','a','a')),rowAnnCols=list(r1=c('1'='red','2'='blue'),r2=c(a='green')),colAnns = list(c1=c(1,1,1,2),c2=c(2,1,2,1),c3=c('a','b','b','b')))
 }
