@@ -1,5 +1,5 @@
 Package: visutils
-Title: What the Package Does (One Line, Title Case)
+Title: QC, analyse and visualize visium
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Pavel",
@@ -24,7 +24,12 @@ Imports:
   doMC,
   plyr,
   MASS,
-  igraph
+  igraph,
+  schard,
+  Seurat
+Remotes:
+  github::cellgeni/schard
+  bioc::Seurat
 Suggests: 
     knitr,
     rmarkdown,
