@@ -28,8 +28,7 @@ Imports:
   schard,
   Seurat
 Remotes:
-  github::cellgeni/schard,
-  bioc::Seurat
+  github::cellgeni/schard,bioc::Seurat
 Suggests: 
     knitr,
     rmarkdown,
