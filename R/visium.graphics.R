@@ -136,7 +136,10 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
   # plot
   if(type=='img'){
     image = v@images[[image.name]]
-    xy=plotVisiumImg(xy,image@image,image@scale.factors$lowres,image@spot.radius,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,pie.fracs=pie.fracs,he.img.width=he.img.width,...)
+    if('image' %in% slotNames(z))
+      xy=plotVisiumImg(xy,image@image,image@scale.factors$lowres,image@spot.radius,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,pie.fracs=pie.fracs,he.img.width=he.img.width,...)
+    else
+      points(xy[,1:2],cex=cex,col=col,pch=pch)
   }
   if(type=='hex'){
     xy=plotVisiumHex(xy,cex=cex,col=col,border=border,xaxt=xaxt,yaxt=yaxt,...)
