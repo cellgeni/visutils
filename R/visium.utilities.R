@@ -181,7 +181,7 @@ enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
   f[is.na(f)] = 1
   p = sweep(p,1:2, f,'/')
   if(wb){
-    z=apply(p,1:2,mean)
+    z=(p[,,1]+p[,,2]+p[,,3])/3
     for(j in 1:3)
       p[,,j] = z
   }
