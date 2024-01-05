@@ -437,7 +437,11 @@ imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxl
 
   mgp = par('mgp')
   if(!is.null(colAnns)){
-    par(mgp=mgp+length(colAnns)*colAnnWidth+annSpacer)
+    if(is.list(colAnns))
+      n = length(colAnns)
+    else
+      n = ncol(colAnns)
+    par(mgp=mgp+n*colAnnWidth+annSpacer)
     plotColorAnn(pars$x,colAnns,cex=colAnnWidth,horis=TRUE,col=colAnnCols,spacer = annSpacer)
   }
 
@@ -446,7 +450,11 @@ imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxl
   }
 
   if(!is.null(rowAnns)){
-    par(mgp=mgp+length(rowAnns)*rowAnnWidth+annSpacer)
+    if(is.list(rowAnns))
+      n = length(rowAnns)
+    else
+      n = ncol(rowAnns)
+    par(mgp=mgp+n*rowAnnWidth+annSpacer)
     plotColorAnn(pars$y,rowAnns,cex=rowAnnWidth,horis=FALSE,col=rowAnnCols,spacer = annSpacer)
   }
   if(!is.null(yaxlab))

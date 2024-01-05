@@ -166,7 +166,7 @@ applyTransforms = function(i,trs=getRotations(),simplify=TRUE){
 #' @return image (3d numeric array)
 #' @export
 enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
-  pm0 = pm = apply(p,1:2,max)
+  pm0 = pm = pmax(p[,,1],p[,,2],p[,,3])
   if(!is.null(qs)){
     if(trim01){
       f = pm == 0 | pm == 1
