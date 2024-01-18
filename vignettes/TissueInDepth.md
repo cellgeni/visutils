@@ -206,7 +206,7 @@ plot.new()
 legend('topleft',bty='n',col=ann2col,legend = names(ann2col),pch=16)
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 # Define distance to e2d junction
 
@@ -235,7 +235,7 @@ for(i in names(vs)){
 #> Loading required package: viridisLite
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 Samples contain some irregular structures such as hair follicle, lets
 focus for now on dermis and epidermis only and remove all spots that
@@ -253,7 +253,7 @@ for(i in names(vs)){
 }
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 
 # Differentiall analyses
 
@@ -306,7 +306,7 @@ for(ct in celltypes$celltype)
   plotFeatureProfiles(dfsmtx.c2l,features=ct,cols = "#E41A1C",lwd=5,main=ct,legend. = FALSE)
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 or one can summarise it as heatmap
 
@@ -320,7 +320,7 @@ par(mar=c(4,15,1,1),bty='n')
 imageWithText(m[,celltypes$celltype],'',rowAnns = list(celltypes$class),rowAnnCols = list(char2col(celltypes$class)))
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ### Compare body vs face
 
@@ -341,7 +341,7 @@ par(mfrow=c(1,3),mar=c(4,11,1,4))
 plotTD.HM(comp.c2l,fdr.thrs = c('x'=0.05,'*'=0.2,'.'=0.5),order = celltypes$celltype,cond.titles = c('body','face'),feature.class = celltypes$class)
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
 The plot above shows two types of information. First it gives spatial
 (along distance to dermis to epiderms junction) distribution of
@@ -360,7 +360,7 @@ for(bp in c('body','face','bcc'))
   plotFeatureProfiles(dfsmtx.c2l[,,meta$`body part`==bp],features=celltypes,cols = cols,lwd=5,sd.mult = 1,legend. = bp=='bcc',main=bp)
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
 In terms of differential abundance it shows that melanocytes, and
 chondrocytes are enriched, while POSTN+ fibroblasts are depleted in face
@@ -374,7 +374,7 @@ for(ct in celltypes)
   plotConditionsProfiles(dfsmtx.c2l,feature=ct,meta$`body part`,cols = cols,lwd=5,sd.mult = 1,legend. = ct==celltypes[length(celltypes)],main=ct)
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ## Gene expression
 
@@ -397,7 +397,7 @@ hvg = table(unlist(lapply(vs,VariableFeatures)))
 barplot(table(hvg))
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 hvg = names(hvg)[hvg>=10]
@@ -461,7 +461,7 @@ comp.ge.f = lapply(comp.ge,function(x)x[,f])
 plotTD.HM(comp.ge.f,fdr.thrs = c('x'=0.001,'*'=0.01,'.'=0.05),cond.titles = c('body','face'),log=FALSE)
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
 
 We can also plot profiles for individual genes
 
@@ -478,7 +478,7 @@ for(gn in genes[1:min(16,length(genes))]){
 }
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
 
 Or plot spatial expression, APOC1 exhibits clearly higher expression in
 face compared to body
@@ -493,7 +493,7 @@ for(s in meta$`Source Name`[o][meta$`body part`[o] != 'bcc'])
              spot.filter = vs[[s]]$man.ann %in% c('epi','dermis'),zlim=zlim,type='hex')
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
 
 APOC1 does’n show clear spatial differences in expression, so lets look
 for genes that are higher in face at some distance to junction but lower
@@ -508,7 +508,7 @@ comp.ge.f = lapply(comp.ge,function(x)x[,f])
 plotTD.HM(comp.ge.f,fdr.thrs = c('x'=0.05,'*'=0.2,'.'=0.5),cond.titles = c('body','face'),log=FALSE)
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-26-1.png)<!-- -->
 
 Plot same genes as profiles
 
@@ -520,7 +520,7 @@ for(gn in genes[1:min(6,length(genes))])
   plotConditionsProfiles(dfsmtx.ge,feature=gn,meta$`body part`, cols = cols,lwd=5,sd.mult = 1,main=gn,legend.=list(x='topleft'))
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-27-1.png)<!-- -->
 
 SDC4 expression is not very high, but it clearly show a tendency to be
 more superficial in body and be more evenly expressed in face.
@@ -535,4 +535,4 @@ for(s in meta$`Source Name`[o][meta$`body part`[o] != 'bcc'])
              spot.filter = vs[[s]]$man.ann %in% c('epi','dermis'),zlim=zlim,type='hex')
 ```
 
-![](/tmp/RtmpPwReXA/preview-9a66e214b37.dir/TissueInDepth_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
+![](TissueInDepth_files/figure-gfm/unnamed-chunk-28-1.png)<!-- -->
