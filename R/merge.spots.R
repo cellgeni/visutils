@@ -69,7 +69,7 @@ mergeSpots = function(v,gr,image.name=NULL){
   gr$nCount_Spatial = v$nCount_Spatial
   gr$nspots = as.numeric(table(gr$group)[gr$group])
   gr$barcode = rownames(gr)
-  mtx_ = calcColSums(v@assays$Spatial@counts,gr$group,mean = FALSE,verbose = FALSE)
+  mtx_ = calcColSums(v[['Spatial']]$counts,gr$group,mean = FALSE,verbose = FALSE)
 
   # combine spot info
   # either center (if exists) or max covered spot
@@ -97,7 +97,7 @@ mergeSpots = function(v,gr,image.name=NULL){
   image <- image[Cells(x = object)]
   DefaultAssay(object = image) = "Spatial"
   object[[image.name]] = image
-  object@assays$Spatial@meta.features = v@assays$Spatial@meta.features
+  object[['Spatial']] = AddMetaData(object[['Spatial']], metadata = v[['Spatial']][[]])
 
   cols = setdiff(colnames(v@meta.data),c(colnames(object@meta.data)))
   object@meta.data = cbind(object@meta.data,v@meta.data[rownames(object@meta.data),cols,drop=FALSE])

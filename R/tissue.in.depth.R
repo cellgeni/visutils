@@ -169,8 +169,9 @@ plotTD.HM = function(comp,cond.titles=c('cond1','cond2'),order=NULL,l2fc.zlim=NU
   }
 
   # scale per feature
-  m1 = sweep(comp$m1,2,apply(comp$m1,2,max,na.rm=TRUE),'/')
-  m2 = sweep(comp$m2,2,apply(comp$m2,2,max,na.rm=TRUE),'/')
+  maxx = apply(rbind(comp$m1,comp$m2),2,max,na.rm=TRUE)
+  m1 = sweep(comp$m1,2,maxx,'/')
+  m2 = sweep(comp$m2,2,maxx,'/')
 
   xlim = c(0.5,0.5+nrow(l2fc))
   imageWithText(m1,'',main=cond.titles[1],xlab='Distance to epidermis-dermis interface (spots)',col=col,rowAnns = feature.class)
@@ -210,9 +211,11 @@ plotTD.HM = function(comp,cond.titles=c('cond1','cond2'),order=NULL,l2fc.zlim=NU
 #'
 #' @export
 plotFeatureProfiles = function(m,features,cols=NULL,sd.mult=2,legend.=TRUE,ylim=NULL,scaleY=TRUE,area.opacity = 0.2,lwd=2,xlab='Distance (spots)',
-                               ylab='Relative abundance',main='',...){
+                               ylab='Relative abundance',main='',xlim=NULL,...){
   if(is.null(cols))
     cols = char2col(features)
+  if(is.null(names(cols)))
+    names(cols) = features
   x = as.numeric(dimnames(m)[[1]])
   areas = lapply(features,function(ct){
     do.call(rbind,apply(m[,ct,],1,function(x){
@@ -222,10 +225,12 @@ plotFeatureProfiles = function(m,features,cols=NULL,sd.mult=2,legend.=TRUE,ylim=
   })
   names(areas) = features
   if(scaleY)
-    areas = lapply(areas,function(a){a[,1:2]=a[,1:2]/max(a$mean);a})
+    areas = lapply(areas,function(a){a[,1:2]=a[,1:2]/max(a$mean,na.rm=TRUE);a})
   if(is.null(ylim))
-    ylim = range(sapply(areas,function(a)c(min(a$mean-a$sd*sd.mult),max(a$mean+a$sd*sd.mult))))
-  plot(1,t='n',xlim=range(x),ylim=ylim,xlab=xlab,ylab=ylab,main=main,...)
+    ylim = range(sapply(areas,function(a)c(min(a$mean-a$sd*sd.mult,na.rm=TRUE),max(a$mean+a$sd*sd.mult,na.rm=TRUE))))
+  if(is.null(xlim))
+    xlim = range(x)
+  plot(1,t='n',xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,main=main,...)
   for(n in names(areas))
     plotArea(x,areas[[n]][,1:2],sd.mult = sd.mult,col=cols[n],new = FALSE,lwd=lwd,area.transp=area.opacity)
   if(!is.null(legend.) && (!is.logical(legend.) || legend.)){

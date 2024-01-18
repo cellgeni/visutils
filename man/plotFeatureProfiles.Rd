@@ -17,6 +17,7 @@ plotFeatureProfiles(
   xlab = "Distance (spots)",
   ylab = "Relative abundance",
   main = "",
+  xlim = NULL,
   ...
 )
 }

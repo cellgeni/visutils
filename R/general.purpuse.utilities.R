@@ -860,7 +860,7 @@ number2bin = function(v,n){
   o = order(v)
   j = 1
   for(i in 1:length(v)){
-    if(j < i/length(v)*n)
+    if(j < i * n / length(v))
       j = j + 1
     v[o[i]] = j
   }

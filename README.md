@@ -7,7 +7,7 @@ It provides functions to perform analyses of gene expression or celltype abundan
 devtools::install_github("iaaka/visutils")
 ```
 # Tutorials
-* [Tissue in depth](vignettes/TissueInDepth.md) shows how to analyse celltype abundance and gene expression in dependence on distance to dermsit-to-epidermis junction in public skin dataset
+* [Tissue in depth](vignettes/TissueInDepth.knit.md) shows how to analyse celltype abundance and gene expression in dependence on distance to dermsit-to-epidermis junction in public skin dataset
 
 ___Coming soon:___
 * __Spot merge__. Normally spots with low coverage (say below 500 UMI) are excluded from analyses. In some sample it could result in removal of whole areas since some tissues such as dermis, adipose, or cartilage are frequently have low read counts. Merging adjacent low-covered spot together is an alternative to filter then away.
