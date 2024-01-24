@@ -209,7 +209,12 @@ myLoad10X_Spatial = function(data.dir,filter.matrix=TRUE,ens_id=TRUE,slice='slic
                       filter.matrix=filter.matrix,
                       use.name=!ens_id,
                       slice=slice,...)
-  d[['is.tissue']] = d@images[[slice]]@coordinates$tissue
+  d = AddMetaData(d,d@images[[slice]]@coordinates$tissue,col.name = 'is.tissue')
+  #d[['is.tissue']] = d@images[[slice]]@coordinates$tissue
+  features = read.table(paste0(data.dir,'/filtered_feature_bc_matrix/features.tsv.gz'),sep = '\t',col.names = c('gene_id','gene_name','type'))[,1:2]
+  rownames(features) = features[,1]
+  d[['Spatial']] = AddMetaData(d[['Spatial']],features)
+
   d
 }
 

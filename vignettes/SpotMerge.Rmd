@@ -1,0 +1,112 @@
+---
+title: "Spots merging"
+output: 
+  github_document:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Spots merging}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Intoruction
+This document demonstrates how to group and merge visium spots with low coverage using visutils.
+The spots are grouped into coarser mesh by seven spots preserving hexagonal layout. All spots from single groups with coverage below certain threshold are merged, their counts are summed and one spot is used as the representative: either the central one (if its coverage below the threshold) or the spot with highest coverage.
+
+
+# Load libraries
+```{r setup}
+# devtools::install_github("iaaka/visutils",force = TRUE)
+library(visutils)
+library(Seurat)
+```
+
+# Load data
+Lets take one random skin sample from <https://spatial-skin-atlas.cellgeni.sanger.ac.uk/>.
+```{r}
+sid = 'WSSKNKCLsp12887263'
+tmpfile = tempfile()
+download.file(paste0('https://cellgeni.cog.sanger.ac.uk/spatial-skin-atlas/download/',sid,'.h5ad'),tmpfile,quiet = TRUE)
+vis = schard::h5ad2seurat_spatial(tmpfile,use.raw = TRUE,img.res = 'hires')
+```
+
+# Check data
+One can use Seurat visualization functions
+```{r,fig.width=4,fig.height=4}
+SpatialFeaturePlot(vis,'nCount_Spatial')
+```
+but here we will use visutils functions which offers more flexibility
+
+```{r,fig.width=8,fig.height=3}
+par(mfrow=c(1,2),mar=c(0,0,1,5),bty='n')
+plotVisium(vis,vis$nCount_Spatial,zfun=log1p)
+plotVisium(vis,vis$nCount_Spatial<1000,legend.args = list(title='<1000 UMI'))
+```
+
+so there are quite a few spots with coverage below 1000. We will merge them instead of filtering them out.
+
+# Quick start
+everything can be done just in one line
+```{r}
+umi.thr = 1000
+vism = mergeSpots(vis,getCenters(vis,to.merge = vis$nCount_Spatial<umi.thr))
+# lets compare merged object mobm0 with the original one
+```
+
+Lets compare coverage in original and merged objects. The spots size it proportional to sqrt of number of spots merged.
+```{r,fig.width=8,fig.height=6}
+par(mfrow=c(2,2),mar=c(0,0,1,5),bty='n')
+plotVisium(vis,vis$nCount_Spatial,zfun = sqrt,main='Original')
+plotVisium(vism,vism$nCount_Spatial,cex = vism$cex,zfun=sqrt,main='Merged') 
+plotVisium(vis,vis$nCount_Spatial < umi.thr,main='Original',legend.args = list(title='<1000 UMI'))
+plotVisium(vism,vism$nCount_Spatial < umi.thr,cex=vism$cex,main='Merged',legend.args = list(title='<1000 UMI')) 
+
+```
+Most of spots in merged object now have coverage above threshold, so we will lose much less data on filtering
+
+# Details
+## Choose coverage threshold
+```{r}
+hist(vis$nCount_Spatial,500,xlim=c(0,5000))
+```
+```{r}
+table(vis$nCount_Spatial<umi.thr)
+```
+The threshold can be set to 500, but lets keep at 1000 for demonstration propose.
+
+## Define merging groups
+We first define groups of spots to be merged by grouping these of them who have coverage lower than threshold into groups of 7 by spatial proximity.
+```{r}
+groups = getCenters(vis,to.merge = vis$nCount_Spatial<umi.thr)
+groups[1:5,]
+```
+
+Lets check the groups visually
+```{r,fig.height = 3, fig.width = 6}
+par(mfrow=c(1,2),mar=c(1,1,1,1),bty='n')
+plotVisium(vis,groups$group,plot.legend = F)
+# change orientation of y axis to match H7E orientation (by default y-axis is reversed)
+plotVisium(vis,groups$group,plot.legend = F,type='hex',ylim = range(vis@images$WSSKNKCLsp12887263@coordinates$row))
+```
+groups of adjacent spots with same color are the ones to be merged. Spots in regions with higher coverage 
+
+## Merge spots
+Now we have groups, lets use them to merge spots
+```{r}
+vism = mergeSpots(vis,groups)
+vism@meta.data[1:5,]
+```
+
+The resultant seurat object contains summed counts, metadata table provides information about number of spots merged (nspots) and their identity (merged_spots)
+
+```{r,fig.height = 3, fig.width = 4}
+par(mar=c(1,1,1,5))
+plotVisium(vism,vism$nCount_Spatial,zfun = log1p,cex=vism$cex)
+```

@@ -28,7 +28,7 @@ library(Matrix)
 ```
 
 # Download the data
-We will use data from <https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-13085>, lets first load metadata:
+We will use data from <https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-13084>, lets first load metadata:
 ```{r}
 meta = read.table('https://ftp.ebi.ac.uk/biostudies/fire/E-MTAB-/084/E-MTAB-13084/Files/E-MTAB-13084.sdrf.txt',header = TRUE,check.names = FALSE,sep='\t',quote = '')
 # samples are duplicated for each fastq, lets collapse them
@@ -44,7 +44,7 @@ meta[1:3,]
 We'll take h5ad data from <https://spatial-skin-atlas.cellgeni.sanger.ac.uk/> and load them using hchard package. These h5ad contains cell2location results so we will be able to use them. Alternatively visium data can be loaded from spaceranger output using Seurat::Load10X_Spatial or its wrapper visutils::myLoad10X_Spatial. In this case one will need to load cell2location predictions separately.
 
 ```{r}
-# download data to to temporary location and load as Seurat obje
+# download data to to temporary location and load as Seurat object
 tmpfile = tempfile()
 vs = list()
 for(i in 1:nrow(meta)){

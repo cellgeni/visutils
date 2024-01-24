@@ -281,7 +281,7 @@ plotVisiumImg = function(xy,img,scale.factor,spot.radius,cex=1,col='red',border=
                 d=pie.fracs[f,],
                 cols= pie.cols,border = border[f])
   }
-  invisible(data.frame(y=xy$imagecol*scale.factor,y=nrow(img)-xy$imagerow*scale.factor))
+  invisible(data.frame(x=xy$imagecol*scale.factor,y=nrow(img)-xy$imagerow*scale.factor))
 }
 
 #' Plot Visium as honeycombs
