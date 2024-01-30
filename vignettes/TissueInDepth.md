@@ -11,12 +11,12 @@ Tissue in depth
     - [Celltype distribution across all
       dataset](#celltype-distribution-across-all-dataset)
     - [Compare body vs face](#compare-body-vs-face)
-    - [Visualaze results](#visualaze-results)
+    - [Visualize results](#visualize-results)
   - [Gene expression](#gene-expression)
     - [Select genes to work with](#select-genes-to-work-with)
     - [Prepare summary matrix](#prepare-summary-matrix-1)
     - [Compare body vs face](#compare-body-vs-face-1)
-    - [Visualaze results](#visualaze-results-1)
+    - [Visualize results](#visualize-results-1)
 
 ``` r
 # install packages if necessary
@@ -34,9 +34,6 @@ library(Seurat)
 #> 'SeuratObject' was built under R 4.3.0 but the current version is
 #> 4.3.1; it is recomended that you reinstall 'SeuratObject' as the ABI
 #> for R may have changed
-#> 'SeuratObject' was built with package 'Matrix' 1.6.3 but the current
-#> version is 1.6.4; it is recomended that you reinstall 'SeuratObject' as
-#> the ABI for 'Matrix' may have changed
 #> 
 #> Attaching package: 'SeuratObject'
 #> The following object is masked from 'package:base':
@@ -48,7 +45,7 @@ library(Matrix)
 # Download the data
 
 We will use data from
-<https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-13085>,
+<https://www.ebi.ac.uk/biostudies/arrayexpress/studies/E-MTAB-13084>,
 lets first load metadata:
 
 ``` r
@@ -80,7 +77,7 @@ visutils::myLoad10X_Spatial. In this case one will need to load
 cell2location predictions separately.
 
 ``` r
-# download data to to temporary location and load as Seurat obje
+# download data to to temporary location and load as Seurat object
 tmpfile = tempfile()
 vs = list()
 for(i in 1:nrow(meta)){
@@ -303,7 +300,7 @@ dfsmtx.c2l = makeDistFeatureSampleTable(dist = spots$dist2junction,
 ``` r
 par(mfrow=c(5,6),mar=c(3,3,1,0),bty='n',tcl=-0.2,mgp=c(1.3,0.3,0),oma=c(0,0,0,0))
 for(ct in celltypes$celltype)
-  plotFeatureProfiles(dfsmtx.c2l,features=ct,cols = "#E41A1C",lwd=5,main=ct,legend. = FALSE)
+  plotFeatureProfiles(dfsmtx.c2l,features=ct,cols = "#E41A1C",lwd=5,main=ct,legend. = FALSE,scaleY=FALSE)
 ```
 
 ![](TissueInDepth_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
@@ -331,7 +328,7 @@ comparing two conditions for each celltype and each distance
 comp.c2l = testTDConditions(dfsmtx.c2l,meta$`body part`=='body',meta$`body part`=='face')
 ```
 
-### Visualaze results
+### Visualize results
 
 ``` r
 # reorder celltypes by depth of max abundance in body
@@ -362,12 +359,12 @@ for(bp in c('body','face','bcc'))
 
 ![](TissueInDepth_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
 
-In terms of differential abundance it shows that melanocytes, and
-chondrocytes are enriched, while POSTN+ fibroblasts are depleted in face
-compared to body:
+In terms of differential abundance it shows that melanocytes, and T reg
+are enriched, while POSTN+ fibroblasts are depleted in face compared to
+body:
 
 ``` r
-celltypes=c('Melanocytes','Chondrocytes','POSTN+ fibroblasts')
+celltypes=c('Melanocytes','T reg','POSTN+ fibroblasts')
 cols = char2col(c('face','body'))
 par(mfrow=c(1,3),mar=c(3,3,1,0),bty='n',tcl=-0.2,mgp=c(1.3,0.3,0),oma=c(0,0,0,14))
 for(ct in celltypes)
@@ -447,7 +444,7 @@ table(apply(comp.ge$sgn,2,sum))
 #> 1566   22   11   14    6    1    2   10   12    8    7    7    4   12
 ```
 
-### Visualaze results
+### Visualize results
 
 Now we can plot gene expression as heatmaps. We will make fdr cutoff
 stronger to highlight more significant genes. There is not need to take

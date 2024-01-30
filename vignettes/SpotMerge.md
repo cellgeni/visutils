@@ -1,7 +1,7 @@
 Spots merging
 ================
 
-- [Intoruction](#intoruction)
+- [Introduction](#introduction)
 - [Load libraries](#load-libraries)
 - [Load data](#load-data)
 - [Check data](#check-data)
@@ -11,7 +11,7 @@ Spots merging
   - [Define merging groups](#define-merging-groups)
   - [Merge spots](#merge-spots)
 
-# Intoruction
+# Introduction
 
 This document demonstrates how to group and merge visium spots with low
 coverage using visutils. The spots are grouped into coarser mesh by
@@ -36,9 +36,6 @@ library(Seurat)
 #> 'SeuratObject' was built under R 4.3.0 but the current version is
 #> 4.3.1; it is recomended that you reinstall 'SeuratObject' as the ABI
 #> for R may have changed
-#> 'SeuratObject' was built with package 'Matrix' 1.6.3 but the current
-#> version is 1.6.4; it is recomended that you reinstall 'SeuratObject' as
-#> the ABI for 'Matrix' may have changed
 #> 
 #> Attaching package: 'SeuratObject'
 #> The following object is masked from 'package:base':

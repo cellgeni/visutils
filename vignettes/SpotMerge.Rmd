@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Intoruction
+# Introduction
 This document demonstrates how to group and merge visium spots with low coverage using visutils.
 The spots are grouped into coarser mesh by seven spots preserving hexagonal layout. All spots from single groups with coverage below certain threshold are merged, their counts are summed and one spot is used as the representative: either the central one (if its coverage below the threshold) or the spot with highest coverage.
 

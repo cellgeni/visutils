@@ -163,7 +163,7 @@ dfsmtx.c2l = makeDistFeatureSampleTable(dist = spots$dist2junction,
 ```{r,fig.height=15,fig.width=18}
 par(mfrow=c(5,6),mar=c(3,3,1,0),bty='n',tcl=-0.2,mgp=c(1.3,0.3,0),oma=c(0,0,0,0))
 for(ct in celltypes$celltype)
-  plotFeatureProfiles(dfsmtx.c2l,features=ct,cols = "#E41A1C",lwd=5,main=ct,legend. = FALSE)
+  plotFeatureProfiles(dfsmtx.c2l,features=ct,cols = "#E41A1C",lwd=5,main=ct,legend. = FALSE,scaleY=FALSE)
 ```
 
 or one can summarise it as heatmap
@@ -185,7 +185,7 @@ comp.c2l = testTDConditions(dfsmtx.c2l,meta$`body part`=='body',meta$`body part`
 ```
 
 
-### Visualaze results
+### Visualize results
 ```{r,fig.height=5,fig.width=11}
 # reorder celltypes by depth of max abundance in body
 celltypes = celltypes[order(celltypes$class,-apply(comp.c2l$m1,2,which.max),decreasing = T),]
@@ -204,10 +204,10 @@ for(bp in c('body','face','bcc'))
   plotFeatureProfiles(dfsmtx.c2l[,,meta$`body part`==bp],features=celltypes,cols = cols,lwd=5,sd.mult = 1,legend. = bp=='bcc',main=bp)
 ```
 
-In terms of differential abundance it shows that melanocytes, and chondrocytes are enriched, while POSTN+ fibroblasts are depleted in face compared to body:
+In terms of differential abundance it shows that melanocytes, and T reg are enriched, while POSTN+ fibroblasts are depleted in face compared to body:
 
 ```{r,fig.height=3,fig.width=11}
-celltypes=c('Melanocytes','Chondrocytes','POSTN+ fibroblasts')
+celltypes=c('Melanocytes','T reg','POSTN+ fibroblasts')
 cols = char2col(c('face','body'))
 par(mfrow=c(1,3),mar=c(3,3,1,0),bty='n',tcl=-0.2,mgp=c(1.3,0.3,0),oma=c(0,0,0,14))
 for(ct in celltypes)
@@ -267,7 +267,7 @@ comp.ge$sgn = comp.ge$fdr<0.05 & abs(comp.ge$m2-comp.ge$m1) >= log(2)
 table(apply(comp.ge$sgn,2,sum))
 ```
 
-### Visualaze results
+### Visualize results
 Now we can plot gene expression as heatmaps. We will make fdr cutoff stronger to highlight more significant genes. There is not need to take log, since analyses was done already on log CPM, so we will set log to FALSE.
 
 ```{r,fig.height=5,fig.width=11}
