@@ -331,11 +331,13 @@ plotVisiumHex = function(xy,cex=1,col='red',border=col,xlab='Cols',ylab='Rows',x
 }
 
 #' @export
-plotTiles = function(col,tiles,border=NA,bg = NA,...){
+plotTiles = function(col,tiles,border=NA,bg = NA,xlim=NULL,ylim=NULL,...){
   col = recycle(col,length(tiles))
   border = recycle(border,length(tiles))
-  xlim = range(unlist(lapply(tiles,function(z)z$x)))
-  ylim = range(unlist(lapply(tiles,function(z)z$y)))
+  if(is.null(xlim))
+    xlim = range(unlist(lapply(tiles,function(z)z$x)))
+  if(is.null(ylim))
+    ylim = range(unlist(lapply(tiles,function(z)z$y)))
   plot(1,t='n',xlim=xlim,ylim=ylim,...)
   fillBackground(bg)
   for(i in 1:length(tiles))
