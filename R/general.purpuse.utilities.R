@@ -62,7 +62,7 @@ log10p1 = function(x){
 #' @examples
 #' splitSub(c('a,b','d,c'),',',2)
 splitSub = function(x,del,inx,fixed=TRUE,collapse=TRUE,simplify=TRUE){
-  r = sapply(strsplit(x,del,fixed=fixed),'[',inx,simplify = simplify & !collapse)
+  r = sapply(strsplit(x,del,fixed=fixed),'[',inx,simplify = simplify & (!collapse | length(inx)==1))
   if(collapse & length(inx)>1)
     r = sapply(r,paste,collapse=del)
   r
