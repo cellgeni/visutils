@@ -5,7 +5,7 @@
 \title{Cuts part of delimited text
 analogous to bash cut}
 \usage{
-splitSub(x, del, inx, fixed = TRUE, simplify = TRUE)
+splitSub(x, del, inx, fixed = TRUE, collapse = TRUE, simplify = TRUE)
 }
 \arguments{
 \item{x}{character vector to cut from}
@@ -16,7 +16,9 @@ splitSub(x, del, inx, fixed = TRUE, simplify = TRUE)
 
 \item{fixed}{logical, whether del is fixed (to be passed to strsplit)}
 
-\item{simplify}{logical, whether output should be simplified (to be passed to sapply)}
+\item{collapse}{logical, whether to collapse selected items with same delimeter.}
+
+\item{simplify}{logical, whether output should be simplified (to be passed to sapply).}
 }
 \value{
 character vector or

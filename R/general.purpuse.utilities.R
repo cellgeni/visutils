@@ -1,3 +1,8 @@
+#' String concatenation operator
+#'
+#' @export
+`%+%` = paste0
+
 #' Compare two lists of sets
 #'
 #' return matrix of set similarities defined by fun.
@@ -48,15 +53,19 @@ log10p1 = function(x){
 #' @param del delimiter
 #' @param inx indexes of items to return
 #' @param fixed logical, whether del is fixed (to be passed to strsplit)
-#' @param simplify logical, whether output should be simplified (to be passed to sapply)
+#' @param collapse logical, whether to collapse selected items with same delimeter.
+#' @param simplify logical, whether output should be simplified (to be passed to sapply).
 #'
 #' @return character vector or
 #' @export
 #'
 #' @examples
 #' splitSub(c('a,b','d,c'),',',2)
-splitSub = function(x,del,inx,fixed=TRUE,simplify=TRUE){
-  sapply(strsplit(x,del,fixed=fixed),'[',inx,simplify = simplify)
+splitSub = function(x,del,inx,fixed=TRUE,collapse=TRUE,simplify=TRUE){
+  r = sapply(strsplit(x,del,fixed=fixed),'[',inx,simplify = simplify & !collapse)
+  if(collapse & length(inx)>1)
+    r = sapply(r,paste,collapse=del)
+  r
 }
 
 
