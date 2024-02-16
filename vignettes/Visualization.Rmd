@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 
-# Load libraries
+
 ```{r setup}
 # devtools::install_github("iaaka/visutils",force = TRUE)
 library(visutils)
@@ -39,18 +39,22 @@ file.remove(tmpfile)
 par(mar=c(0,0,1,5),bty='n')
 plotVisium(vis,vis$nCount_Spatial,legend.args = list(title='UMI'))
 ```
+
 # Plot multiple microenvironments
+
 ```{r fig.width=8,fig.height=8}
 c2l = as.matrix(vis@meta.data[,grep('c2l',colnames(vis@meta.data))])
 colnames(c2l) = sub('c2l_','',colnames(c2l))
 celltypes = char2col(c('Suprabasal keratinocytes','APOD+ fibroblasts','Basal keratinocytes','Melanocytes'))
 par(mfrow=c(2,1),mar=c(0,0,1,20),bty='n')
-plotVisiumMultyColours(vis,c2l[,names(celltypes)],cols = celltypes,img.alpha=0.5,legend.ncol = 2)
+plotVisiumMultyColours(vis,c2l[,names(celltypes)],cols = celltypes,img.alpha=0.5,legend.ncol = 2,min.opacity = 100)
 # or as pie charts
 c2l = sweep(c2l,2,apply(c2l,2,max),'/')
 plotVisium(vis,pie.fracs = c2l[,names(celltypes)],pie.cols = celltypes,img.alpha=0.5)
 ```
+
 # Plot multiple genes
+
 ```{r fig.width=8,fig.height=4}
 cnts = vis@assays$Spatial@layers$counts
 rownames(cnts) = vis@assays$Spatial@meta.data$`_index`
@@ -59,5 +63,5 @@ gids = char2col(c('KRT5','KRT10','COL1A2','PERP'))
 cpm = t(as.matrix(cnts[names(gids),]))
 cpm = sweep(cpm,1,vis$nCount_Spatial,'/')*1e4
 par(mar=c(0,0,1,20),bty='n')
-plotVisiumMultyColours(vis,cpm,cols = gids,img.alpha=0.5,legend.ncol = 2)
+plotVisiumMultyColours(vis,cpm,cols = gids,img.alpha=0.5,legend.ncol = 2,min.opacity = 100)
 ```

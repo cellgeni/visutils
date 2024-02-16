@@ -1,10 +1,9 @@
 Visualization
 ================
 
-- [Load libraries](#load-libraries)
 - [Load data](#load-data)
-
-# Load libraries
+- [Plot multiple microenvironments](#plot-multiple-microenvironments)
+- [Plot multiple genes](#plot-multiple-genes)
 
 ``` r
 # devtools::install_github("iaaka/visutils",force = TRUE)
@@ -46,8 +45,9 @@ plotVisium(vis,vis$nCount_Spatial,legend.args = list(title='UMI'))
 #> Loading required package: EBImage
 ```
 
-![](Visualization_files/figure-gfm/unnamed-chunk-3-1.png)<!-- --> \#
-Plot multiple microenvironments
+![](Visualization_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+# Plot multiple microenvironments
 
 ``` r
 c2l = as.matrix(vis@meta.data[,grep('c2l',colnames(vis@meta.data))])
@@ -55,14 +55,15 @@ colnames(c2l) = sub('c2l_','',colnames(c2l))
 celltypes = char2col(c('Suprabasal keratinocytes','APOD+ fibroblasts','Basal keratinocytes','Melanocytes'))
 #> Loading required package: randomcoloR
 par(mfrow=c(2,1),mar=c(0,0,1,20),bty='n')
-plotVisiumMultyColours(vis,c2l[,names(celltypes)],cols = celltypes,img.alpha=0.5,legend.ncol = 2)
+plotVisiumMultyColours(vis,c2l[,names(celltypes)],cols = celltypes,img.alpha=0.5,legend.ncol = 2,min.opacity = 100)
 # or as pie charts
 c2l = sweep(c2l,2,apply(c2l,2,max),'/')
 plotVisium(vis,pie.fracs = c2l[,names(celltypes)],pie.cols = celltypes,img.alpha=0.5)
 ```
 
-![](Visualization_files/figure-gfm/unnamed-chunk-4-1.png)<!-- --> \#
-Plot multiple genes
+![](Visualization_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+# Plot multiple genes
 
 ``` r
 cnts = vis@assays$Spatial@layers$counts
@@ -72,7 +73,7 @@ gids = char2col(c('KRT5','KRT10','COL1A2','PERP'))
 cpm = t(as.matrix(cnts[names(gids),]))
 cpm = sweep(cpm,1,vis$nCount_Spatial,'/')*1e4
 par(mar=c(0,0,1,20),bty='n')
-plotVisiumMultyColours(vis,cpm,cols = gids,img.alpha=0.5,legend.ncol = 2)
+plotVisiumMultyColours(vis,cpm,cols = gids,img.alpha=0.5,legend.ncol = 2,min.opacity = 100)
 ```
 
 ![](Visualization_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
