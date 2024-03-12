@@ -33,7 +33,7 @@ defineJunction = function(v,ann.column,which,contactTo,image.name=NULL){
 #' @export
 calcDistance2SpotSet = function(v,spots,image.name=NULL){
   dist = calcSpotDistance(v,image.name)
-  apply(dist[spots,],2,function(x){ifelse(length(x)>0,min(x),Inf)})
+  apply(dist[spots,,drop=FALSE],2,function(x){ifelse(length(x)>0,min(x),Inf)})
 }
 
 #' Calculates matrix of spatial distances between spot centers
@@ -120,14 +120,14 @@ testTDConditions = function(m,f1,f2,test.fun=t.test){
     for(j in 1:dim(m)[2]){
       x1 = m[i,j,f1]
       x2 = m[i,j,f2]
+      m1[i,j] = mean(x1,na.rm=T)
+      m2[i,j] = mean(x2,na.rm=T)
       if(sum(!is.na(x1))<2 || sum(!is.na(x2))<2){
         next
       }
       tryCatch({
         r = test.fun(x1,x2)$p.value
         pv[i,j] = r
-        m1[i,j] = mean(x1,na.rm=T)
-        m2[i,j] = mean(x2,na.rm=T)
       },error=function(e){})
     }
   }
@@ -285,9 +285,9 @@ plotConditionsProfiles = function(m,feature,conditions,cols=NULL,sd.mult=2,legen
   })
   names(areas) = uniq.conds
   if(scaleY)
-    areas = lapply(areas,function(a){a[,1:2]=a[,1:2]/max(a$mean);a})
+    areas = lapply(areas,function(a){a[,1:2]=a[,1:2]/max(a$mean,na.rm=TRUE);a})
   if(is.null(ylim))
-    ylim = range(sapply(areas,function(a)c(min(a$mean-a$sd*sd.mult),max(a$mean+a$sd*sd.mult))))
+    ylim = range(sapply(areas,function(a)c(min(a$mean-a$sd*sd.mult,na.rm=TRUE),max(a$mean+a$sd*sd.mult,na.rm=TRUE))))
   plot(1,t='n',xlim=range(x),ylim=ylim,xlab=xlab,ylab=ylab,main=main)
   for(n in names(areas))
     plotArea(x,areas[[n]][,1:2],sd.mult = sd.mult,col=cols[n],new = FALSE,lwd=lwd,area.transp=area.opacity)
