@@ -12,7 +12,8 @@ plotTD.HM(
   feature.class = NULL,
   log = TRUE,
   col = hcl.colors(100, "YlOrRd", rev = TRUE),
-  fdr.thrs = c(`*` = 0.05, . = 0.2)
+  fdr.thrs = c(`*` = 0.05, . = 0.2),
+  feature.names.map = NULL
 )
 }
 \arguments{
@@ -27,6 +28,8 @@ plotTD.HM(
 \item{feature.class}{list (or matrix of columns) with feature annotations to be shown by color}
 
 \item{fdr.thrs}{named numerical list used to show levels of significance on log fold change plot, default is c('*'=0.05,'.'=0.2)}
+
+\item{feature.names.map}{named vector that maps feature ids used in comp to display names}
 
 \item{cols}{cols to be used for condition heatmaps}
 }

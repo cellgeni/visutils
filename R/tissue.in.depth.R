@@ -148,10 +148,11 @@ testTDConditions = function(m,f1,f2,test.fun=t.test){
 #' @param feature.class list (or matrix of columns) with feature annotations to be shown by color
 #' @param cols cols to be used for condition heatmaps
 #' @param fdr.thrs named numerical list used to show levels of significance on log fold change plot, default is c('*'=0.05,'.'=0.2)
-#'
+#' @param feature.names.map named vector that maps feature ids used in comp to display names
 #' @export
 plotTD.HM = function(comp,cond.titles=c('cond1','cond2'),order=NULL,l2fc.zlim=NULL,feature.class=NULL,log=TRUE,
-                     col = hcl.colors(100, "YlOrRd", rev = TRUE),fdr.thrs=c('*'=0.05,'.'=0.2)){
+                     col = hcl.colors(100, "YlOrRd", rev = TRUE),fdr.thrs=c('*'=0.05,'.'=0.2),
+                     feature.names.map=NULL){
   if(!is.null(order)){
     comp = lapply(comp,function(x)x[,order])
   }
@@ -172,10 +173,13 @@ plotTD.HM = function(comp,cond.titles=c('cond1','cond2'),order=NULL,l2fc.zlim=NU
   maxx = apply(rbind(comp$m1,comp$m2),2,max,na.rm=TRUE)
   m1 = sweep(comp$m1,2,maxx,'/')
   m2 = sweep(comp$m2,2,maxx,'/')
-
+  if(!is.null(feature.names.map))
+    feature.display.names = feature.names.map[colnames(m1)]
+  else
+    feature.display.names = colnames(m1)
   xlim = c(0.5,0.5+nrow(l2fc))
-  imageWithText(m1,'',main=cond.titles[1],xlab='Distance to epidermis-dermis interface (spots)',col=col,rowAnns = feature.class)
-  imageWithText(m2,'',main=cond.titles[2],xlab='Distance to epidermis-dermis interface (spots)',col=col,rowAnns = feature.class)
+  imageWithText(m1,'',main=cond.titles[1],xlab='Distance to epidermis-dermis interface (spots)',col=col,rowAnns = feature.class,yaxlab = feature.display.names)
+  imageWithText(m2,'',main=cond.titles[2],xlab='Distance to epidermis-dermis interface (spots)',col=col,rowAnns = feature.class,yaxlab = feature.display.names)
   if(is.null(l2fc.zlim)){
     l2fc.zlim=range(l2fc,na.rm=T)
   }
@@ -183,7 +187,8 @@ plotTD.HM = function(comp,cond.titles=c('cond1','cond2'),order=NULL,l2fc.zlim=NU
   l2fc[l2fc>l2fc.zlim[2]] = l2fc.zlim[2]
   zmax=max(abs(l2fc.zlim))
   imageWithText(l2fc,pvt,zlim=c(-zmax,zmax),main=paste0('log2(',cond.titles[2],'/',cond.titles[1],')'),
-                xlab='Distance to epidermis-dermis interface (spots)',rowAnns = feature.class,col=hcl.colors(100, "Blue-Red 3"))
+                xlab='Distance to epidermis-dermis interface (spots)',rowAnns = feature.class,col=hcl.colors(100, "Blue-Red 3"),
+                yaxlab = feature.display.names)
 
   if(any(!is.na(l2fc))){
     zlim=range(l2fc,na.rm=T)
