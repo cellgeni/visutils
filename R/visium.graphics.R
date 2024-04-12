@@ -349,6 +349,9 @@ plotTiles = function(col,tiles,border=NA,bg = NA,xlim=NULL,ylim=NULL,...){
 plotVisiumRect = function(xy,cex=1,col='red',border=NA,xlab='x',ylab='y',
                           xlim=c(min(xy$x)-0.5,max(xy$x)+0.5),
                           ylim=c(min(xy$y)+0.5,max(xy$y)-0.5),...){
+  xy = as.data.frame(xy)
+  if(!all(c('x','y') %in% colnames(xy)))
+    colnames(xy)[1:2] = c('x','y')
   cex = recycle(cex,1:nrow(xy))
   col = recycle(col,1:nrow(xy))
   border = recycle(border,1:nrow(xy))
