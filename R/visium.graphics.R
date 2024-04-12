@@ -107,7 +107,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
     N = length(z)
   }
   # if z2col one of viridis gradientds
-  if(length(z2col)==1 && is.character(z2col) && z2col %in% c('magma','inferno','plasma','cividis','rocket','mako','turbo')){
+  if(length(z2col)==1 && is.character(z2col) && z2col %in% c('magma','inferno','plasma','cividis','rocket','mako','turbo','viridis')){
     require(viridis)
     ccc=viridis::viridis(100,option=z2col)
     z2col = function(x){
