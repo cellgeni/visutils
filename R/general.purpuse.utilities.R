@@ -1,7 +1,7 @@
 #' String concatenation operator
 #'
 #' @export
-`%+%` = paste0
+`%p%` = paste0
 
 #' Compare two lists of sets
 #'
@@ -876,56 +876,28 @@ number2bin = function(v,n){
   v
 }
 
-#' Calculates row sums for matrix subsets
-#'
-#' @param d matrix
-#' @param f character vector, factor to split matrix columns (length should be equal to nrow(d))
-#' @param FUN function to be applied to matrix slices (mean by default)
-#' @param verbose
-#'
-#' @return matrix with number of rows equal to nrow(d) and number of columns equal to number of unique(f)
-#' @export
-calcMeanCols = function(d,f,FUN=base::mean,verbose=FALSE){
-  stop('deprecated, use calcColSums')
-  u = sort(unique(as.character(f)))
-  r = matrix(ncol=length(u),nrow=nrow(d))
-  colnames(r) = u
-  rownames(r) = rownames(d)
-  for(j in 1:length(u)){
-    i = u[j]
-    if(verbose) cat('\r',j,' from ',length(u),'; ',i,'      ')
-    r[,i] = apply(d[,f==i,drop=F],1,FUN,na.rm=TRUE)
-  }
-  r
-}
 
 #' Calculates row sums for matrix subsets
 #'
 #' @param d matrix
 #' @param f character vector, factor to split matrix columns (length should be equal to nrow(d))
 #' @param mean logical, calculate mean instead of sum
-#' @param verbose
 #'
 #' @return matrix with number of rows equal to nrow(d) and number of columns equal to number of unique(f)
 #' @export
-calcColSums = function(d,f,mean=FALSE,verbose=FALSE){
-  u = sort(unique(as.character(f)))
-  r = matrix(ncol=length(u),nrow=nrow(d))
-  colnames(r) = u
-  rownames(r) = rownames(d)
-  for(j in 1:length(u)){
-    i = u[j]
-    if(verbose) cat('\r',j,' from ',length(u),'; ',i,'      ')
-    r[,i] = Matrix::rowSums(d[,f==i,drop=F],na.rm=TRUE)
-  }
+calcColSums = function(d,f,mean=FALSE){
+  m = sparse.model.matrix(~ f+0)
+  r = d %*% m
+  colnames(r) = sub('^f','',colnames(r))
+
   if(mean){
     t = as.numeric(table(f)[colnames(r)])
     r = sweep(r,2,t,'/')
   }
+  if(!is(d,'sparseMatrix'))
+    r = as.matrix(r)
   r
 }
-
-
 
 #' Add panel label
 #'
