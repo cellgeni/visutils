@@ -435,16 +435,22 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=function(x)x^2,scale.per.co
 
     y0 = y0[2]
 
+    fullzlim = range(z)
+
     for(i in 1:length(cols)){
       col1 = paste0(cols[i],'00')
       col2 = paste0(cols[i],'FF')
       r = (i-1) %% legend.nrow
       c = (i-1) %/% legend.nrow
+
+      if(scale.per.colour)
+        fullzlim = range(z[,i])
+
       plotColorLegend2(x0+dx*c,
                        x0+dx*(c+1),
                        y0-dy*(r+1)+lw*0.8,
                        y0-dy*r-lw*0.8,
-                       zlim = range(z[,i]),fullzlim = range(z[,i]),zfun=zfun,
+                       zlim = range(z[,i]),fullzlim = fullzlim,zfun=zfun,
                        z2col=function(x)num2col(x,c(col1,col2)),title=colnames(z)[i],title.adj = title.adj)
     }
   }

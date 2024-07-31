@@ -886,7 +886,11 @@ number2bin = function(v,n){
 #' @return matrix with number of rows equal to nrow(d) and number of columns equal to number of unique(f)
 #' @export
 calcColSums = function(d,f,mean=FALSE){
-  m = sparse.model.matrix(~ f+0)
+  if(length(unique(f))==1){
+    r = rowSums(d)
+    return(matrix(r,ncol=1))
+  }
+  m = Matrix::sparse.model.matrix(~ f+0)
   r = d %*% m
   colnames(r) = sub('^f','',colnames(r))
 
