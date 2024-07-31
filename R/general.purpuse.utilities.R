@@ -886,6 +886,7 @@ number2bin = function(v,n){
 #' @return matrix with number of rows equal to nrow(d) and number of columns equal to number of unique(f)
 #' @export
 calcColSums = function(d,f,mean=FALSE){
+  library(Matrix)
   if(length(unique(f))==1){
     r = rowSums(d)
     return(matrix(r,ncol=1))
