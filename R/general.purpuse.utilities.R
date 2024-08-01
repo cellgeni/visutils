@@ -890,6 +890,7 @@ calcColSums = function(d,f,mean=FALSE){
     r = Matrix::rowSums(d)
     r = matrix(r,ncol=1)
     rownames(r) = rownames(d)
+    colnames(r) = f[1]
     return(r)
   }
   m = Matrix::sparse.model.matrix(~ f+0)
