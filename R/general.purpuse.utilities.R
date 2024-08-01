@@ -888,7 +888,9 @@ number2bin = function(v,n){
 calcColSums = function(d,f,mean=FALSE){
   if(length(unique(f))==1){
     r = Matrix::rowSums(d)
-    return(matrix(r,ncol=1))
+    r = matrix(r,ncol=1)
+    rownames(r) = rownames(d)
+    return(r)
   }
   m = Matrix::sparse.model.matrix(~ f+0)
   r = d %*% m
