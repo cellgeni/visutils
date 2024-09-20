@@ -41,8 +41,9 @@
 plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.legend=TRUE,zlim=NULL,zfun = identity,spot.filter=NULL,pch=16,
                       num.leg.tic=NULL,label.clusters=FALSE,legend.args=list(),randomize.points=FALSE,order.points.by.z=FALSE,xaxt='n',yaxt='n',
                       cluster.lab.adj=c(0.5,0.5),cluster.lab.cex=1,cluster.lab.font=1,cluster.lab2col=NULL,show.cluster.sizes=FALSE,bg=NA,image.name=NULL,
-                      pie.fracs=NULL,he.img.width=400,...){
+                      pie.fracs=NULL,he.img.width=400,bty='n',xaxs='i',yaxs='i',...){
   xy = NULL
+  par_bkp = par(bty=bty,xaxs=xaxs,yaxs=yaxs)
   if('Seurat' %in% class(v)){
     if(type=='xy'){
       if(is.null(z))
@@ -261,8 +262,16 @@ plotVisiumImg = function(xy,img,scale.factor,spot.radius,cex=1,col='red',border=
   }
   if(is.null(xlim)) xlim=xlim.
   if(is.null(ylim)) ylim=ylim.
+  xlim = round(xlim)
+  ylim = round(ylim)
+
+  xlimi = pmin(ncol(img),pmax(1,xlim))
+  ylimi = pmin(nrow(img),pmax(1,ylim))
+
+  img_crop = img[nrow(img) - ylimi[2]:ylimi[1],xlimi[1]:xlimi[2],]
+
   plot(1,t='n',xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,...)
-  rasterImage(1-(1-img)*img.alpha,1,1,ncol(img),nrow(img))
+  rasterImage(1-(1-img_crop)*img.alpha,xlimi[1],ylimi[1],xlimi[2],ylimi[2])
 
   f = cex>0
   if(any(cex>0) & is.null(pie.fracs))
