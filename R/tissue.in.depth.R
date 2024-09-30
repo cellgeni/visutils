@@ -293,7 +293,9 @@ plotConditionsProfiles = function(m,feature,conditions,cols=NULL,sd.mult=2,legen
     areas = lapply(areas,function(a){a[,1:2]=a[,1:2]/max(a$mean,na.rm=TRUE);a})
   if(is.null(ylim))
     ylim = range(sapply(areas,function(a)c(min(a$mean-a$sd*sd.mult,na.rm=TRUE),max(a$mean+a$sd*sd.mult,na.rm=TRUE))))
-  plot(1,t='n',xlim=range(x),ylim=ylim,xlab=xlab,ylab=ylab,main=main)
+  if(is.null(xlim))
+    xlim = range(x)
+  plot(1,t='n',xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,main=main)
   for(n in names(areas))
     plotArea(x,areas[[n]][,1:2],sd.mult = sd.mult,col=cols[n],new = FALSE,lwd=lwd,area.transp=area.opacity)
   if(!is.null(legend.) && (!is.logical(legend.) || legend.)){
