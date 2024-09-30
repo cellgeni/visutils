@@ -69,7 +69,7 @@ mergeSpots = function(v,gr,image.name=NULL){
   gr$nCount_Spatial = v$nCount_Spatial
   gr$nspots = as.numeric(table(gr$group)[gr$group])
   gr$barcode = rownames(gr)
-  mtx_ = calcColSums(v[['Spatial']]$counts,gr$group,mean = FALSE,verbose = FALSE)
+  mtx_ = calcColSums(v[['Spatial']]$counts,gr$group,mean = FALSE)
 
   # combine spot info
   # either center (if exists) or max covered spot
