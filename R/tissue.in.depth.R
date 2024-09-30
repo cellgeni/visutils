@@ -270,7 +270,7 @@ plotFeatureProfiles = function(m,features,cols=NULL,sd.mult=2,legend.=TRUE,ylim=
 #' @param ... other parameters to be passed to plot
 #'
 #' @export
-plotConditionsProfiles = function(m,feature,conditions,cols=NULL,sd.mult=2,legend.=TRUE,ylim=NULL,scaleY=FALSE,
+plotConditionsProfiles = function(m,feature,conditions,cols=NULL,sd.mult=2,legend.=TRUE,ylim=NULL,xlim=NULL,scaleY=FALSE,
                                   area.opacity = 0.2,lwd=2,xlab='Distance (spots)',
                                   ylab='Abundance',main='',...){
 
