@@ -23,7 +23,7 @@ The spots are grouped into coarser mesh by seven spots preserving hexagonal layo
 
 # Load libraries
 ```{r setup}
-# devtools::install_github("iaaka/visutils",force = TRUE)
+# devtools::install_github("cellgeni/visutils",force = TRUE)
 library(visutils)
 library(Seurat)
 ```

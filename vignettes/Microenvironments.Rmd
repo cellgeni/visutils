@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 # install packages if necessary
-# devtools::install_github("iaaka/visutils")
+# devtools::install_github("cellgeni/visutils")
 library(visutils)
 # package to load h5ad file as Seurat objects
 library(schard) 
