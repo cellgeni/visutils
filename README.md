@@ -4,7 +4,7 @@ The package provides set of functions to facilitate Visium data analyses, QC, an
 It provides functions to perform analyses of gene expression or celltype abundancies (predicted by methods such as cell2location) in dependence on distance to some histological feature defined as set of spots ("tissue in depth"), microenvironment analyses (via NMF), merging low-covered spots to achieve reasonable coverage, splirring slides by tissue pieces and defining tissue border. See tutorials below for more information
 # Installation
 ```
-devtools::install_github("iaaka/visutils")
+devtools::install_github("cellgeni/visutils")
 ```
 # Tutorials
 * [Tissue in depth](vignettes/TissueInDepth.md) shows how to analyse celltype abundance and gene expression in dependence on distance to dermis-to-epidermis junction in public skin dataset
