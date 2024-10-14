@@ -200,6 +200,7 @@ enhanceImage = function(p,wb=FALSE,qs=NULL,trim01 = TRUE){
 #' @return Seurat object
 #' @export
 myLoad10X_Spatial = function(data.dir,filter.matrix=TRUE,ens_id=TRUE,slice='slice1',...){
+  require(Seurat)
   #TODO: rename)
   if(dir.exists(paste0(data.dir,'/outs'))){
     data.dir = paste0(data.dir,'/outs')
