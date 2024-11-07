@@ -12,6 +12,7 @@ plotConditionsProfiles(
   sd.mult = 2,
   legend. = TRUE,
   ylim = NULL,
+  xlim = NULL,
   scaleY = FALSE,
   area.opacity = 0.2,
   lwd = 2,

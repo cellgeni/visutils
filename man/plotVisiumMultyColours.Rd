@@ -27,7 +27,7 @@ plotVisiumMultyColours(
 
 \item{scale.per.colour}{logical, specifies whether each color should cover whole range (that is, should z be scaled per column)}
 
-\item{min.opacity}{minimal spot opacity. Default is 0, that means that spots with low intensity of all features will be almost transparent. Set it higer if you want at least one feature to be visible in each spot.}
+\item{min.opacity}{int from 0 to 255. Minimal spot opacity. Default is 0, that means that spots with low intensity of all features will be almost transparent. Set it higer if you want at least one feature to be visible in each spot.}
 
 \item{title.adj}{legend title adj (to be passed to text function)}
 

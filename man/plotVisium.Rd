@@ -32,6 +32,9 @@ plotVisium(
   image.name = NULL,
   pie.fracs = NULL,
   he.img.width = 400,
+  bty = "n",
+  xaxs = "i",
+  yaxs = "i",
   ...
 )
 }

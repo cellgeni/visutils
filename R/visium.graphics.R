@@ -384,7 +384,7 @@ plotVisiumRect = function(xy,cex=1,col='red',border=NA,xlab='x',ylab='y',
 #' @param cols colors to be used for columns in z
 #' @param zfun function to transform values in z (z^2 is default)
 #' @param scale.per.colour logical, specifies whether each color should cover whole range (that is, should z be scaled per column)
-#' @param min.opacity minimal spot opacity. Default is 0, that means that spots with low intensity of all features will be almost transparent. Set it higer if you want at least one feature to be visible in each spot.
+#' @param min.opacity int from 0 to 255. Minimal spot opacity. Default is 0, that means that spots with low intensity of all features will be almost transparent. Set it higer if you want at least one feature to be visible in each spot.
 #' @param title.adj legend title adj (to be passed to text function)
 #' @param legend.ncol number of legend columns. Set to 0 to suppress legend plotting.
 #' @param ... other parameters to be passed to plotVisium
@@ -446,8 +446,10 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=function(x)x^2,scale.per.co
 
     fullzlim = range(z)
 
+    min.opacity.hex = substr(rgb(min.opacity,1,1,maxColorValue = 255),2,3)
+
     for(i in 1:length(cols)){
-      col1 = paste0(cols[i],'00')
+      col1 = paste0(cols[i],min.opacity.hex)
       col2 = paste0(cols[i],'FF')
       r = (i-1) %% legend.nrow
       c = (i-1) %/% legend.nrow
