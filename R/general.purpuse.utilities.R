@@ -886,6 +886,12 @@ number2bin = function(v,n){
 #' @return matrix with number of rows equal to nrow(d) and number of columns equal to number of unique(f)
 #' @export
 calcColSums = function(d,f,mean=FALSE){
+  # all levels are unique
+  if(all(table(f)==1)){
+    colnames(d) = f
+    return(d)
+  }
+  # just one level
   if(length(unique(f))==1){
     r = Matrix::rowSums(d)
     r = matrix(r,ncol=1)

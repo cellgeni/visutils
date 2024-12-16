@@ -308,16 +308,21 @@ plotVisiumImg = function(xy,img,scale.factor,spot.radius,cex=1,col='red',border=
 #'
 #' @return data.frame with spot coordinates
 #' @export
-plotVisiumHex = function(xy,cex=1,col='red',border=col,xlab='Cols',ylab='Rows',xlim=c(min(xy$col)-1,max(xy$col)+1),
-                         ylim=c(max(xy$row)+1,min(xy$row)-1),hexstep=0.25,transpose=FALSE,...){
+plotVisiumHex = function(xy,cex=1,col='red',border=col,xlab='Cols',ylab='Rows',xlim=NULL,
+                         ylim=NULL,hexstep=0.25,transpose=FALSE,...){
   if(transpose){
     c = xy$row
     r = xy$col
+    xy$col = r
+    xy$row = c
+    t = xy$imagerow
+    xy$imagerow = xy$imagecol
+    xy$imagecol = t
+
     t = ylab
     ylab=xlab
     xlab=t
-    xlim=c(max(c)+1,min(c)-1)
-    ylim=c(min(r)-1,max(r)+1)
+
     rmask = c(-1,-1,0,1,1,0)
     cmask = c(-hexstep,hexstep,1-hexstep,hexstep,-hexstep,-1+hexstep)
   }else{
@@ -326,6 +331,22 @@ plotVisiumHex = function(xy,cex=1,col='red',border=col,xlab='Cols',ylab='Rows',x
     cmask = c(-1,-1,0,1,1,0)
     rmask = c(-hexstep,hexstep,1-hexstep,hexstep,-hexstep,-1+hexstep)
   }
+
+  # make orientation same as H&E
+  if(is.null(xlim)){
+    if(cor(xy$col,xy$imagecol)>0)
+      xlim=c(min(c)-1,max(c)+1)
+    else
+      xlim=c(max(c)+1,min(c)-1)
+  }
+
+  if(is.null(ylim)){
+    if(cor(xy$row,xy$imagerow)<0)
+      ylim=c(min(r)-1,max(r)+1)
+    else
+      ylim=c(max(r)+1,min(r)-1)
+  }
+
   cex = recycle(cex,1:length(r))
   col = recycle(col,1:length(r))
 
@@ -412,8 +433,8 @@ plotVisiumMultyColours = function(v,z,cols=NULL,zfun=function(x)x^2,scale.per.co
   }else{
     opacity = scaleTo(opacity)
   }
-  # opacity is proportional to max opacity, maybe sum can be used instead.
-  opacity = scaleTo(apply(opacity,1,max,na.rm=TRUE),from=min.opacity,to=255)
+
+  opacity = scaleTo(apply(opacity,1,sum,na.rm=TRUE),from=min.opacity,to=255)
   opacity[is.na(opacity)] = 0
 
 

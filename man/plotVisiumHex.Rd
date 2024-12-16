@@ -11,8 +11,8 @@ plotVisiumHex(
   border = col,
   xlab = "Cols",
   ylab = "Rows",
-  xlim = c(min(xy$col) - 1, max(xy$col) + 1),
-  ylim = c(max(xy$row) + 1, min(xy$row) - 1),
+  xlim = NULL,
+  ylim = NULL,
   hexstep = 0.25,
   transpose = FALSE,
   ...

@@ -4,7 +4,14 @@
 \alias{defineJunction}
 \title{Annotate spots on border between two features}
 \usage{
-defineJunction(v, ann.column, which, contactTo, image.name = NULL)
+defineJunction(
+  v,
+  ann.column,
+  which,
+  contactTo,
+  image.name = NULL,
+  dist.thr = 1.2
+)
 }
 \arguments{
 \item{v}{Seurat visium object}
@@ -16,6 +23,8 @@ defineJunction(v, ann.column, which, contactTo, image.name = NULL)
 \item{contactTo}{name if feature border spots should contact with}
 
 \item{image.name}{image to use, specify if object contains more than one sample}
+
+\item{dist.thr}{maximal distance (in distances between spots) to consider spots as neighbors}
 }
 \value{
 data.frame with two columns logical 'junction' that specifies whether spot belongs to junction and numerical 'dist2junction' expressed in inter-spot distances

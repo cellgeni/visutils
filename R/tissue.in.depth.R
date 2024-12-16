@@ -7,12 +7,13 @@
 #' @param which name if feature border spots should belong to
 #' @param contactTo name if feature border spots should contact with
 #' @param image.name image to use, specify if object contains more than one sample
+#' @param dist.thr maximal distance (in distances between spots) to consider spots as neighbors
 #'
 #' @return data.frame with two columns logical 'junction' that specifies whether spot belongs to junction and numerical 'dist2junction' expressed in inter-spot distances
 #' @export
-defineJunction = function(v,ann.column,which,contactTo,image.name=NULL){
+defineJunction = function(v,ann.column,which,contactTo,image.name=NULL,dist.thr=1.2){
   dist = calcSpotDistance(v,image.name)
-  junction = v@meta.data[,ann.column] == which &  apply(dist[v@meta.data[,ann.column] == contactTo,],2,min) <= 1.2
+  junction = v@meta.data[,ann.column] == which &  apply(dist[v@meta.data[,ann.column] == contactTo,],2,min) <= dist.thr
   dist2junction = apply(dist[junction,],2,min)
   dist2junction[v@meta.data[,ann.column] != which] = -dist2junction[v@meta.data[,ann.column] != which]
   r = data.frame(junction=junction,dist2junction=dist2junction)
@@ -46,9 +47,13 @@ calcDistance2SpotSet = function(v,spots,image.name=NULL){
 #' @return distance matrix
 #' @export
 calcSpotDistance = function(v,image.name=NULL){
-  image.name = getImageName(v,image.name,stopIfMoreThanOne=TRUE)
+  if(is.null(image.name))
+    image.name = getImageName(v,image.name,stopIfMoreThanOne=TRUE)
   dist = as.matrix(dist(v@images[[image.name]]@coordinates[,c('imagerow','imagecol')]))
-  spot.dist = min(dist[upper.tri(dist,diag = FALSE)])
+  dist_sp = as.matrix(dist(v@images[[image.name]]@coordinates[,c('row','col')],method='manhattan'))
+  dist_spr = as.matrix(dist(v@images[[image.name]]@coordinates[,c('row'),drop=FALSE],method='manhattan'))
+  spot.dist = mean(dist[dist_sp == 2 & dist_spr == 1]) # direct neighbors are in 1 by row and in two by both row and col
+  #spot.dist = min(dist[upper.tri(dist,diag = FALSE)])
   dist = dist/spot.dist
   dist
 }
@@ -178,8 +183,11 @@ plotTD.HM = function(comp,cond.titles=c('cond1','cond2'),order=NULL,l2fc.zlim=NU
   else
     feature.display.names = colnames(m1)
   xlim = c(0.5,0.5+nrow(l2fc))
+  zero_inx = which(rownames(m1) == '0') - 0.5
   imageWithText(m1,'',main=cond.titles[1],xlab='Distance to epidermis-dermis interface (spots)',col=col,rowAnns = feature.class,yaxlab = feature.display.names)
+  abline(v=zero_inx,lty=3)
   imageWithText(m2,'',main=cond.titles[2],xlab='Distance to epidermis-dermis interface (spots)',col=col,rowAnns = feature.class,yaxlab = feature.display.names)
+  abline(v=zero_inx,lty=3)
   if(is.null(l2fc.zlim)){
     l2fc.zlim=range(l2fc,na.rm=T)
   }
@@ -189,13 +197,23 @@ plotTD.HM = function(comp,cond.titles=c('cond1','cond2'),order=NULL,l2fc.zlim=NU
   imageWithText(l2fc,pvt,zlim=c(-zmax,zmax),main=paste0('log2(',cond.titles[2],'/',cond.titles[1],')'),
                 xlab='Distance to epidermis-dermis interface (spots)',rowAnns = feature.class,col=hcl.colors(100, "Blue-Red 3"),
                 yaxlab = feature.display.names)
-
+  abline(v=zero_inx,lty=3)
   if(any(!is.na(l2fc))){
     zlim=range(l2fc,na.rm=T)
     plotColorLegend2(1,1.2,0.2,0.8,c(-zmax,zmax),zlim,identity,function(x)num2col(x),title='log2FC')
   }
-  legend(grconvertX(1,'npc','user'),grconvertY(1,'npc','user'),xpd=NA,pch=names(fdr.thrs),legend=paste0('<',fdr.thrs),bty='n',title='FDR')
+  l = legend(grconvertX(1,'npc','user'),grconvertY(1,'npc','user'),xpd=NA,pch=names(fdr.thrs),legend=paste0('<',fdr.thrs),bty='n',title='FDR')
+
+  plotColorLegend2(grconvertX(1,'npc','nfc'),
+                             1,
+                             grconvertY(l$rect$top-l$rect$h*3.2,'user','nfc'),
+                             grconvertY(l$rect$top-l$rect$h*1.2,'user','nfc'),
+                             fullzlim = c(-zmax,zmax),
+                             zlim = c(-zmax,zmax),
+                             z2col = function(x)num2col(x,hcl.colors(100, "Blue-Red 3")),
+                             zfun = identity)
 }
+
 
 
 #' Plots features profiles
