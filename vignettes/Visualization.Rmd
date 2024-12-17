@@ -4,7 +4,7 @@ output:
   github_document:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{Tissue carving}
+  %\VignetteIndexEntry{Visualization}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -12,7 +12,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.path = 'Visualization_files/'
 )
 ```
 
