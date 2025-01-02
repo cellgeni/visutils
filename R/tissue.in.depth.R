@@ -288,10 +288,11 @@ plotFeatureProfiles = function(m,features,cols=NULL,sd.mult=2,legend.=TRUE,ylim=
 #' @param ... other parameters to be passed to plot
 #'
 #' @export
-plotConditionsProfiles = function(m,feature,conditions,cols=NULL,sd.mult=2,legend.=TRUE,ylim=NULL,xlim=NULL,scaleY=FALSE,
+plotConditionsProfiles = function(m,feature,conditions,cols=NULL,ltys=1,sd.mult=2,legend.=TRUE,ylim=NULL,xlim=NULL,scaleY=FALSE,
                                   area.opacity = 0.2,lwd=2,xlab='Distance (spots)',
-                                  ylab='Abundance',main='',...){
-
+                                  ylab='Abundance',main='',cilim=c(-Inf,Inf)){
+  ltys = recycle(ltys,length(cols))
+  names(ltys) = names(cols)
   if(is.null(cols)){
     uniq.conds = unique(conditions)
     cols = char2col(uniq.conds)
@@ -313,9 +314,11 @@ plotConditionsProfiles = function(m,feature,conditions,cols=NULL,sd.mult=2,legen
     ylim = range(sapply(areas,function(a)c(min(a$mean-a$sd*sd.mult,na.rm=TRUE),max(a$mean+a$sd*sd.mult,na.rm=TRUE))))
   if(is.null(xlim))
     xlim = range(x)
+  ylim[1] = max(ylim[1],cilim[1])
+  ylim[2] = min(ylim[2],cilim[2])
   plot(1,t='n',xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,main=main)
   for(n in names(areas))
-    plotArea(x,areas[[n]][,1:2],sd.mult = sd.mult,col=cols[n],new = FALSE,lwd=lwd,area.transp=area.opacity)
+    plotArea(x,areas[[n]][,1:2],sd.mult = sd.mult,col=cols[n],new = FALSE,lwd=lwd,area.transp=area.opacity,cilim=cilim,lty=ltys[n])
   if(!is.null(legend.) && (!is.logical(legend.) || legend.)){
     if(!is.list(legend.))
       legend. = list()
