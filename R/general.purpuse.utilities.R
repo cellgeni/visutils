@@ -824,7 +824,7 @@ plotColorLegend = function(x0,x1,y0,y1,col,at,legend,title=NULL,title.adj=c(0,-0
     rect(grconvertX(x0,'nfc','user'),coors$x[-length(coors$x)],grconvertX(x0+(x1-x0)*0.25,'nfc','user'),coors$x[-1],col=col,border = NA)
     text(grconvertX(x0+(x1-x0)*0.3,'nfc','user'),coors$at,legend,adj=c(0,0.5))
     if(!is.null(title)){
-      text(grconvertX(x0,'nfc','user'),y[length(y)],title,adj=title.adj)
+      text(grconvertX(x0,'nfc','user'),coors$x[length(coors$x)],title,adj=title.adj)
     }
   }
   par(xpd=xpd)
