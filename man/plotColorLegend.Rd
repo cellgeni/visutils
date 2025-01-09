@@ -13,7 +13,8 @@ plotColorLegend(
   at,
   legend,
   title = NULL,
-  title.adj = c(0, -0.5)
+  title.adj = c(0, -0.5),
+  horizontal = FALSE
 )
 }
 \arguments{

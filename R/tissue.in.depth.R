@@ -230,11 +230,12 @@ plotTD.HM = function(comp,cond.titles=c('cond1','cond2'),order=NULL,l2fc.zlim=NU
 #' @param area.opacity opacity of CI shade
 #' @param lwd line width
 #' @param xlab,ylab,main plot annotation
+#' @param cilim numerical vector with two values, gives lower and apper values to truncate CI. NULL (to truncation) by default.
 #' @param ... other parameters to be passed to plot
 #'
 #' @export
 plotFeatureProfiles = function(m,features,cols=NULL,sd.mult=2,legend.=TRUE,ylim=NULL,scaleY=TRUE,area.opacity = 0.2,lwd=2,xlab='Distance (spots)',
-                               ylab='Relative abundance',main='',xlim=NULL,...){
+                               ylab='Relative abundance',main='',xlim=NULL,cilim=c(-Inf,Inf),...){
   if(is.null(cols))
     cols = char2col(features)
   if(is.null(names(cols)))
@@ -255,7 +256,7 @@ plotFeatureProfiles = function(m,features,cols=NULL,sd.mult=2,legend.=TRUE,ylim=
     xlim = range(x)
   plot(1,t='n',xlim=xlim,ylim=ylim,xlab=xlab,ylab=ylab,main=main,...)
   for(n in names(areas))
-    plotArea(x,areas[[n]][,1:2],sd.mult = sd.mult,col=cols[n],new = FALSE,lwd=lwd,area.transp=area.opacity)
+    plotArea(x,areas[[n]][,1:2],sd.mult = sd.mult,col=cols[n],new = FALSE,lwd=lwd,area.transp=area.opacity,cilim=cilim)
   if(!is.null(legend.) && (!is.logical(legend.) || legend.)){
     if(!is.list(legend.))
       legend. = list()
@@ -285,6 +286,7 @@ plotFeatureProfiles = function(m,features,cols=NULL,sd.mult=2,legend.=TRUE,ylim=
 #' @param area.opacity opacity of CI shade
 #' @param lwd line width
 #' @param xlab,ylab,main plot annotation
+#' @param cilim numerical vector with two values, gives lower and apper values to truncate CI. NULL (to truncation) by default.
 #' @param ... other parameters to be passed to plot
 #'
 #' @export

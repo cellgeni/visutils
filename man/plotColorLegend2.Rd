@@ -5,27 +5,28 @@
 \title{Gradient legend}
 \usage{
 plotColorLegend2(
-  x0,
-  x1,
-  y0,
-  y1,
-  fullzlim,
+  x0 = NULL,
+  x1 = NULL,
+  y0 = NULL,
+  y1 = NULL,
   zlim,
-  zfun,
-  z2col,
+  fullzlim = zlim,
+  zfun = identity,
+  z2col = num2col,
   N = 100,
   ntic = 5,
   leg = NULL,
   title = NULL,
-  title.adj = c(0, -0.5)
+  title.adj = c(0, -0.5),
+  horizontal = FALSE
 )
 }
 \arguments{
 \item{x0, x1, y0, y1}{rectange coordinates of the legend in nfc coordinates}
 
-\item{fullzlim}{numeric vector with two items. Full range to be considered.}
-
 \item{zlim}{numeric vector with two items. Range to show, trimmed to fullzlim if wider.}
+
+\item{fullzlim}{numeric vector with two items. Full range to be considered.}
 
 \item{zfun}{transformation for value (gradient will be drawn along transformed value). Identity, log1p, sqrt, ets.}
 

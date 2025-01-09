@@ -18,6 +18,7 @@ plotFeatureProfiles(
   ylab = "Relative abundance",
   main = "",
   xlim = NULL,
+  cilim = c(-Inf, Inf),
   ...
 )
 }
@@ -41,6 +42,8 @@ plotFeatureProfiles(
 \item{lwd}{line width}
 
 \item{xlab, ylab, main}{plot annotation}
+
+\item{cilim}{numerical vector with two values, gives lower and apper values to truncate CI. NULL (to truncation) by default.}
 
 \item{...}{other parameters to be passed to plot}
 }

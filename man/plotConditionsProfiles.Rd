@@ -9,6 +9,7 @@ plotConditionsProfiles(
   feature,
   conditions,
   cols = NULL,
+  ltys = 1,
   sd.mult = 2,
   legend. = TRUE,
   ylim = NULL,
@@ -19,7 +20,7 @@ plotConditionsProfiles(
   xlab = "Distance (spots)",
   ylab = "Abundance",
   main = "",
-  ...
+  cilim = c(-Inf, Inf)
 )
 }
 \arguments{
@@ -44,6 +45,8 @@ plotConditionsProfiles(
 \item{lwd}{line width}
 
 \item{xlab, ylab, main}{plot annotation}
+
+\item{cilim}{numerical vector with two values, gives lower and apper values to truncate CI. NULL (to truncation) by default.}
 
 \item{...}{other parameters to be passed to plot}
 }

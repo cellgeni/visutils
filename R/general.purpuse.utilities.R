@@ -757,7 +757,20 @@ col2hex = function(c,withAlpha = TRUE){
 #' @param title.adj legend title adj parameter to be passed to text function
 #'
 #' @export
-plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,leg=NULL,title=NULL,title.adj=c(0,-0.5)){
+plotColorLegend2 = function(x0=NULL,x1=NULL,y0=NULL,y1=NULL,zlim,fullzlim=zlim,zfun=identity,z2col=num2col,N=100,ntic=5,leg=NULL,title=NULL,title.adj=c(0,-0.5),horizontal=FALSE){
+  if(is.null(x0)){
+    if(horizontal){
+      x0=grconvertX(0,'npc','nfc')
+      x1=grconvertX(1,'npc','nfc')
+      y0=grconvertY(0,'npc','nfc')
+      y1=0
+    }else{
+      x0=grconvertX(1,'npc','nfc')
+      x1=1
+      y0=grconvertY(0.1,'npc','nfc')
+      y1=grconvertY(0.9,'npc','nfc')
+    }
+  }
   if(zlim[1]<fullzlim[1])
     zlim[1]=fullzlim[1]
   if(zlim[2]>fullzlim[2])
@@ -783,7 +796,7 @@ plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,le
   ztcol = sort(unique(c(ztat,seq(zfun(zlim[1]),zfun(zlim[2]),length.out = N))))
   col = z2col(c(zfun(fullzlim),ztcol))[-(1:length(fullzlim))]
   at = match(ztat,ztcol)
-  plotColorLegend(x0,x1,y0,y1,col,at=at,legend=leg,title=title,title.adj=title.adj)
+  plotColorLegend(x0,x1,y0,y1,col,at=at,legend=leg,title=title,title.adj=title.adj,horizontal=horizontal)
 }
 
 #' Gradient legend
@@ -800,17 +813,30 @@ plotColorLegend2 = function(x0,x1,y0,y1,fullzlim,zlim,zfun,z2col,N=100,ntic=5,le
 #' @examples
 #' plot(1)
 #' plotColorLegend(0.4,0.5,0.8,0.3,getPal(n=100),0:10*10,1:10)
-plotColorLegend = function(x0,x1,y0,y1,col,at,legend,title=NULL,title.adj=c(0,-0.5)){
+plotColorLegend = function(x0,x1,y0,y1,col,at,legend,title=NULL,title.adj=c(0,-0.5),horizontal = FALSE){
   xpd = par(xpd=NA)
-  y = seq(grconvertY(y0,'nfc','user'),grconvertY(y1,'nfc','user'),length.out = length(col)+1)
-  rect(grconvertX(x0,'nfc','user'),y[-length(y)],grconvertX(x0+(x1-x0)*0.25,'nfc','user'),y[-1],col=col,border = NA)
-  at = y[at]+(y[2]-y[1])/2
-  text(grconvertX(x0+(x1-x0)*0.3,'nfc','user'),at,legend,adj=c(0,0.5))
-  if(!is.null(title)){
-    #text(grconvertX(x1,'nfc','user'),y[length(y)],title,adj=c(1,-0.5))
-    text(grconvertX(x0,'nfc','user'),y[length(y)],title,adj=title.adj)
+  if(horizontal){
+    # to make marks at borders, boxes will be slightly larger
+    coors = makeColorLenedCoordinates(x0,x1,length(col),at,grconvert=grconvertX)
+    rect(coors$x[-length(coors$x)],grconvertY(y0,'nfc','user'),coors$x[-1],grconvertY(y0+(y1-y0)*0.25,'nfc','user'),col=col,border = NA)
+  }else{
+    coors = makeColorLenedCoordinates(y0,y1,length(col),at,grconvert=grconvertY)
+    rect(grconvertX(x0,'nfc','user'),coors$x[-length(coors$x)],grconvertX(x0+(x1-x0)*0.25,'nfc','user'),coors$x[-1],col=col,border = NA)
+    text(grconvertX(x0+(x1-x0)*0.3,'nfc','user'),coors$at,legend,adj=c(0,0.5))
+    if(!is.null(title)){
+      text(grconvertX(x0,'nfc','user'),y[length(y)],title,adj=title.adj)
+    }
   }
   par(xpd=xpd)
+}
+
+makeColorLenedCoordinates = function(x0,x1,n,at,grconvert){
+  w = (x1-x0)/(n - 1)/2
+  x0 = x0 - w
+  x1 = x1 + w
+  x = seq(grconvert(x0,'nfc','user'),grconvert(x1,'nfc','user'),length.out = n+1)
+  at = x[at]+(x[2]-x[1])/2
+  list(x=x,at=at)
 }
 
 #' Merge multiple png files into pdf
