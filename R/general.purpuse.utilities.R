@@ -403,10 +403,10 @@ isColors <- function(x) {
 #' @param text.xadj text adjastment by x
 #' @param colAnns,rowAnns list (or matrix of columns) of column (row) annotation to be shown by color
 #' @param colAnnsCols,rowAnnsCols - colors to be used for col (row) annotation. Defined by char2color if null.
-#' @param legend.cex.at,legend.col.at values to be used in legend, set both to have two independent legends for size and colour
-#' @param legend.cex.title,legend.col.title titles of legends
+#' @param col col for image
 #' @param rowAnnWidth,colAnnWidth - size of colour annotations as fraction of plot area
 #' @param annSpacer - spacer between heatmap and annotation as fraction of plot area
+#' @param cex.axis.x,cex.axis.y - sizes of x and y axis labels
 #' @param ... other options to be supplied to image
 #'
 #' @export
@@ -455,7 +455,7 @@ imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxl
   }
 
   if(!is.null(xaxlab)){
-    axis(1,pars$x,xaxlab,las=las)
+    axis(1,pars$x,xaxlab,las=las,cex.axis = cex.axis.x)
   }
 
   if(!is.null(rowAnns)){
@@ -467,7 +467,7 @@ imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxl
     plotColorAnn(pars$y,rowAnns,cex=rowAnnWidth,horis=FALSE,col=rowAnnCols,spacer = annSpacer)
   }
   if(!is.null(yaxlab))
-    axis(2,pars$y,yaxlab,las=las)
+    axis(2,pars$y,yaxlab,las=las,cex.axis = cex.axis.y)
 
   par(mgp=mgp)
 }
