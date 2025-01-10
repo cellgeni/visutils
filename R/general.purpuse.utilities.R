@@ -417,7 +417,9 @@ imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxl
                          colAnns=NULL,rowAnns=NULL,
                          colAnnCols=NULL,rowAnnCols=NULL,
                          col= hcl.colors(100, "YlOrRd", rev = TRUE),
-                         rowAnnWidth=0.7,colAnnWidth=0.7,annSpacer=0.1,...){
+                         rowAnnWidth=0.7,colAnnWidth=0.7,annSpacer=0.1,
+			 cex.axis.x=1,cex.axis.y=1,
+			...){
 
   d = as.matrix(d)
   if(is.null(t))
