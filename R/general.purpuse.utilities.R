@@ -823,8 +823,11 @@ plotColorLegend = function(x0,x1,y0,y1,col,at,legend,title=NULL,title.adj=c(0,-0
     rect(coors$x[-length(coors$x)],grconvertY(y0,'nfc','user'),coors$x[-1],grconvertY(y0+(y1-y0)*0.25,'nfc','user'),col=col,border = NA)
   }else{
     coors = makeColorLenedCoordinates(y0,y1,length(col),at,grconvert=grconvertY)
-    rect(grconvertX(x0,'nfc','user'),coors$x[-length(coors$x)],grconvertX(x0+(x1-x0)*0.25,'nfc','user'),coors$x[-1],col=col,border = NA)
+    xright = grconvertX(x0+(x1-x0)*0.25,'nfc','user')
+    rect(grconvertX(x0,'nfc','user'),coors$x[-length(coors$x)],xright,coors$x[-1],col=col,border = NA)
     text(grconvertX(x0+(x1-x0)*0.3,'nfc','user'),coors$at,legend,adj=c(0,0.5))
+    segments(xright,coors$at[1],xright,coors$at[length(coors$at)])
+    segments(xright,coors$at,grconvertX(x0+(x1-x0)*0.29,'nfc','user'),coors$at)
     if(!is.null(title)){
       text(grconvertX(x0,'nfc','user'),coors$x[length(coors$x)],title,adj=title.adj)
     }
@@ -1017,7 +1020,6 @@ my.make.unique = function(x,sep='.'){
   }
   x
 }
-
 
 #' Plots scatterplot with regression line
 #'
