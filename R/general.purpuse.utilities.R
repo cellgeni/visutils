@@ -1065,9 +1065,11 @@ plotLine = function(x,y=NULL,cor.method='pearson',line.col='red',line.lwd=1,plot
   if(tolower(cor.method)==substr('spearman',1,nchar(cor.method))){
     x = rank(x)
     y = rank(y)
-    cor.method = 'pearson'
+    c = cor.test(x,y,m='pearson')
+  }else{
+    c = cor.test(x,y,m=cor.method)
   }
-  c = cor.test(x,y,m=cor.method)
+
   ci = round(c$conf.int,2)
   leg=paste(toupper(substr(cor.method,1,1)),'CC=',round(c$estimate,2),' [',ci[1],',',ci[2],']\npv=',format(c$p.value,digits=2,scientific=TRUE),'\nN=',length(x),sep='')
   text(grconvertX(0.01,'npc','user'),grconvertY(0.99,'npc','user'),leg,col=line.col,adj=c(0,1),font=2)

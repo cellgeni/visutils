@@ -187,7 +187,8 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
       do.call(legend,legend.args)
     }else if(is.function(z2col) && !is.null(zorig) && is.numeric(zorig)){
       # numerical
-      plotColorLegend2(grconvertX(1,'npc','nfc'),1,grconvertY(0.1,'npc','nfc'),grconvertY(0.9,'npc','nfc'),zlim,range(zorig,na.rm=TRUE),zfun,z2col,
+      plotColorLegend2(grconvertX(1,'npc','nfc'),1,grconvertY(0.1,'npc','nfc'),grconvertY(0.9,'npc','nfc'),
+                       zlim = zlim,fullzlim = range(zlim,zorig,na.rm=TRUE),zfun = zfun,z2col = z2col,
                        leg=num.leg.tic,title=legend.args$title)
     }
   }
@@ -236,7 +237,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
 #' @return data.frame with user spot coordinates
 #' @export
 plotVisiumImg = function(xy,img,scale.factor,spot.radius,cex=1,col='red',border=NA,spot.dist=NULL,img.alpha=1,xlim=NULL,
-                         ylim=NULL,symmetric.lims=TRUE,xlab='',ylab='',pie.fracs=NULL,pie.cols=NULL,pie.min.frac=0.05,
+                         ylim=NULL,symmetric.lims=TRUE,xlab='',ylab='',pie.fracs=NULL,pie.cols=char2col(colnames(pie.fracs)),pie.min.frac=0.05,
                          he.img.width=NULL,he.grayscale=FALSE,...){
 
   if(!is.null(he.img.width)){
@@ -412,7 +413,7 @@ plotVisiumRect = function(xy,cex=1,col='red',border=NA,xlab='x',ylab='y',
 #'
 #' @return data.frame with user spot coordinates
 #' @export
-plotVisiumMultyColours = function(v,z,cols=NULL,zfun=function(x)x^2,scale.per.colour=TRUE,
+plotVisiumMultyColours = function(v,z,cols=char2col(colnames(z)),zfun=function(x)x^2,scale.per.colour=TRUE,
                                   min.opacity=0,title.adj=c(0,-0.5),
                                   legend.ncol=1,...){
   z = as.matrix(z)
