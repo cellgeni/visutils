@@ -293,14 +293,15 @@ plotFeatureProfiles = function(m,features,cols=NULL,sd.mult=2,legend.=TRUE,ylim=
 plotConditionsProfiles = function(m,feature,conditions,cols=NULL,ltys=1,sd.mult=2,legend.=TRUE,ylim=NULL,xlim=NULL,scaleY=FALSE,
                                   area.opacity = 0.2,lwd=2,xlab='Distance (spots)',
                                   ylab='Abundance',main='',cilim=c(-Inf,Inf)){
-  ltys = recycle(ltys,length(cols))
-  names(ltys) = names(cols)
   if(is.null(cols)){
     uniq.conds = unique(conditions)
     cols = char2col(uniq.conds)
   }else{
     uniq.conds = intersect(names(cols),conditions)
   }
+
+  ltys = recycle(ltys,length(cols))
+  names(ltys) = names(cols)
 
   x = as.numeric(dimnames(m)[[1]])
   areas = lapply(uniq.conds,function(cnd){

@@ -125,7 +125,7 @@ plotVisium = function(v,z=NULL,cex=1,type='img',border=NA,z2col=num2col,plot.leg
     }else
       zlim=range(z,na.rm = TRUE)
     z = zfun(z)
-    col = z2col(c(zfun(zlim),z))[-(1:length(zlim))]
+    col = z2col(c(zfun(range(zlim,zorig)),z))[-(1:2)]
   }else if(all(isColors(z))){
     col = z
   }else{
