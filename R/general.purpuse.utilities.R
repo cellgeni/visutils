@@ -459,6 +459,7 @@ imageWithText = function(d,t=NULL,digits=2,text.col=NULL,xaxlab=rownames(d),yaxl
   if(!is.null(xaxlab)){
     axis(1,pars$x,xaxlab,las=las,cex.axis = cex.axis.x)
   }
+  par(mgp=mgp)
 
   if(!is.null(rowAnns)){
     if(is.list(rowAnns))
